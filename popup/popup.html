@@ -13,6 +13,7 @@
       <div class="tabs">
         <button class="tab active" data-tab="builder">Search Builder</button>
         <button class="tab" data-tab="saved">Saved Searches</button>
+        <button class="tab" data-tab="settings">Settings</button>
       </div>
     </header>
 
@@ -212,6 +213,25 @@
       <div id="emptyState" class="empty-state hidden">
         <p>No saved searches yet.</p>
         <p>Create your first search in the Search Builder tab!</p>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="settings-tab">
+      <div class="settings-section">
+        <h3>Sidebar Settings</h3>
+        <div class="setting-item">
+          <label class="toggle-label">
+            <input type="checkbox" id="sidebarPinned" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">
+              <strong>Show sidebar by default</strong>
+              <small>Display saved searches sidebar when you visit X.com</small>
+            </span>
+          </label>
+        </div>
+        <div class="setting-info">
+          <p>💡 You can always toggle the sidebar using the arrow button on the right side of X.com</p>
+        </div>
       </div>
     </div>
   </div>

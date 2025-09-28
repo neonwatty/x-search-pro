@@ -15,9 +15,11 @@ export const test = base.extend<ExtensionFixtures>({
 
     fs.mkdirSync(userDataDir, { recursive: true });
 
+    const isHeadless = process.env.HEADLESS !== 'false';
     const context = await chromium.launchPersistentContext(userDataDir, {
       headless: false,
       args: [
+        ...(isHeadless ? ['--headless=new'] : []),
         '--disable-extensions-except=' + pathToExtension,
         '--load-extension=' + pathToExtension,
       ],

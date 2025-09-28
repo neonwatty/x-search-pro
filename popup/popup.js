@@ -5,10 +5,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   await initializeTemplates();
   initializeTabs();
   initializeCollapsibleSections();
+  initializeDefaultDates();
   initializeDatePresets();
   initializeFormListeners();
   initializeButtons();
   await loadSavedSearches();
+  await loadSettings();
 });
 
 function initializeTabs() {
@@ -40,6 +42,20 @@ function initializeCollapsibleSections() {
       section.classList.toggle('collapsed');
     });
   });
+}
+
+function initializeDefaultDates() {
+  const today = new Date();
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const sinceDate = document.getElementById('sinceDate');
+  const untilDate = document.getElementById('untilDate');
+
+  sinceDate.value = weekAgo.toISOString().split('T')[0];
+  untilDate.value = today.toISOString().split('T')[0];
+
+  updateQueryPreview();
 }
 
 function initializeDatePresets() {
@@ -420,6 +436,25 @@ function filterSavedSearches() {
       item.style.display = '';
     } else {
       item.style.display = 'none';
+    }
+  });
+}
+
+async function loadSettings() {
+  const settings = await chrome.storage.sync.get(['sidebarVisible']);
+  const sidebarPinned = document.getElementById('sidebarPinned');
+
+  sidebarPinned.checked = settings.sidebarVisible !== false;
+
+  sidebarPinned.addEventListener('change', async (e) => {
+    await chrome.storage.sync.set({ sidebarVisible: e.target.checked });
+
+    const [tab] = await chrome.tabs.query({ active: true, url: ['*://x.com/*', '*://twitter.com/*'] });
+    if (tab) {
+      chrome.tabs.sendMessage(tab.id, {
+        action: 'updateSidebarVisibility',
+        visible: e.target.checked
+      }).catch(() => {});
     }
   });
 }

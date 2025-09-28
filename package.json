@@ -4,12 +4,12 @@
   "description": "Chrome extension to simplify X/Twitter advanced search",
   "scripts": {
     "test:install": "playwright install chromium",
-    "test:e2e": "playwright test",
-    "test:e2e:headed": "playwright test --headed",
+    "test:e2e": "HEADLESS=true playwright test",
+    "test:e2e:headed": "HEADLESS=false playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "test:unit": "playwright test --project=unit",
-    "test:workflows": "playwright test tests/e2e/workflows/",
+    "test:workflows": "HEADLESS=true playwright test tests/e2e/workflows/",
     "test:setup": "playwright test --project=setup",
     "test:report": "playwright show-report"
   },

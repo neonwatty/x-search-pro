@@ -1,4 +1,5 @@
-let sidebarVisible = false;
+let sidebarVisible = true;
+let sidebarCollapsed = false;
 let sidebarElement = null;
 
 console.log('[CONTENT SCRIPT] Loaded on:', window.location.href);
@@ -12,6 +13,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('[CONTENT SCRIPT] Applying search with query:', request.query);
     applySearchToPage(request.query);
     console.log('[CONTENT SCRIPT] Search applied, sending success response');
+    sendResponse({ success: true });
+  } else if (request.action === 'updateSidebarVisibility') {
+    sidebarVisible = request.visible;
+    updateSidebarVisibility();
     sendResponse({ success: true });
   }
   return true;
@@ -73,8 +78,12 @@ function applySearchToPage(query) {
   }
 }
 
-function initializeSidebar() {
+async function initializeSidebar() {
   if (sidebarElement) return;
+
+  const settings = await chrome.storage.sync.get(['sidebarVisible', 'sidebarCollapsed']);
+  sidebarVisible = settings.sidebarVisible !== false;
+  sidebarCollapsed = settings.sidebarCollapsed || false;
 
   sidebarElement = document.createElement('div');
   sidebarElement.id = 'x-search-tabs-sidebar';
@@ -82,13 +91,20 @@ function initializeSidebar() {
   sidebarElement.innerHTML = `
     <div class="sidebar-toggle" id="sidebarToggle">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-        <path d="M21 11H6.83l3.58-3.59L9 6l-6 6 6 6 1.41-1.41L6.83 13H21z"/>
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
       </svg>
     </div>
     <div class="sidebar-panel" id="sidebarPanel">
       <div class="sidebar-header">
         <h3>Saved Searches</h3>
-        <button class="close-btn" id="closeSidebar">×</button>
+        <div class="sidebar-header-actions">
+          <button class="icon-action-btn" id="collapseSidebar" title="Minimize">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M19 12.998H5v-2h14z"/>
+            </svg>
+          </button>
+          <button class="icon-action-btn" id="closeSidebar" title="Hide">×</button>
+        </div>
       </div>
       <div class="sidebar-content">
         <input type="text" id="sidebarSearchFilter" placeholder="Filter searches..." class="sidebar-search" />
@@ -104,31 +120,56 @@ function initializeSidebar() {
   document.body.appendChild(sidebarElement);
 
   document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
-  document.getElementById('closeSidebar').addEventListener('click', () => {
+  document.getElementById('closeSidebar').addEventListener('click', async () => {
     sidebarVisible = false;
+    await chrome.storage.sync.set({ sidebarVisible: false });
     updateSidebarVisibility();
   });
+  document.getElementById('collapseSidebar').addEventListener('click', toggleCollapse);
 
   document.getElementById('sidebarSearchFilter').addEventListener('input', filterSidebarSearches);
 
+  updateSidebarVisibility();
   loadSidebarSearches();
 }
 
-function toggleSidebar() {
+async function toggleSidebar() {
   sidebarVisible = !sidebarVisible;
+  await chrome.storage.sync.set({ sidebarVisible });
   updateSidebarVisibility();
   if (sidebarVisible) {
     loadSidebarSearches();
   }
 }
 
+async function toggleCollapse() {
+  sidebarCollapsed = !sidebarCollapsed;
+  await chrome.storage.sync.set({ sidebarCollapsed });
+  updateSidebarVisibility();
+}
+
 function updateSidebarVisibility() {
   const panel = document.getElementById('sidebarPanel');
   const toggle = document.getElementById('sidebarToggle');
+  const collapseBtn = document.getElementById('collapseSidebar');
 
   if (sidebarVisible) {
     panel.classList.add('visible');
     toggle.classList.add('active');
+
+    if (sidebarCollapsed) {
+      panel.classList.add('collapsed');
+      if (collapseBtn) {
+        collapseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13H5v-2h14v2z"/><path d="M13 17h-2v-4h2v4zm0-6h-2V7h2v4z"/></svg>';
+        collapseBtn.title = 'Expand';
+      }
+    } else {
+      panel.classList.remove('collapsed');
+      if (collapseBtn) {
+        collapseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 12.998H5v-2h14z"/></svg>';
+        collapseBtn.title = 'Minimize';
+      }
+    }
   } else {
     panel.classList.remove('visible');
     toggle.classList.remove('active');
@@ -155,6 +196,7 @@ async function loadSidebarSearches() {
         <span class="sidebar-item-category">${search.category}</span>
       </div>
       <div class="sidebar-item-query">${search.query}</div>
+      <div class="sidebar-item-name-only">${search.name}</div>
     </div>
   `).join('');
 
@@ -165,8 +207,6 @@ async function loadSidebarSearches() {
       if (search) {
         await StorageManager.incrementUseCount(id);
         applySearchToPage(search.query);
-        sidebarVisible = false;
-        updateSidebarVisibility();
       }
     });
   });
