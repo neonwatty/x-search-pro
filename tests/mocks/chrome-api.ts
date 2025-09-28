@@ -1,8 +1,8 @@
-export interface MockStorageData {
+interface MockStorageData {
   [key: string]: any;
 }
 
-export interface MockTab {
+interface MockTab {
   id: number;
   url: string;
   windowId: number;
@@ -10,7 +10,7 @@ export interface MockTab {
   lastAccessed?: number;
 }
 
-export class MockChromeStorage {
+class MockChromeStorage {
   private data: MockStorageData = {};
 
   async get(keys: string[]): Promise<MockStorageData> {

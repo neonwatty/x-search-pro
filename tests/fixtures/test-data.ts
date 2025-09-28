@@ -63,16 +63,6 @@ export const mockSettings = {
   theme: 'auto' as const
 };
 
-export const mockFilters = {
-  keywords: 'test query',
-  minFaves: 50,
-  minRetweets: 25,
-  sinceDate: '2025-01-01',
-  verified: true,
-  hasVideos: true,
-  lang: 'en'
-};
-
 export const mockExportData = {
   version: '1.0',
   exportDate: '2025-01-20T12:00:00.000Z',
