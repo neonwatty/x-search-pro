@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Chrome extension to simplify X/Twitter advanced search",
   "scripts": {
+    "prepare": "husky",
+    "lint": "eslint . --ext .js,.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:unit",
     "test:install": "playwright install chromium",
     "test:e2e": "HEADLESS=true playwright test",
     "test:e2e:headed": "HEADLESS=false playwright test",
@@ -11,7 +15,8 @@
     "test:unit": "playwright test --project=unit",
     "test:workflows": "HEADLESS=true playwright test tests/e2e/workflows/",
     "test:setup": "playwright test --project=setup",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "validate:pre-push": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e"
   },
   "keywords": [
     "chrome-extension",
@@ -26,7 +31,11 @@
     "@playwright/test": "^1.40.0",
     "@types/chrome": "^0.0.254",
     "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
     "dotenv": "^16.3.1",
+    "eslint": "^9.36.0",
+    "husky": "^9.1.7",
     "typescript": "^5.3.3"
   }
 }

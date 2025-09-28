@@ -2,7 +2,7 @@ import { Page, expect } from '@playwright/test';
 
 export class PopupPage {
   constructor(
-    private page: Page,
+    public readonly page: Page,
     public readonly extensionId: string
   ) {}
 

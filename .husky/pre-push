@@ -1,0 +1,49 @@
+#!/usr/bin/env sh
+
+set -e
+
+echo "🚨 Running mandatory pre-push validation..."
+echo "⚠️  This will take 2-3 minutes to ensure code quality before pushing to remote"
+echo ""
+
+echo "📝 Running ESLint..."
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "❌ ESLint failed! Please fix linting errors before pushing."
+  exit 1
+fi
+echo "✅ Linting passed"
+echo ""
+
+echo "🔍 Running TypeScript type check..."
+npm run typecheck
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript type check failed! Please fix type errors before pushing."
+  exit 1
+fi
+echo "✅ Type check passed"
+echo ""
+
+echo "🧪 Running unit tests (97 tests)..."
+npm run test:unit
+if [ $? -ne 0 ]; then
+  echo "❌ Unit tests failed! Please fix failing tests before pushing."
+  exit 1
+fi
+echo "✅ Unit tests passed"
+echo ""
+
+echo "🎭 Running E2E tests (headless mode)..."
+echo "⚠️  This ensures extension works on real X.com pages"
+echo "📍 Tests require Chrome browser and internet connection"
+echo ""
+
+npm run test:e2e
+if [ $? -ne 0 ]; then
+  echo "❌ E2E tests failed! Please fix failing tests before pushing."
+  exit 1
+fi
+echo "✅ E2E tests passed"
+echo ""
+
+echo "🎉 All validation checks passed! Pushing to remote..."

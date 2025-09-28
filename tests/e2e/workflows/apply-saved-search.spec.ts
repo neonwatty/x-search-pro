@@ -19,7 +19,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
 
-    await sidebar.toggle();
+    await sidebar.ensureVisible();
     await expect(await sidebar.isVisible()).toBe(true);
 
     const searches = await sidebar.getSearchList();
@@ -53,7 +53,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection();
 
-    await sidebar.toggle();
+    await sidebar.ensureVisible();
     await expect(await sidebar.isVisible()).toBe(true);
 
     const initialCount = await sidebar.getSearchCount();
@@ -77,7 +77,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection();
 
-    await sidebar.toggle();
+    await sidebar.ensureVisible();
     await expect(await sidebar.isVisible()).toBe(true);
 
     const searches = await sidebar.getSearchList();

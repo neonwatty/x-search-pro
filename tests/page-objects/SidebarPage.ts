@@ -11,6 +11,23 @@ export class SidebarPage {
   async toggle() {
     const sidebarToggle = this.page.locator('#sidebarToggle');
     await sidebarToggle.click();
+
+    await this.page.waitForFunction(
+      () => {
+        const panel = document.getElementById('sidebarPanel');
+        return panel !== null;
+      },
+      { timeout: 3000 }
+    );
+
+    await this.page.waitForTimeout(500);
+  }
+
+  async ensureVisible() {
+    const isCurrentlyVisible = await this.isVisible();
+    if (!isCurrentlyVisible) {
+      await this.toggle();
+    }
   }
 
   async isVisible(): Promise<boolean> {

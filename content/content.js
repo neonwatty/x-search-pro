@@ -207,6 +207,9 @@ async function loadSidebarSearches() {
       if (search) {
         await StorageManager.incrementUseCount(id);
         applySearchToPage(search.query);
+        sidebarVisible = false;
+        await chrome.storage.sync.set({ sidebarVisible: false });
+        updateSidebarVisibility();
       }
     });
   });

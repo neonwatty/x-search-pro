@@ -46,7 +46,7 @@ export class MockChromeTabs {
     if (options.url) {
       const patterns = Array.isArray(options.url) ? options.url : [options.url];
       filtered = filtered.filter(tab => {
-        return patterns.some(pattern => {
+        return patterns.some((pattern: string) => {
           const regex = new RegExp(pattern.replace(/\*/g, '.*'));
           return regex.test(tab.url);
         });

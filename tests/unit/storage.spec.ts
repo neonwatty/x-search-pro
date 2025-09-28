@@ -182,8 +182,10 @@ test.describe('StorageManager Unit Tests', () => {
       const after = new Date().toISOString();
 
       expect(updated?.lastUsed).toBeTruthy();
-      expect(updated?.lastUsed! >= before).toBe(true);
-      expect(updated?.lastUsed! <= after).toBe(true);
+      if (updated?.lastUsed) {
+        expect(updated.lastUsed >= before).toBe(true);
+        expect(updated.lastUsed <= after).toBe(true);
+      }
     });
 
     test('should return null for non-existent ID', async () => {
