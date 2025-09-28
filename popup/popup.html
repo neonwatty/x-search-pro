@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X Search Tabs</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>X Search Tabs</h1>
+      <div class="tabs">
+        <button class="tab active" data-tab="builder">Search Builder</button>
+        <button class="tab" data-tab="saved">Saved Searches</button>
+      </div>
+    </header>
+
+    <div class="tab-content" id="builder-tab">
+      <form id="search-form">
+        <section class="form-section">
+          <h3>Keywords</h3>
+          <input type="text" id="keywords" placeholder='e.g., "claude code"' />
+        </section>
+
+        <section class="form-section collapsible">
+          <h3 class="section-header">
+            Engagement
+            <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="section-content">
+            <div class="input-group">
+              <label>Min Likes</label>
+              <input type="number" id="minFaves" min="0" placeholder="0" />
+            </div>
+            <div class="input-group">
+              <label>Min Retweets</label>
+              <input type="number" id="minRetweets" min="0" placeholder="0" />
+            </div>
+            <div class="input-group">
+              <label>Min Replies</label>
+              <input type="number" id="minReplies" min="0" placeholder="0" />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section collapsible">
+          <h3 class="section-header">
+            Date Range
+            <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="section-content">
+            <div class="input-group">
+              <label>Since</label>
+              <input type="date" id="sinceDate" />
+            </div>
+            <div class="input-group">
+              <label>Until</label>
+              <input type="date" id="untilDate" />
+            </div>
+            <div class="date-presets">
+              <button type="button" class="preset-btn" data-preset="today">Today</button>
+              <button type="button" class="preset-btn" data-preset="week">Last Week</button>
+              <button type="button" class="preset-btn" data-preset="month">Last Month</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section collapsible">
+          <h3 class="section-header">
+            Users
+            <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="section-content">
+            <div class="input-group">
+              <label>From User</label>
+              <input type="text" id="fromUser" placeholder="username" />
+            </div>
+            <div class="input-group">
+              <label>To User</label>
+              <input type="text" id="toUser" placeholder="username" />
+            </div>
+            <div class="input-group">
+              <label>Mentions User</label>
+              <input type="text" id="mentionsUser" placeholder="username" />
+            </div>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="verified" />
+                Verified Accounts Only
+              </label>
+              <label>
+                <input type="checkbox" id="blueVerified" />
+                Blue Verified Only
+              </label>
+              <label>
+                <input type="checkbox" id="follows" />
+                From Follows Only
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section collapsible">
+          <h3 class="section-header">
+            Content Type
+            <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="section-content">
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="hasMedia" />
+                Has Media
+              </label>
+              <label>
+                <input type="checkbox" id="hasImages" />
+                Has Images
+              </label>
+              <label>
+                <input type="checkbox" id="hasVideos" />
+                Has Videos
+              </label>
+              <label>
+                <input type="checkbox" id="hasLinks" />
+                Has Links
+              </label>
+              <label>
+                <input type="checkbox" id="quoteOnly" />
+                Quote Tweets Only
+              </label>
+            </div>
+            <div class="radio-group">
+              <label>Replies:</label>
+              <label>
+                <input type="radio" name="replies" value="any" checked />
+                Any
+              </label>
+              <label>
+                <input type="radio" name="replies" value="exclude" />
+                Exclude
+              </label>
+              <label>
+                <input type="radio" name="replies" value="only" />
+                Only
+              </label>
+            </div>
+            <div class="radio-group">
+              <label>Retweets:</label>
+              <label>
+                <input type="radio" name="retweets" value="any" checked />
+                Any
+              </label>
+              <label>
+                <input type="radio" name="retweets" value="exclude" />
+                Exclude
+              </label>
+              <label>
+                <input type="radio" name="retweets" value="only" />
+                Only
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section collapsible collapsed">
+          <h3 class="section-header">
+            Language
+            <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="section-content">
+            <div class="input-group">
+              <label>Language Code</label>
+              <select id="lang">
+                <option value="">Any</option>
+                <option value="en">English (en)</option>
+                <option value="es">Spanish (es)</option>
+                <option value="fr">French (fr)</option>
+                <option value="de">German (de)</option>
+                <option value="it">Italian (it)</option>
+                <option value="pt">Portuguese (pt)</option>
+                <option value="ja">Japanese (ja)</option>
+                <option value="ko">Korean (ko)</option>
+                <option value="zh">Chinese (zh)</option>
+                <option value="ar">Arabic (ar)</option>
+                <option value="hi">Hindi (hi)</option>
+                <option value="ru">Russian (ru)</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <div class="query-preview">
+          <h4>Query Preview</h4>
+          <div id="queryPreview" class="preview-text">Enter search criteria above...</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="saveBtn" class="btn btn-secondary">Save Search</button>
+          <button type="button" id="applyBtn" class="btn btn-primary">Apply Search</button>
+          <button type="button" id="resetBtn" class="btn btn-text">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="tab-content hidden" id="saved-tab">
+      <div class="saved-header">
+        <input type="text" id="searchFilter" placeholder="Filter saved searches..." />
+        <button id="exportBtn" class="btn btn-small">Export</button>
+        <button id="importBtn" class="btn btn-small">Import</button>
+      </div>
+      <div id="savedSearches" class="saved-list"></div>
+      <div id="emptyState" class="empty-state hidden">
+        <p>No saved searches yet.</p>
+        <p>Create your first search in the Search Builder tab!</p>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="importFile" accept=".json" style="display: none;" />
+
+  <script src="../lib/query-builder.js"></script>
+  <script src="../lib/storage.js"></script>
+  <script src="../lib/templates.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
