@@ -22,68 +22,71 @@ test.describe('Category Colors Management', () => {
     });
   });
 
-  test.describe('Settings Tab - Category Colors Section', () => {
-    test('should display Category Colors section in Settings tab', async ({ page, extensionId }) => {
+  test.describe('Categories Tab - Category Management Section', () => {
+    test('should display Manage Categories section in Categories tab', async ({ page, extensionId }) => {
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      // Navigate to Settings tab
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      // Navigate to Categories tab
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
-      // Verify Category Colors section exists
-      const categorySection = page.locator('.settings-section').nth(1);
-      await expect(categorySection.locator('h3')).toHaveText('Category Colors');
+      // Verify Manage Categories section exists
+      const categorySection = page.locator('.categories-section');
+      await expect(categorySection.locator('h3')).toHaveText('Manage Categories');
 
       // Verify description text
       const settingInfo = categorySection.locator('.setting-info p');
-      await expect(settingInfo).toHaveText('Customize the border colors for each search category');
+      await expect(settingInfo).toHaveText('Create and organize custom categories for your saved searches');
 
-      // Verify reset button exists
-      const resetButton = page.locator('#resetCategoryColors');
-      await expect(resetButton).toBeVisible();
-      await expect(resetButton).toHaveText('Reset to Defaults');
+      // Verify add category button exists
+      const addButton = page.locator('#addCategoryBtn');
+      await expect(addButton).toBeVisible();
+      await expect(addButton).toHaveText('Add');
     });
 
     test('should show all existing categories with color pickers', async ({ page, extensionId }) => {
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
-      // Check for category color items
-      const categoryItems = page.locator('.category-color-item');
+      // Check for category items
+      const categoryItems = page.locator('.category-item');
       const count = await categoryItems.count();
       expect(count).toBeGreaterThan(0);
 
-      // Verify structure of first item
+      // Verify structure of first item - category items have inline color picker
       const firstItem = categoryItems.first();
-      await expect(firstItem.locator('.category-color-preview')).toBeVisible();
-      await expect(firstItem.locator('.category-name')).toBeVisible();
-      await expect(firstItem.locator('.color-picker')).toBeVisible();
+      await expect(firstItem.locator('.category-item-color')).toBeVisible();
+      await expect(firstItem.locator('.category-item-info')).toBeVisible();
+      await expect(firstItem.locator('input[type="color"]')).toBeVisible();
 
       // Check for specific categories
-      const categoryNames = await page.locator('.category-name').allTextContents();
-      expect(categoryNames).toContain('Popular');
-      expect(categoryNames).toContain('Media');
-      expect(categoryNames).toContain('Uncategorized');
+      const categoryContents = await page.locator('.category-item').allTextContents();
+      const hasPopular = categoryContents.some(text => text.includes('Popular'));
+      const hasMedia = categoryContents.some(text => text.includes('Media'));
+      const hasUncategorized = categoryContents.some(text => text.includes('Uncategorized'));
+      expect(hasPopular).toBe(true);
+      expect(hasMedia).toBe(true);
+      expect(hasUncategorized).toBe(true);
     });
 
-    test('should display color preview squares', async ({ page, extensionId }) => {
+    test('should display color indicators', async ({ page, extensionId }) => {
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
-      // Check all color previews are visible and have colors
-      const colorPreviews = page.locator('.category-color-preview');
-      const count = await colorPreviews.count();
+      // Check all color displays are visible and have colors
+      const colorDisplays = page.locator('.category-item-color');
+      const count = await colorDisplays.count();
 
       for (let i = 0; i < count; i++) {
-        const preview = colorPreviews.nth(i);
-        await expect(preview).toBeVisible();
+        const display = colorDisplays.nth(i);
+        await expect(display).toBeVisible();
 
         // Verify it has a background color set
-        const bgColor = await preview.evaluate(el =>
+        const bgColor = await display.evaluate(el =>
           window.getComputedStyle(el).backgroundColor
         );
         expect(bgColor).not.toBe('');
@@ -93,22 +96,22 @@ test.describe('Category Colors Management', () => {
   });
 
   test.describe('Color Picker Interactions', () => {
-    test('should update preview square when color changes', async ({ page, extensionId }) => {
+    test('should update color display when color changes', async ({ page, extensionId }) => {
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
       // Find Popular category
-      const popularItem = page.locator('.category-color-item').filter({
+      const popularItem = page.locator('.category-item').filter({
         hasText: 'Popular'
       });
 
-      const colorPicker = popularItem.locator('.color-picker');
-      const preview = popularItem.locator('.category-color-preview');
+      const colorPicker = popularItem.locator('input[type="color"]');
+      const colorDisplay = popularItem.locator('.category-item-color');
 
       // Get initial color
-      const initialColor = await preview.evaluate(el =>
+      const initialColor = await colorDisplay.evaluate(el =>
         window.getComputedStyle(el).backgroundColor
       );
 
@@ -121,8 +124,8 @@ test.describe('Category Colors Management', () => {
       // Wait for update
       await page.waitForTimeout(100);
 
-      // Verify preview updated
-      const newColor = await preview.evaluate(el =>
+      // Verify color display updated
+      const newColor = await colorDisplay.evaluate(el =>
         window.getComputedStyle(el).backgroundColor
       );
       expect(newColor).not.toBe(initialColor);
@@ -132,15 +135,15 @@ test.describe('Category Colors Management', () => {
     test('should persist color changes without page reload', async ({ page, extensionId, context }) => {
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
       // Change Media category color
-      const mediaItem = page.locator('.category-color-item').filter({
+      const mediaItem = page.locator('.category-item').filter({
         hasText: 'Media'
       });
 
-      const colorPicker = mediaItem.locator('.color-picker');
+      const colorPicker = mediaItem.locator('input[type="color"]');
       await colorPicker.evaluate((input: HTMLInputElement) => {
         input.value = '#00ff00';
         input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -152,14 +155,14 @@ test.describe('Category Colors Management', () => {
       const newPage = await context.newPage();
       await newPage.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const newSettingsTab = newPage.locator('[data-tab="settings"]');
-      await newSettingsTab.click();
+      const newCategoriesTab = newPage.locator('[data-tab="categories"]');
+      await newCategoriesTab.click();
 
       // Verify color persisted
-      const newMediaItem = newPage.locator('.category-color-item').filter({
+      const newMediaItem = newPage.locator('.category-item').filter({
         hasText: 'Media'
       });
-      const persistedColor = await newMediaItem.locator('.color-picker').inputValue();
+      const persistedColor = await newMediaItem.locator('input[type="color"]').inputValue();
       expect(persistedColor).toBe('#00ff00');
 
       await newPage.close();
@@ -168,19 +171,19 @@ test.describe('Category Colors Management', () => {
     test('should update multiple categories independently', async ({ page, extensionId }) => {
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
       // Update multiple categories
       const categories = ['Popular', 'Media', 'News'];
       const colors = ['#ff0000', '#00ff00', '#0000ff'];
 
       for (let i = 0; i < categories.length; i++) {
-        const item = page.locator('.category-color-item').filter({
+        const item = page.locator('.category-item').filter({
           hasText: categories[i]
         });
 
-        const colorPicker = item.locator('.color-picker');
+        const colorPicker = item.locator('input[type="color"]');
         await colorPicker.evaluate((input: HTMLInputElement, color: string) => {
           input.value = color;
           input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -191,80 +194,27 @@ test.describe('Category Colors Management', () => {
 
       // Verify all colors are set correctly
       for (let i = 0; i < categories.length; i++) {
-        const item = page.locator('.category-color-item').filter({
+        const item = page.locator('.category-item').filter({
           hasText: categories[i]
         });
 
-        const currentColor = await item.locator('.color-picker').inputValue();
+        const currentColor = await item.locator('input[type="color"]').inputValue();
         expect(currentColor).toBe(colors[i]);
       }
     });
   });
 
   test.describe('Reset Functionality', () => {
-    test('should reset all colors to defaults on button click', async ({ page, extensionId }) => {
+    test.skip('should reset all colors to defaults on button click', async ({ page, extensionId }) => {
+      // SKIP REASON: Reset functionality was part of old Settings tab design
+      // New Categories tab uses individual color pickers without bulk reset
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
-
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
-
-      // First, change a color
-      const popularItem = page.locator('.category-color-item').filter({
-        hasText: 'Popular'
-      });
-
-      const colorPicker = popularItem.locator('.color-picker');
-      await colorPicker.evaluate((input: HTMLInputElement) => {
-        input.value = '#ffffff';
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-
-      await page.waitForTimeout(100);
-
-      // Click reset button
-      const resetButton = page.locator('#resetCategoryColors');
-      await resetButton.click();
-
-      await page.waitForTimeout(200);
-
-      // Verify color reset to default
-      const resetColor = await colorPicker.inputValue();
-      expect(resetColor).toBe('#ef4444'); // Default Popular color
     });
 
-    test('should update UI immediately after reset', async ({ page, extensionId }) => {
+    test.skip('should update UI immediately after reset', async ({ page, extensionId }) => {
+      // SKIP REASON: Reset functionality was part of old Settings tab design
+      // New Categories tab uses individual color pickers without bulk reset
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
-
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
-
-      // Change multiple colors
-      const items = page.locator('.category-color-item');
-      const count = Math.min(3, await items.count());
-
-      for (let i = 0; i < count; i++) {
-        const picker = items.nth(i).locator('.color-picker');
-        await picker.evaluate((input: HTMLInputElement) => {
-          input.value = '#123456';
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        });
-      }
-
-      await page.waitForTimeout(100);
-
-      // Reset
-      await page.locator('#resetCategoryColors').click();
-      await page.waitForTimeout(200);
-
-      // Verify all previews updated
-      const previews = page.locator('.category-color-preview');
-      for (let i = 0; i < count; i++) {
-        const bgColor = await previews.nth(i).evaluate(el =>
-          window.getComputedStyle(el).backgroundColor
-        );
-        // Should not be the test color anymore
-        expect(bgColor).not.toContain('18, 52, 86'); // RGB for #123456
-      }
     });
   });
 
@@ -273,14 +223,14 @@ test.describe('Category Colors Management', () => {
       // First set a custom color for Popular category
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      const settingsTab = page.locator('[data-tab="settings"]');
-      await settingsTab.click();
+      const categoriesTab = page.locator('[data-tab="categories"]');
+      await categoriesTab.click();
 
-      const popularItem = page.locator('.category-color-item').filter({
+      const popularItem = page.locator('.category-item').filter({
         hasText: 'Popular'
       });
 
-      await popularItem.locator('.color-picker').evaluate((input: HTMLInputElement) => {
+      await popularItem.locator('input[type="color"]').evaluate((input: HTMLInputElement) => {
         input.value = '#ff0000';
         input.dispatchEvent(new Event('change', { bubbles: true }));
       });

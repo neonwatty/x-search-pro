@@ -491,4 +491,266 @@ test.describe('StorageManager Unit Tests', () => {
       expect(saved.isCustomColor).toBe(false);
     });
   });
+
+  test.describe('createCategory', () => {
+    test('should create new category with default color', async () => {
+      const result = await StorageManager.createCategory('TestCategory');
+
+      expect(result.name).toBe('TestCategory');
+      expect(result.color).toBe('#6b7280');
+
+      const categories = await StorageManager.getCategories();
+      expect(categories).toContain('TestCategory');
+    });
+
+    test('should create new category with custom color', async () => {
+      const result = await StorageManager.createCategory('CustomColor', '#ff0000');
+
+      expect(result.name).toBe('CustomColor');
+      expect(result.color).toBe('#ff0000');
+
+      const categoryColors = await StorageManager.getCategoryColors();
+      expect(categoryColors['CustomColor']).toBe('#ff0000');
+    });
+
+    test('should trim category name', async () => {
+      const result = await StorageManager.createCategory('  Trimmed  ');
+
+      expect(result.name).toBe('Trimmed');
+      const categories = await StorageManager.getCategories();
+      expect(categories).toContain('Trimmed');
+    });
+
+    test('should throw error for empty name', async () => {
+      await expect(StorageManager.createCategory('')).rejects.toThrow('Category name cannot be empty');
+      await expect(StorageManager.createCategory('   ')).rejects.toThrow('Category name cannot be empty');
+    });
+
+    test('should throw error for duplicate category', async () => {
+      await StorageManager.createCategory('Duplicate');
+      await expect(StorageManager.createCategory('Duplicate')).rejects.toThrow('Category already exists');
+    });
+  });
+
+  test.describe('deleteCategory', () => {
+    test('should delete empty category', async () => {
+      await StorageManager.createCategory('ToDelete');
+      const result = await StorageManager.deleteCategory('ToDelete');
+
+      expect(result.deleted).toBe(true);
+      expect(result.searchesMoved).toBe(0);
+
+      const categories = await StorageManager.getCategories();
+      expect(categories).not.toContain('ToDelete');
+    });
+
+    test('should move searches to Uncategorized when deleting category', async () => {
+      await StorageManager.createCategory('WillDelete');
+      await mockChrome.storage.sync.set({ categoryColors: { 'WillDelete': '#123456' } });
+
+      // Create searches in this category
+      const search1 = await StorageManager.saveSearch({
+        name: 'Search 1',
+        query: 'test1',
+        filters: {},
+        category: 'WillDelete'
+      });
+
+      const search2 = await StorageManager.saveSearch({
+        name: 'Search 2',
+        query: 'test2',
+        filters: {},
+        category: 'WillDelete'
+      });
+
+      const result = await StorageManager.deleteCategory('WillDelete');
+
+      expect(result.deleted).toBe(true);
+      expect(result.searchesMoved).toBe(2);
+
+      const searches = await StorageManager.getSavedSearches();
+      const movedSearches = searches.filter((s: any) => s.id === search1.id || s.id === search2.id);
+      movedSearches.forEach((s: any) => {
+        expect(s.category).toBe('Uncategorized');
+      });
+    });
+
+    test('should remove category color when deleting', async () => {
+      await StorageManager.createCategory('ColorDelete', '#abcdef');
+      await StorageManager.deleteCategory('ColorDelete');
+
+      const categoryColors = await StorageManager.getCategoryColors();
+      expect(categoryColors['ColorDelete']).toBeUndefined();
+    });
+
+    test('should prevent deletion of Uncategorized', async () => {
+      await expect(StorageManager.deleteCategory('Uncategorized')).rejects.toThrow('Cannot delete Uncategorized category');
+    });
+
+    test('should return false when category does not exist', async () => {
+      const result = await StorageManager.deleteCategory('NonExistent');
+
+      expect(result.deleted).toBe(false);
+      expect(result.searchesMoved).toBe(0);
+    });
+  });
+
+  test.describe('renameCategory', () => {
+    test('should rename category', async () => {
+      await StorageManager.createCategory('OldName');
+      const result = await StorageManager.renameCategory('OldName', 'NewName');
+
+      expect(result.renamed).toBe(true);
+      expect(result.searchesUpdated).toBe(0);
+
+      const categories = await StorageManager.getCategories();
+      expect(categories).toContain('NewName');
+      expect(categories).not.toContain('OldName');
+    });
+
+    test('should update searches when renaming category', async () => {
+      await StorageManager.createCategory('RenameMe');
+
+      const search1 = await StorageManager.saveSearch({
+        name: 'Search 1',
+        query: 'test1',
+        filters: {},
+        category: 'RenameMe'
+      });
+
+      const search2 = await StorageManager.saveSearch({
+        name: 'Search 2',
+        query: 'test2',
+        filters: {},
+        category: 'RenameMe'
+      });
+
+      const result = await StorageManager.renameCategory('RenameMe', 'Renamed');
+
+      expect(result.renamed).toBe(true);
+      expect(result.searchesUpdated).toBe(2);
+
+      const searches = await StorageManager.getSavedSearches();
+      const renamedSearches = searches.filter((s: any) => s.id === search1.id || s.id === search2.id);
+      renamedSearches.forEach((s: any) => {
+        expect(s.category).toBe('Renamed');
+      });
+    });
+
+    test('should move category color when renaming', async () => {
+      await StorageManager.createCategory('ColorMove', '#123456');
+      await StorageManager.renameCategory('ColorMove', 'ColorMoved');
+
+      const categoryColors = await StorageManager.getCategoryColors();
+      expect(categoryColors['ColorMoved']).toBe('#123456');
+      expect(categoryColors['ColorMove']).toBeUndefined();
+    });
+
+    test('should trim new category name', async () => {
+      await StorageManager.createCategory('TrimTest');
+      const result = await StorageManager.renameCategory('TrimTest', '  Trimmed  ');
+
+      expect(result.renamed).toBe(true);
+      const categories = await StorageManager.getCategories();
+      expect(categories).toContain('Trimmed');
+    });
+
+    test('should throw error for empty new name', async () => {
+      await StorageManager.createCategory('HasName');
+      await expect(StorageManager.renameCategory('HasName', '')).rejects.toThrow('New category name cannot be empty');
+      await expect(StorageManager.renameCategory('HasName', '   ')).rejects.toThrow('New category name cannot be empty');
+    });
+
+    test('should throw error if old category does not exist', async () => {
+      await expect(StorageManager.renameCategory('DoesNotExist', 'NewName')).rejects.toThrow('Category does not exist');
+    });
+
+    test('should throw error if new name already exists', async () => {
+      await StorageManager.createCategory('First');
+      await StorageManager.createCategory('Second');
+      await expect(StorageManager.renameCategory('First', 'Second')).rejects.toThrow('New category name already exists');
+    });
+
+    test('should return false if old and new names are the same', async () => {
+      await StorageManager.createCategory('SameName');
+      const result = await StorageManager.renameCategory('SameName', 'SameName');
+
+      expect(result.renamed).toBe(false);
+      expect(result.searchesUpdated).toBe(0);
+    });
+  });
+
+  test.describe('getCategoryUsageCount', () => {
+    test('should return count of searches in category', async () => {
+      await StorageManager.createCategory('CountMe');
+
+      await StorageManager.saveSearch({
+        name: 'Search 1',
+        query: 'test1',
+        filters: {},
+        category: 'CountMe'
+      });
+
+      await StorageManager.saveSearch({
+        name: 'Search 2',
+        query: 'test2',
+        filters: {},
+        category: 'CountMe'
+      });
+
+      const count = await StorageManager.getCategoryUsageCount('CountMe');
+      expect(count).toBe(2);
+    });
+
+    test('should return 0 for empty category', async () => {
+      await StorageManager.createCategory('Empty');
+      const count = await StorageManager.getCategoryUsageCount('Empty');
+      expect(count).toBe(0);
+    });
+
+    test('should return 0 for non-existent category', async () => {
+      const count = await StorageManager.getCategoryUsageCount('DoesNotExist');
+      expect(count).toBe(0);
+    });
+  });
+
+  test.describe('getAllCategoryUsageCounts', () => {
+    test('should return usage counts for all categories', async () => {
+      await StorageManager.createCategory('Cat1');
+      await StorageManager.createCategory('Cat2');
+
+      await StorageManager.saveSearch({
+        name: 'Search 1',
+        query: 'test1',
+        filters: {},
+        category: 'Cat1'
+      });
+
+      await StorageManager.saveSearch({
+        name: 'Search 2',
+        query: 'test2',
+        filters: {},
+        category: 'Cat1'
+      });
+
+      await StorageManager.saveSearch({
+        name: 'Search 3',
+        query: 'test3',
+        filters: {},
+        category: 'Cat2'
+      });
+
+      const counts = await StorageManager.getAllCategoryUsageCounts();
+
+      expect(counts['Cat1']).toBe(2);
+      expect(counts['Cat2']).toBe(1);
+    });
+
+    test('should include categories with zero searches', async () => {
+      await StorageManager.createCategory('EmptyCat');
+      const counts = await StorageManager.getAllCategoryUsageCounts();
+
+      expect(counts['EmptyCat']).toBe(0);
+    });
+  });
 });

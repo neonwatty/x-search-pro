@@ -13,6 +13,7 @@
       <div class="tabs">
         <button class="tab active" data-tab="builder">Search Builder</button>
         <button class="tab" data-tab="saved">Saved Searches</button>
+        <button class="tab" data-tab="categories">Categories</button>
         <button class="tab" data-tab="settings">Settings</button>
         <button class="tab" data-tab="about">About</button>
       </div>
@@ -23,6 +24,16 @@
         <section class="form-section">
           <h3>Keywords</h3>
           <input type="text" id="keywords" placeholder='e.g., "claude code"' />
+        </section>
+
+        <section class="form-section">
+          <h3>Category</h3>
+          <div class="category-selection">
+            <select id="searchCategory" class="category-select">
+              <option value="Uncategorized">Uncategorized</option>
+            </select>
+            <div class="category-color-indicator" id="categoryColorIndicator"></div>
+          </div>
         </section>
 
         <section class="form-section collapsible">
@@ -215,6 +226,33 @@
       </div>
     </div>
 
+    <div class="tab-content hidden" id="categories-tab">
+      <div class="categories-section">
+        <h3>Manage Categories</h3>
+        <div class="setting-info">
+          <p>Create and organize custom categories for your saved searches</p>
+        </div>
+
+        <!-- Add New Category -->
+        <div class="add-category-section">
+          <h4>Add New Category</h4>
+          <div class="add-category-form">
+            <input type="text" id="newCategoryName" placeholder="Category name" class="category-input" />
+            <input type="color" id="newCategoryColor" value="#6b7280" class="color-picker-small" title="Category color" />
+            <button type="button" id="addCategoryBtn" class="btn btn-primary btn-small">Add</button>
+          </div>
+        </div>
+
+        <!-- Existing Categories List -->
+        <div class="categories-list-section">
+          <h4>Your Categories</h4>
+          <div id="categoriesList" class="categories-list">
+            <!-- Category items will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="tab-content hidden" id="settings-tab">
       <div class="settings-section">
         <h3>Sidebar Settings</h3>
@@ -230,19 +268,6 @@
         </div>
         <div class="setting-info">
           <p>💡 You can always toggle the sidebar using the arrow button on the right side of X.com</p>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <h3>Category Colors</h3>
-        <div class="setting-info">
-          <p>Customize the border colors for each search category</p>
-        </div>
-        <div id="categoryColorsList" class="category-colors-list">
-          <!-- Category color items will be populated by JavaScript -->
-        </div>
-        <div class="setting-actions">
-          <button type="button" id="resetCategoryColors" class="btn btn-small">Reset to Defaults</button>
         </div>
       </div>
 
