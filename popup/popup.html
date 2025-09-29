@@ -14,6 +14,7 @@
         <button class="tab active" data-tab="builder">Search Builder</button>
         <button class="tab" data-tab="saved">Saved Searches</button>
         <button class="tab" data-tab="settings">Settings</button>
+        <button class="tab" data-tab="about">About</button>
       </div>
     </header>
 
@@ -206,8 +207,6 @@
     <div class="tab-content hidden" id="saved-tab">
       <div class="saved-header">
         <input type="text" id="searchFilter" placeholder="Filter saved searches..." />
-        <button id="exportBtn" class="btn btn-small">Export</button>
-        <button id="importBtn" class="btn btn-small">Import</button>
       </div>
       <div id="savedSearches" class="saved-list"></div>
       <div id="emptyState" class="empty-state hidden">
@@ -233,10 +232,54 @@
           <p>💡 You can always toggle the sidebar using the arrow button on the right side of X.com</p>
         </div>
       </div>
+
+      <div class="settings-section">
+        <h3>Category Colors</h3>
+        <div class="setting-info">
+          <p>Customize the border colors for each search category</p>
+        </div>
+        <div id="categoryColorsList" class="category-colors-list">
+          <!-- Category color items will be populated by JavaScript -->
+        </div>
+        <div class="setting-actions">
+          <button type="button" id="resetCategoryColors" class="btn btn-small">Reset to Defaults</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tab-content hidden" id="about-tab">
+      <div class="about-section">
+        <div class="about-header">
+          <h2>X Search Pro</h2>
+          <p class="about-tagline">Advanced search made simple for X.com</p>
+        </div>
+
+        <div class="about-content">
+          <p class="about-message">
+            Connect on social • Report bugs • Request features
+          </p>
+          <div class="about-links">
+            <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="link-icon">𝕏</span>
+              <span>@neonwatty</span>
+            </a>
+            <a href="https://github.com/neonwatty/x-search-tabs" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="link-icon">⚡</span>
+              <span>GitHub</span>
+            </a>
+            <a href="https://neonwatty.com/" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="link-icon">✨</span>
+              <span>Blog</span>
+            </a>
+          </div>
+          <p class="about-creator">
+            Made with ❤️ by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-
-  <input type="file" id="importFile" accept=".json" style="display: none;" />
 
   <script src="../lib/query-builder.js"></script>
   <script src="../lib/storage.js"></script>

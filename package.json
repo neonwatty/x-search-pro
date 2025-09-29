@@ -1,6 +1,6 @@
 {
   "name": "x-search-tabs",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Chrome extension to simplify X/Twitter advanced search",
   "scripts": {
     "prepare": "husky",
@@ -16,7 +16,8 @@
     "test:workflows": "HEADLESS=true playwright test tests/e2e/workflows/",
     "test:setup": "playwright test --project=setup",
     "test:report": "playwright show-report",
-    "validate:pre-push": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e"
+    "validate:pre-push": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e",
+    "build:zip": "zip -r x-search-pro.zip manifest.json popup/ content/ background/ lib/ assets/ LICENSE PRIVACY_POLICY.md -x '*.DS_Store' -x '*/.DS_Store'"
   },
   "keywords": [
     "chrome-extension",
@@ -37,5 +38,8 @@
     "eslint": "^9.36.0",
     "husky": "^9.1.7",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.0.0"
   }
 }

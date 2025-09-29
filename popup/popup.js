@@ -1,5 +1,4 @@
 let currentBuilder = new QueryBuilder();
-let editingSearchId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initializeTemplates();
@@ -99,11 +98,6 @@ function initializeButtons() {
   document.getElementById('applyBtn').addEventListener('click', applySearch);
   document.getElementById('saveBtn').addEventListener('click', saveSearch);
   document.getElementById('resetBtn').addEventListener('click', resetForm);
-  document.getElementById('exportBtn').addEventListener('click', exportSearches);
-  document.getElementById('importBtn').addEventListener('click', () => {
-    document.getElementById('importFile').click();
-  });
-  document.getElementById('importFile').addEventListener('change', importSearches);
   document.getElementById('searchFilter').addEventListener('input', filterSavedSearches);
 }
 
@@ -210,17 +204,33 @@ async function saveSearch() {
   const name = prompt('Enter a name for this search:');
   if (!name) return;
 
-  const category = prompt('Enter a category (optional):', 'Uncategorized');
+  // Get available categories for better UX
+  const categories = await StorageManager.getCategories();
+  const categoryColors = await StorageManager.getCategoryColors();
+
+  let categoryInfo = 'Available categories:\n';
+  categories.forEach(cat => {
+    const color = categoryColors[cat] || '#6b7280';
+    categoryInfo += `• ${cat} (${color})\n`;
+  });
+
+  const category = prompt(
+    `${categoryInfo}\nEnter a category (press Enter for 'Uncategorized'):`,
+    'Uncategorized'
+  );
+
   const filters = getFormValues();
+  const selectedCategory = category || 'Uncategorized';
 
   await StorageManager.saveSearch({
     name: name,
     query: query,
     filters: filters,
-    category: category || 'Uncategorized'
+    category: selectedCategory
   });
 
-  alert('Search saved successfully!');
+  const categoryColor = await StorageManager.getCategoryColor(selectedCategory);
+  alert(`Search saved successfully!\nCategory: ${selectedCategory}\nColor: ${categoryColor}`);
   await loadSavedSearches();
 }
 
@@ -228,7 +238,6 @@ function resetForm() {
   document.getElementById('search-form').reset();
   currentBuilder.reset();
   updateQueryPreview();
-  editingSearchId = null;
 }
 
 async function loadSavedSearches() {
@@ -343,8 +352,6 @@ async function editSearch(id) {
 
   if (!search) return;
 
-  editingSearchId = id;
-
   document.querySelector('.tab[data-tab="builder"]').click();
 
   const filters = search.filters;
@@ -393,35 +400,9 @@ async function deleteSearch(id) {
   await loadSavedSearches();
 }
 
-async function exportSearches() {
-  const data = await StorageManager.exportData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `x-search-tabs-export-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
+// Export functionality removed
 
-async function importSearches(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      await StorageManager.importData(data);
-      alert('Searches imported successfully!');
-      await loadSavedSearches();
-    } catch (error) {
-      alert('Error importing file. Please check the file format.');
-      console.error(error);
-    }
-  };
-  reader.readAsText(file);
-}
+// Import functionality removed
 
 function filterSavedSearches() {
   const filter = document.getElementById('searchFilter').value.toLowerCase();
@@ -457,4 +438,80 @@ async function loadSettings() {
       }).catch(() => {});
     }
   });
+
+  // Load category colors
+  await loadCategoryColors();
+}
+
+async function loadCategoryColors() {
+  const categories = await StorageManager.getCategories();
+  const categoryColors = await StorageManager.getCategoryColors();
+  const container = document.getElementById('categoryColorsList');
+
+  container.innerHTML = '';
+
+  categories.forEach(category => {
+    const color = categoryColors[category] || '#6b7280';
+    const item = createCategoryColorItem(category, color);
+    container.appendChild(item);
+  });
+
+  // Add reset button event listener
+  document.getElementById('resetCategoryColors').addEventListener('click', resetCategoryColors);
+}
+
+function createCategoryColorItem(category, color) {
+  const item = document.createElement('div');
+  item.className = 'category-color-item';
+  item.innerHTML = `
+    <div class="category-info">
+      <div class="category-color-preview" style="background-color: ${color}"></div>
+      <div class="category-name">${category}</div>
+    </div>
+    <div class="category-color-controls">
+      <input type="color" class="color-picker" value="${color}" data-category="${category}">
+    </div>
+  `;
+
+  const colorPicker = item.querySelector('.color-picker');
+  colorPicker.addEventListener('change', (e) => {
+    updateCategoryColor(category, e.target.value);
+  });
+
+  return item;
+}
+
+async function updateCategoryColor(category, color) {
+  await StorageManager.setCategoryColor(category, color);
+  await StorageManager.updateSearchesInCategory(category, color);
+
+  // Update the preview
+  const preview = document.querySelector(`[data-category="${category}"]`).closest('.category-color-item').querySelector('.category-color-preview');
+  preview.style.backgroundColor = color;
+
+  // Refresh saved searches to show new colors
+  await loadSavedSearches();
+}
+
+async function resetCategoryColors() {
+  const defaultColors = {
+    'Popular': '#ef4444',
+    'Media': '#8b5cf6',
+    'Content': '#06b6d4',
+    'News': '#10b981',
+    'Personal': '#3b82f6',
+    'Verified': '#6366f1',
+    'Uncategorized': '#6b7280'
+  };
+
+  await chrome.storage.sync.set({ categoryColors: defaultColors });
+
+  // Update all searches in each category
+  for (const [category, color] of Object.entries(defaultColors)) {
+    await StorageManager.updateSearchesInCategory(category, color);
+  }
+
+  // Reload the interface
+  await loadCategoryColors();
+  await loadSavedSearches();
 }

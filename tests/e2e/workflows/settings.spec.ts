@@ -7,7 +7,7 @@ test.describe('Settings Management', () => {
     const settingsTab = page.locator('[data-tab="settings"]');
     await settingsTab.click();
 
-    await expect(page.locator('.settings-section h3')).toHaveText('Sidebar Settings');
+    await expect(page.locator('.settings-section').first().locator('h3')).toHaveText('Sidebar Settings');
 
     const checkbox = page.locator('#sidebarPinned');
     const initialState = await checkbox.isChecked();
@@ -57,7 +57,7 @@ test.describe('Settings Management', () => {
     const settingsTab = page.locator('[data-tab="settings"]');
     await settingsTab.click();
 
-    const infoMessage = page.locator('.setting-info p');
+    const infoMessage = page.locator('.settings-section').first().locator('.setting-info p');
     await expect(infoMessage).toContainText('toggle the sidebar');
     await expect(infoMessage).toBeVisible();
   });

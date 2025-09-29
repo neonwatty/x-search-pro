@@ -113,6 +113,9 @@ async function initializeSidebar() {
           <p>No saved searches yet.</p>
           <p>Click the extension icon to create one!</p>
         </div>
+        <div class="sidebar-footer">
+          Made with ❤️ by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
+        </div>
       </div>
     </div>
   `;
@@ -230,11 +233,6 @@ function filterSidebarSearches() {
       item.style.display = 'none';
     }
   });
-}
-
-function isSearchPage() {
-  return window.location.pathname.includes('/search') ||
-         window.location.pathname === '/explore';
 }
 
 if (document.readyState === 'loading') {

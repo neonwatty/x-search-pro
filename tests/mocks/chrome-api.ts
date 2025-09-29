@@ -80,7 +80,7 @@ export class MockChromeTabs {
     return newTab;
   }
 
-  async sendMessage(tabId: number, message: any): Promise<any> {
+  async sendMessage(_tabId: number, _message: any): Promise<any> {
     return { success: true };
   }
 
@@ -121,7 +121,7 @@ export class MockChromeRuntime {
     }
   };
 
-  async sendMessage(message: any): Promise<any> {
+  async sendMessage(_message: any): Promise<any> {
     return { success: true };
   }
 

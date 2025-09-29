@@ -1,22 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { createMockChrome } from '../mocks/chrome-api';
-import { mockSearches, mockCategories, mockSettings, mockExportData } from '../fixtures/test-data';
+import { mockSearches, mockSettings, mockCategoryColors, mockSearchesWithCustomColors } from '../fixtures/test-data';
 
 test.describe('StorageManager Unit Tests', () => {
   let StorageManager: any;
   let mockChrome: any;
 
   test.beforeEach(async () => {
-    const path = await import('path');
-    const modulePath = path.join(__dirname, '../../lib/storage.js');
-
     mockChrome = createMockChrome();
+    mockChrome.storage.sync.clear();
     global.chrome = mockChrome as any;
 
     delete require.cache[require.resolve('../../lib/storage.js')];
     StorageManager = require('../../lib/storage.js');
-
-    mockChrome.storage.sync.clear();
   });
 
   test.afterEach(() => {
@@ -64,7 +60,7 @@ test.describe('StorageManager Unit Tests', () => {
       const saved = await StorageManager.saveSearch(newSearch);
 
       expect(saved.category).toBe('Uncategorized');
-      expect(saved.color).toBe('#3b82f6');
+      expect(saved.color).toBe('#6b7280'); // Default gray color for Uncategorized
       expect(saved.useCount).toBe(0);
       expect(saved.lastUsed).toBeNull();
       expect(saved.createdAt).toBeTruthy();
@@ -288,63 +284,8 @@ test.describe('StorageManager Unit Tests', () => {
     });
   });
 
-  test.describe('exportData', () => {
-    test('should export all data with version and timestamp', async () => {
-      await mockChrome.storage.sync.set({
-        savedSearches: mockSearches,
-        categories: mockCategories,
-        settings: mockSettings
-      });
-
-      const exported = await StorageManager.exportData();
-
-      expect(exported.version).toBe('1.0');
-      expect(exported.exportDate).toBeTruthy();
-      expect(exported.searches).toEqual(mockSearches);
-      expect(exported.categories).toEqual(mockCategories);
-      expect(exported.settings).toEqual(mockSettings);
-    });
-  });
-
-  test.describe('importData', () => {
-    test('should import searches correctly', async () => {
-      await StorageManager.importData({ searches: mockSearches });
-
-      const searches = await StorageManager.getSavedSearches();
-      expect(searches).toEqual(mockSearches);
-    });
-
-    test('should import categories and settings', async () => {
-      await StorageManager.importData({
-        categories: mockCategories,
-        settings: mockSettings
-      });
-
-      const categories = await StorageManager.getCategories();
-      const settings = await StorageManager.getSettings();
-
-      expect(categories).toEqual(mockCategories);
-      expect(settings).toEqual(mockSettings);
-    });
-
-    test('should handle partial imports', async () => {
-      await mockChrome.storage.sync.set({
-        savedSearches: [mockSearches[0]],
-        categories: ['Old'],
-        settings: { theme: 'light' }
-      });
-
-      await StorageManager.importData({
-        searches: [mockSearches[1]]
-      });
-
-      const searches = await StorageManager.getSavedSearches();
-      const categories = await StorageManager.getCategories();
-
-      expect(searches).toEqual([mockSearches[1]]);
-      expect(categories).toEqual(['Old']);
-    });
-  });
+  // Import/export functionality has been removed from StorageManager
+  // These tests are no longer applicable
 
   test.describe('generateId', () => {
     test('should generate unique IDs', () => {
@@ -356,6 +297,198 @@ test.describe('StorageManager Unit Tests', () => {
       expect(id1).not.toBe(id2);
       expect(id1).toMatch(/^search_\d+_.+$/);
       expect(id2).toMatch(/^search_\d+_.+$/);
+    });
+  });
+
+  test.describe('getCategoryColors', () => {
+    test('should return default colors when none saved', async () => {
+      const colors = await StorageManager.getCategoryColors();
+
+      expect(colors).toBeTruthy();
+      expect(colors['Popular']).toBe('#ef4444');
+      expect(colors['Media']).toBe('#8b5cf6');
+      expect(colors['Content']).toBe('#06b6d4');
+      expect(colors['News']).toBe('#10b981');
+      expect(colors['Personal']).toBe('#3b82f6');
+      expect(colors['Verified']).toBe('#6366f1');
+      expect(colors['Uncategorized']).toBe('#6b7280');
+    });
+
+    test('should return saved colors when they exist', async () => {
+      const customColors = { 'Popular': '#ff0000', 'Tech': '#00ff00' };
+      await mockChrome.storage.sync.set({ categoryColors: customColors });
+
+      const colors = await StorageManager.getCategoryColors();
+      expect(colors).toEqual(customColors);
+    });
+
+    test('should merge with defaults for partial saved colors', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const colors = await StorageManager.getCategoryColors();
+      expect(colors).toEqual(mockCategoryColors);
+    });
+  });
+
+  test.describe('setCategoryColor', () => {
+    test('should set color for existing category', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const updatedColors = await StorageManager.setCategoryColor('Popular', '#123456');
+
+      expect(updatedColors['Popular']).toBe('#123456');
+      expect(updatedColors['Media']).toBe('#8b5cf6'); // Others unchanged
+    });
+
+    test('should create new category color mapping', async () => {
+      const updatedColors = await StorageManager.setCategoryColor('NewCategory', '#abcdef');
+
+      expect(updatedColors['NewCategory']).toBe('#abcdef');
+    });
+
+    test('should persist changes to storage', async () => {
+      await StorageManager.setCategoryColor('Tech', '#fedcba');
+
+      const stored = await mockChrome.storage.sync.get(['categoryColors']);
+      expect(stored.categoryColors['Tech']).toBe('#fedcba');
+    });
+  });
+
+  test.describe('getCategoryColor', () => {
+    test('should return correct color for existing category', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const color = await StorageManager.getCategoryColor('Popular');
+      expect(color).toBe('#ef4444');
+    });
+
+    test('should return default gray for unknown category', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const color = await StorageManager.getCategoryColor('NonExistent');
+      expect(color).toBe('#6b7280');
+    });
+
+    test('should handle null/undefined category input', async () => {
+      const color1 = await StorageManager.getCategoryColor(null);
+      const color2 = await StorageManager.getCategoryColor(undefined);
+
+      expect(color1).toBe('#6b7280');
+      expect(color2).toBe('#6b7280');
+    });
+  });
+
+  test.describe('updateSearchesInCategory', () => {
+    test('should update searches without custom colors', async () => {
+      const searches = [
+        { ...mockSearchesWithCustomColors[1] }, // Category color search
+        { ...mockSearchesWithCustomColors[0] }  // Custom color search
+      ];
+      await mockChrome.storage.sync.set({ savedSearches: searches });
+
+      const updated = await StorageManager.updateSearchesInCategory('Popular', '#ff0000');
+
+      expect(updated).toBe(true);
+      const updatedSearches = await StorageManager.getSavedSearches();
+      expect(updatedSearches[0].color).toBe('#ff0000'); // Updated
+      expect(updatedSearches[1].color).toBe('#ff00ff'); // Not updated (custom)
+    });
+
+    test('should NOT update searches with isCustomColor=true', async () => {
+      const customSearch = { ...mockSearchesWithCustomColors[0] };
+      await mockChrome.storage.sync.set({ savedSearches: [customSearch] });
+
+      const updated = await StorageManager.updateSearchesInCategory('Popular', '#000000');
+
+      expect(updated).toBe(false);
+      const searches = await StorageManager.getSavedSearches();
+      expect(searches[0].color).toBe('#ff00ff'); // Unchanged
+    });
+
+    test('should return false when no updates needed', async () => {
+      await mockChrome.storage.sync.set({ savedSearches: [] });
+
+      const updated = await StorageManager.updateSearchesInCategory('Popular', '#ff0000');
+      expect(updated).toBe(false);
+    });
+
+    test('should handle empty searches array', async () => {
+      await mockChrome.storage.sync.set({ savedSearches: [] });
+
+      const updated = await StorageManager.updateSearchesInCategory('Tech', '#123456');
+      expect(updated).toBe(false);
+    });
+
+    test('should handle category with no searches', async () => {
+      await mockChrome.storage.sync.set({ savedSearches: mockSearches });
+
+      const updated = await StorageManager.updateSearchesInCategory('NonExistentCategory', '#000000');
+      expect(updated).toBe(false);
+    });
+  });
+
+  test.describe('saveSearch with category colors', () => {
+    test('should use category color when saving new search', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const newSearch = {
+        name: 'Test Search',
+        query: 'test',
+        filters: {},
+        category: 'Popular'
+      };
+
+      const saved = await StorageManager.saveSearch(newSearch);
+
+      expect(saved.color).toBe('#ef4444');
+      expect(saved.isCustomColor).toBe(false);
+    });
+
+    test('should set isCustomColor=true when custom color provided', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const newSearch = {
+        name: 'Custom Color Search',
+        query: 'custom',
+        filters: {},
+        category: 'Popular',
+        color: '#custom1'
+      };
+
+      const saved = await StorageManager.saveSearch(newSearch);
+
+      expect(saved.color).toBe('#custom1');
+      expect(saved.isCustomColor).toBe(true);
+    });
+
+    test('should handle missing category (defaults to Uncategorized)', async () => {
+      await mockChrome.storage.sync.set({ categoryColors: { ...mockCategoryColors } });
+
+      const newSearch = {
+        name: 'No Category Search',
+        query: 'test',
+        filters: {}
+      };
+
+      const saved = await StorageManager.saveSearch(newSearch);
+
+      expect(saved.category).toBe('Uncategorized');
+      expect(saved.color).toBe('#6b7280');
+      expect(saved.isCustomColor).toBe(false);
+    });
+
+    test('should use default color for unknown category', async () => {
+      const newSearch = {
+        name: 'Unknown Category',
+        query: 'test',
+        filters: {},
+        category: 'BrandNewCategory'
+      };
+
+      const saved = await StorageManager.saveSearch(newSearch);
+
+      expect(saved.color).toBe('#6b7280'); // Default gray
+      expect(saved.isCustomColor).toBe(false);
     });
   });
 });
