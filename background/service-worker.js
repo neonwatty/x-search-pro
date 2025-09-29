@@ -6,10 +6,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     if (!result.templatesInitialized) {
       await initializeDefaultTemplates();
     }
-
-    chrome.tabs.create({
-      url: 'https://x.com'
-    });
   } else if (details.reason === 'update') {
     console.log('X Search Pro updated');
   }
@@ -185,6 +181,15 @@ async function initializeDefaultTemplates() {
     savedSearches: defaultTemplates,
     templatesInitialized: true,
     categories: ['Popular', 'Media', 'Content', 'News', 'Personal', 'Verified', 'Uncategorized'],
+    categoryColors: {
+      'Popular': '#ef4444',
+      'Media': '#8b5cf6',
+      'Content': '#06b6d4',
+      'News': '#10b981',
+      'Personal': '#3b82f6',
+      'Verified': '#6366f1',
+      'Uncategorized': '#6b7280'
+    },
     settings: {
       showSidebar: true,
       defaultView: 'grid',

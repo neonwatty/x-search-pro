@@ -1,6 +1,5 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { PopupPage } from '../../page-objects/PopupPage';
 import { XPageHelpers } from '../../helpers/x-page-helpers';
 
 test.describe('Workflow 2: Quick Apply Saved Search', () => {
@@ -8,7 +7,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     await new Promise(resolve => setTimeout(resolve, 5000));
   });
 
-  test('should apply saved search from sidebar on X.com', async ({ context, extensionId }) => {
+  test('should apply saved search from sidebar on X.com', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const xHelper = new XPageHelpers(page);
 
@@ -43,7 +42,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
   });
 
 
-  test('should filter saved searches in sidebar', async ({ context, extensionId }) => {
+  test('should filter saved searches in sidebar', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const xHelper = new XPageHelpers(page);
 
@@ -67,7 +66,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     await page.close();
   });
 
-  test('should close sidebar after applying search', async ({ context, extensionId }) => {
+  test('should close sidebar after applying search', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const xHelper = new XPageHelpers(page);
 

@@ -1,5 +1,4 @@
 let currentBuilder = new QueryBuilder();
-let editingSearchId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initializeTemplates();
@@ -11,6 +10,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeButtons();
   await loadSavedSearches();
   await loadSettings();
+  await initializeCategoriesTab();
+  await initializeCategoryDropdown();
 });
 
 function initializeTabs() {
@@ -29,6 +30,8 @@ function initializeTabs() {
 
       if (targetTab === 'saved') {
         loadSavedSearches();
+      } else if (targetTab === 'categories') {
+        loadCategoriesList();
       }
     });
   });
@@ -99,11 +102,6 @@ function initializeButtons() {
   document.getElementById('applyBtn').addEventListener('click', applySearch);
   document.getElementById('saveBtn').addEventListener('click', saveSearch);
   document.getElementById('resetBtn').addEventListener('click', resetForm);
-  document.getElementById('exportBtn').addEventListener('click', exportSearches);
-  document.getElementById('importBtn').addEventListener('click', () => {
-    document.getElementById('importFile').click();
-  });
-  document.getElementById('importFile').addEventListener('change', importSearches);
   document.getElementById('searchFilter').addEventListener('input', filterSavedSearches);
 }
 
@@ -210,17 +208,19 @@ async function saveSearch() {
   const name = prompt('Enter a name for this search:');
   if (!name) return;
 
-  const category = prompt('Enter a category (optional):', 'Uncategorized');
+  const categorySelect = document.getElementById('searchCategory');
+  const selectedCategory = categorySelect.value;
   const filters = getFormValues();
 
   await StorageManager.saveSearch({
     name: name,
     query: query,
     filters: filters,
-    category: category || 'Uncategorized'
+    category: selectedCategory
   });
 
-  alert('Search saved successfully!');
+  const categoryColor = await StorageManager.getCategoryColor(selectedCategory);
+  alert(`Search saved successfully!\nCategory: ${selectedCategory}\nColor: ${categoryColor}`);
   await loadSavedSearches();
 }
 
@@ -228,7 +228,6 @@ function resetForm() {
   document.getElementById('search-form').reset();
   currentBuilder.reset();
   updateQueryPreview();
-  editingSearchId = null;
 }
 
 async function loadSavedSearches() {
@@ -343,8 +342,6 @@ async function editSearch(id) {
 
   if (!search) return;
 
-  editingSearchId = id;
-
   document.querySelector('.tab[data-tab="builder"]').click();
 
   const filters = search.filters;
@@ -393,35 +390,9 @@ async function deleteSearch(id) {
   await loadSavedSearches();
 }
 
-async function exportSearches() {
-  const data = await StorageManager.exportData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `x-search-tabs-export-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
+// Export functionality removed
 
-async function importSearches(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      await StorageManager.importData(data);
-      alert('Searches imported successfully!');
-      await loadSavedSearches();
-    } catch (error) {
-      alert('Error importing file. Please check the file format.');
-      console.error(error);
-    }
-  };
-  reader.readAsText(file);
-}
+// Import functionality removed
 
 function filterSavedSearches() {
   const filter = document.getElementById('searchFilter').value.toLowerCase();
@@ -438,6 +409,209 @@ function filterSavedSearches() {
       item.style.display = 'none';
     }
   });
+}
+
+// Category Management Functions
+async function initializeCategoriesTab() {
+  const addBtn = document.getElementById('addCategoryBtn');
+  const nameInput = document.getElementById('newCategoryName');
+
+  addBtn.addEventListener('click', handleAddCategory);
+
+  // Allow Enter key to add category
+  nameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      handleAddCategory();
+    }
+  });
+
+  await loadCategoriesList();
+}
+
+async function handleAddCategory() {
+  const nameInput = document.getElementById('newCategoryName');
+  const colorInput = document.getElementById('newCategoryColor');
+  const name = nameInput.value.trim();
+  const color = colorInput.value;
+
+  if (!name) {
+    alert('Please enter a category name');
+    return;
+  }
+
+  try {
+    await StorageManager.createCategory(name, color);
+    nameInput.value = '';
+    colorInput.value = '#6b7280';
+    await loadCategoriesList();
+    await populateCategoryDropdown(); // Update dropdown in search builder
+    await loadSavedSearches(); // Refresh saved searches if visible
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function loadCategoriesList() {
+  const categories = await StorageManager.getCategories();
+  const categoryColors = await StorageManager.getCategoryColors();
+  const usageCounts = await StorageManager.getAllCategoryUsageCounts();
+  const container = document.getElementById('categoriesList');
+
+  if (!container) return; // Tab not initialized yet
+
+  container.innerHTML = '';
+
+  categories.forEach(category => {
+    const color = categoryColors[category] || '#6b7280';
+    const count = usageCounts[category] || 0;
+    const item = createCategoryItem(category, color, count);
+    container.appendChild(item);
+  });
+}
+
+function createCategoryItem(categoryName, color, usageCount) {
+  const item = document.createElement('div');
+  item.className = 'category-item';
+  item.style.borderLeftColor = color;
+  item.dataset.category = categoryName;
+
+  const usageText = usageCount === 1 ? '1 search' : `${usageCount} searches`;
+
+  item.innerHTML = `
+    <div class="category-item-info">
+      <div class="category-item-color" style="background-color: ${color}"></div>
+      <div class="category-item-details">
+        <div class="category-item-name" data-category="${categoryName}">${categoryName}</div>
+        <div class="category-item-usage">${usageText}</div>
+      </div>
+    </div>
+    <div class="category-item-actions">
+      <input type="color" value="${color}" data-category="${categoryName}" title="Change color">
+      <button class="category-action-btn rename-btn" data-category="${categoryName}" title="Rename">✏️</button>
+      <button class="category-action-btn delete delete-btn" data-category="${categoryName}" title="Delete" ${categoryName === 'Uncategorized' ? 'disabled' : ''}>🗑️</button>
+    </div>
+  `;
+
+  // Color picker event
+  const colorPicker = item.querySelector('input[type="color"]');
+  colorPicker.addEventListener('change', async (e) => {
+    await handleCategoryColorChange(categoryName, e.target.value);
+  });
+
+  // Rename button event
+  const renameBtn = item.querySelector('.rename-btn');
+  renameBtn.addEventListener('click', () => {
+    handleRenameCategory(categoryName);
+  });
+
+  // Delete button event
+  const deleteBtn = item.querySelector('.delete-btn');
+  deleteBtn.addEventListener('click', () => {
+    handleDeleteCategory(categoryName, usageCount);
+  });
+
+  return item;
+}
+
+async function handleCategoryColorChange(categoryName, newColor) {
+  await StorageManager.setCategoryColor(categoryName, newColor);
+  await StorageManager.updateSearchesInCategory(categoryName, newColor);
+
+  // Update the color preview
+  const item = document.querySelector(`[data-category="${categoryName}"]`).closest('.category-item');
+  const colorPreview = item.querySelector('.category-item-color');
+  colorPreview.style.backgroundColor = newColor;
+  item.style.borderLeftColor = newColor;
+
+  // Refresh saved searches to show new colors
+  await loadSavedSearches();
+}
+
+async function handleRenameCategory(oldName) {
+  const newName = prompt(`Rename category "${oldName}" to:`, oldName);
+
+  if (!newName || newName === oldName) return;
+
+  try {
+    const result = await StorageManager.renameCategory(oldName, newName);
+
+    if (result.renamed) {
+      const message = result.searchesUpdated > 0
+        ? `Category renamed successfully! ${result.searchesUpdated} searches updated.`
+        : 'Category renamed successfully!';
+      alert(message);
+
+      await loadCategoriesList();
+      await populateCategoryDropdown(); // Update dropdown in search builder
+      await loadSavedSearches();
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function handleDeleteCategory(categoryName, usageCount) {
+  if (categoryName === 'Uncategorized') {
+    alert('Cannot delete the Uncategorized category');
+    return;
+  }
+
+  const message = usageCount > 0
+    ? `Delete "${categoryName}"?\n\n${usageCount} searches will be moved to "Uncategorized".`
+    : `Delete "${categoryName}"?`;
+
+  if (!confirm(message)) return;
+
+  try {
+    const result = await StorageManager.deleteCategory(categoryName);
+
+    if (result.deleted) {
+      const successMsg = result.searchesMoved > 0
+        ? `Category deleted. ${result.searchesMoved} searches moved to Uncategorized.`
+        : 'Category deleted successfully!';
+      alert(successMsg);
+
+      await loadCategoriesList();
+      await populateCategoryDropdown(); // Update dropdown in search builder
+      await loadSavedSearches();
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+// Category Dropdown in Search Builder
+async function initializeCategoryDropdown() {
+  const categorySelect = document.getElementById('searchCategory');
+  const colorIndicator = document.getElementById('categoryColorIndicator');
+
+  await populateCategoryDropdown();
+
+  categorySelect.addEventListener('change', async () => {
+    const selectedCategory = categorySelect.value;
+    const categoryColors = await StorageManager.getCategoryColors();
+    const color = categoryColors[selectedCategory] || '#6b7280';
+    colorIndicator.style.backgroundColor = color;
+  });
+
+  // Initialize color indicator
+  const initialCategory = categorySelect.value;
+  const categoryColors = await StorageManager.getCategoryColors();
+  colorIndicator.style.backgroundColor = categoryColors[initialCategory] || '#6b7280';
+}
+
+async function populateCategoryDropdown() {
+  const categories = await StorageManager.getCategories();
+  const categorySelect = document.getElementById('searchCategory');
+
+  categorySelect.innerHTML = categories.map(cat =>
+    `<option value="${cat}">${cat}</option>`
+  ).join('');
+
+  // Set default to Uncategorized if it exists
+  if (categories.includes('Uncategorized')) {
+    categorySelect.value = 'Uncategorized';
+  }
 }
 
 async function loadSettings() {

@@ -17,7 +17,6 @@ A Chrome extension that simplifies X/Twitter's advanced search with an intuitive
 - 10 pre-loaded templates for common searches (Viral Content, Recent & Popular, Video Content, etc.)
 - Color-coded categories for easy organization
 - Usage analytics (track how often you use each search)
-- Import/Export functionality for sharing searches
 - Quick filter to find saved searches
 
 ### 🎨 Seamless Integration
@@ -96,8 +95,6 @@ The extension comes with 10 ready-to-use templates:
 - **Edit**: Click the pencil icon on any saved search to modify it
 - **Delete**: Click the trash icon to remove a search
 - **Filter**: Use the search box in "Saved Searches" tab to filter by name, query, or category
-- **Export**: Click "Export" to download all searches as JSON
-- **Import**: Click "Import" to load searches from a JSON file
 
 ## Search Operators Supported
 

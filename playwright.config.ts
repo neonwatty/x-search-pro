@@ -10,7 +10,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: [
-    ['html'],
+    ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['list']
   ],

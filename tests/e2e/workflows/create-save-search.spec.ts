@@ -1,6 +1,5 @@
 import { test, expect } from '../../fixtures/extension';
 import { PopupPage } from '../../page-objects/PopupPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
 
 test.describe('Workflow 1: Create & Save Search', () => {
   test.beforeEach(async () => {

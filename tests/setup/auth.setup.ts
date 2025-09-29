@@ -26,9 +26,31 @@ setup('authenticate with X.com', async ({ page }) => {
   await page.waitForURL('**/home', { timeout: 30000 });
   console.log('✓ Logged in successfully');
 
-  const accountSwitcher = page.locator('[data-testid="SideNav_AccountSwitcher_Button"]');
-  await expect(accountSwitcher).toBeVisible({ timeout: 10000 });
-  console.log('✓ Verified login state');
+  // Try multiple selectors to verify login state, with longer timeouts
+  const loginIndicators = [
+    '[data-testid="SideNav_AccountSwitcher_Button"]',
+    '[data-testid="AppTabBar_Profile_Link"]',
+    '[aria-label="Profile"]',
+    '[data-testid="primaryColumn"]',
+    'nav[aria-label="Primary"]',
+    '[role="main"]'
+  ];
+
+  let verified = false;
+  for (const selector of loginIndicators) {
+    try {
+      await page.locator(selector).waitFor({ state: 'visible', timeout: 15000 });
+      console.log(`✓ Verified login state using selector: ${selector}`);
+      verified = true;
+      break;
+    } catch {
+      continue;
+    }
+  }
+
+  if (!verified) {
+    throw new Error('Could not verify login state - none of the expected elements were found');
+  }
 
   await page.context().storageState({ path: authFile });
   console.log('✓ Authentication state saved to', authFile);

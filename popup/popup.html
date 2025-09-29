@@ -13,7 +13,9 @@
       <div class="tabs">
         <button class="tab active" data-tab="builder">Search Builder</button>
         <button class="tab" data-tab="saved">Saved Searches</button>
+        <button class="tab" data-tab="categories">Categories</button>
         <button class="tab" data-tab="settings">Settings</button>
+        <button class="tab" data-tab="about">About</button>
       </div>
     </header>
 
@@ -22,6 +24,16 @@
         <section class="form-section">
           <h3>Keywords</h3>
           <input type="text" id="keywords" placeholder='e.g., "claude code"' />
+        </section>
+
+        <section class="form-section">
+          <h3>Category</h3>
+          <div class="category-selection">
+            <select id="searchCategory" class="category-select">
+              <option value="Uncategorized">Uncategorized</option>
+            </select>
+            <div class="category-color-indicator" id="categoryColorIndicator"></div>
+          </div>
         </section>
 
         <section class="form-section collapsible">
@@ -206,13 +218,38 @@
     <div class="tab-content hidden" id="saved-tab">
       <div class="saved-header">
         <input type="text" id="searchFilter" placeholder="Filter saved searches..." />
-        <button id="exportBtn" class="btn btn-small">Export</button>
-        <button id="importBtn" class="btn btn-small">Import</button>
       </div>
       <div id="savedSearches" class="saved-list"></div>
       <div id="emptyState" class="empty-state hidden">
         <p>No saved searches yet.</p>
         <p>Create your first search in the Search Builder tab!</p>
+      </div>
+    </div>
+
+    <div class="tab-content hidden" id="categories-tab">
+      <div class="categories-section">
+        <h3>Manage Categories</h3>
+        <div class="setting-info">
+          <p>Create and organize custom categories for your saved searches</p>
+        </div>
+
+        <!-- Add New Category -->
+        <div class="add-category-section">
+          <h4>Add New Category</h4>
+          <div class="add-category-form">
+            <input type="text" id="newCategoryName" placeholder="Category name" class="category-input" />
+            <input type="color" id="newCategoryColor" value="#6b7280" class="color-picker-small" title="Category color" />
+            <button type="button" id="addCategoryBtn" class="btn btn-primary btn-small">Add</button>
+          </div>
+        </div>
+
+        <!-- Existing Categories List -->
+        <div class="categories-list-section">
+          <h4>Your Categories</h4>
+          <div id="categoriesList" class="categories-list">
+            <!-- Category items will be populated by JavaScript -->
+          </div>
+        </div>
       </div>
     </div>
 
@@ -233,10 +270,41 @@
           <p>💡 You can always toggle the sidebar using the arrow button on the right side of X.com</p>
         </div>
       </div>
+
+    </div>
+
+    <div class="tab-content hidden" id="about-tab">
+      <div class="about-section">
+        <div class="about-header">
+          <h2>X Search Pro</h2>
+          <p class="about-tagline">Advanced search made simple for X.com</p>
+        </div>
+
+        <div class="about-content">
+          <p class="about-message">
+            Connect on social • Report bugs • Request features
+          </p>
+          <div class="about-links">
+            <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="link-icon">𝕏</span>
+              <span>@neonwatty</span>
+            </a>
+            <a href="https://github.com/neonwatty/x-search-tabs" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="link-icon">⚡</span>
+              <span>GitHub</span>
+            </a>
+            <a href="https://neonwatty.com/" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="link-icon">✨</span>
+              <span>Blog</span>
+            </a>
+          </div>
+          <p class="about-creator">
+            Made with ❤️ by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-
-  <input type="file" id="importFile" accept=".json" style="display: none;" />
 
   <script src="../lib/query-builder.js"></script>
   <script src="../lib/storage.js"></script>
