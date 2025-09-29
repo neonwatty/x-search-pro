@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === 'install') {
-    console.log('X Search Tabs installed');
+    console.log('X Search Pro installed');
 
     const result = await chrome.storage.sync.get(['templatesInitialized']);
     if (!result.templatesInitialized) {
@@ -11,7 +11,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       url: 'https://x.com'
     });
   } else if (details.reason === 'update') {
-    console.log('X Search Tabs updated');
+    console.log('X Search Pro updated');
   }
 });
 

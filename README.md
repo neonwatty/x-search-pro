@@ -1,4 +1,4 @@
-# X Search Tabs
+# X Search Pro
 
 A Chrome extension that simplifies X/Twitter's advanced search with an intuitive UI for creating, saving, and managing complex search queries without memorizing cryptic syntax.
 
@@ -48,13 +48,13 @@ A Chrome extension that simplifies X/Twitter's advanced search with an intuitive
 
 4. **Pin the extension** (optional)
    - Click the puzzle piece icon in Chrome toolbar
-   - Find "X Search Tabs" and click the pin icon
+   - Find "X Search Pro" and click the pin icon
 
 ## Usage
 
 ### Creating a Search
 
-1. Click the X Search Tabs extension icon
+1. Click the X Search Pro extension icon
 2. Switch to "Search Builder" tab
 3. Fill in your desired criteria:
    - Enter keywords
@@ -168,7 +168,7 @@ x-search-tabs/
 
 1. Make changes to source files
 2. Go to `chrome://extensions/`
-3. Click the refresh icon on the X Search Tabs card
+3. Click the refresh icon on the X Search Pro card
 4. Test on x.com or twitter.com
 
 ### Debugging

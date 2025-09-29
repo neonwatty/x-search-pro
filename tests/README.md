@@ -1,6 +1,6 @@
 # E2E Testing with Playwright
 
-Comprehensive end-to-end testing for the X Search Tabs Chrome extension using Playwright.
+Comprehensive end-to-end testing for the X Search Pro Chrome extension using Playwright.
 
 ## Prerequisites
 
