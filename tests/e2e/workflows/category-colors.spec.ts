@@ -237,7 +237,7 @@ test.describe('Category Colors Management', () => {
 
       await page.waitForTimeout(200);
 
-      // Switch to Saved Searches tab
+      // Switch to Saved tab
       const savedTab = page.locator('[data-tab="saved"]');
       await savedTab.click();
 

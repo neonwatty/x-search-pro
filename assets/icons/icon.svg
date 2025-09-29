@@ -1,13 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1d9bf0;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1a8cd8;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="128" height="128" rx="24" fill="url(#grad)"/>
-  <path d="M40 50 L88 50 M40 64 L88 64 M40 78 L88 78" stroke="white" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="95" cy="50" r="6" fill="white"/>
-  <circle cx="95" cy="64" r="6" fill="white"/>
-  <circle cx="95" cy="78" r="6" fill="white"/>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Smooth Handle Taper Version -->
+  <rect width="128" height="128" rx="20" fill="#000000"/>
+
+  <g transform="translate(64, 64)">
+    <!-- Three bold X arms -->
+    <g stroke="#FFFFFF" stroke-width="11" fill="none" stroke-linecap="round">
+      <line x1="-56" y1="-56" x2="-19" y2="-19"/>
+      <line x1="56" y1="-56" x2="19" y2="-19"/>
+      <line x1="-56" y1="56" x2="-19" y2="19"/>
+    </g>
+
+    <!-- Smooth tapered handle using variable width -->
+    <defs>
+      <mask id="handleMask">
+        <rect x="-64" y="-64" width="128" height="128" fill="white"/>
+        <circle cx="0" cy="0" r="19" fill="black"/>
+      </mask>
+    </defs>
+
+    <!-- Tapered handle path -->
+    <path d="M 13.5 13.5 L 56 56"
+          stroke="#FFFFFF"
+          stroke-width="11"
+          stroke-linecap="round"
+          mask="url(#handleMask)"/>
+
+    <!-- Narrow section overlay -->
+    <line x1="13.5" y1="13.5" x2="20" y2="20"
+          stroke="#FFFFFF"
+          stroke-width="5"
+          stroke-linecap="round"/>
+
+    <!-- Magnifying glass circle -->
+    <circle cx="0" cy="0" r="19" stroke="#FFFFFF" stroke-width="11" fill="none"/>
+  </g>
 </svg>
