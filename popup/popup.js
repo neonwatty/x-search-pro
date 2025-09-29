@@ -571,6 +571,9 @@ async function handleDeleteCategory(categoryName, usageCount) {
         : 'Category deleted successfully!';
       alert(successMsg);
 
+      // Small delay to ensure storage write is committed
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       await loadCategoriesList();
       await populateCategoryDropdown(); // Update dropdown in search builder
       await loadSavedSearches();

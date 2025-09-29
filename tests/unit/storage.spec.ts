@@ -570,9 +570,51 @@ test.describe('StorageManager Unit Tests', () => {
 
       const searches = await StorageManager.getSavedSearches();
       const movedSearches = searches.filter((s: any) => s.id === search1.id || s.id === search2.id);
+      const uncategorizedColor = await StorageManager.getCategoryColor('Uncategorized');
+
       movedSearches.forEach((s: any) => {
         expect(s.category).toBe('Uncategorized');
+        expect(s.color).toBe(uncategorizedColor);
       });
+    });
+
+    test('should preserve custom colors when moving searches to Uncategorized', async () => {
+      await StorageManager.createCategory('WillDelete', '#123456');
+
+      // Create search with custom color
+      const searchWithCustomColor = await StorageManager.saveSearch({
+        name: 'Custom Color Search',
+        query: 'test custom',
+        filters: {},
+        category: 'WillDelete',
+        color: '#ff0000'
+      });
+
+      // Create search with category color
+      const searchWithCategoryColor = await StorageManager.saveSearch({
+        name: 'Category Color Search',
+        query: 'test category',
+        filters: {},
+        category: 'WillDelete'
+      });
+
+      const result = await StorageManager.deleteCategory('WillDelete');
+
+      expect(result.deleted).toBe(true);
+      expect(result.searchesMoved).toBe(2);
+
+      const searches = await StorageManager.getSavedSearches();
+      const customColorSearch = searches.find((s: any) => s.id === searchWithCustomColor.id);
+      const categoryColorSearch = searches.find((s: any) => s.id === searchWithCategoryColor.id);
+      const uncategorizedColor = await StorageManager.getCategoryColor('Uncategorized');
+
+      expect(customColorSearch.category).toBe('Uncategorized');
+      expect(customColorSearch.color).toBe('#ff0000'); // Custom color preserved
+      expect(customColorSearch.isCustomColor).toBe(true);
+
+      expect(categoryColorSearch.category).toBe('Uncategorized');
+      expect(categoryColorSearch.color).toBe(uncategorizedColor); // Updated to Uncategorized color
+      expect(categoryColorSearch.isCustomColor).toBe(false);
     });
 
     test('should remove category color when deleting', async () => {

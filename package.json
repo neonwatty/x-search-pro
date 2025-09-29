@@ -1,5 +1,5 @@
 {
-  "name": "x-search-tabs",
+  "name": "x-search-pro",
   "version": "0.1.0",
   "description": "Chrome extension to simplify X/Twitter advanced search",
   "scripts": {
@@ -17,7 +17,7 @@
     "test:setup": "playwright test --project=setup",
     "test:report": "playwright show-report",
     "validate:pre-push": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e",
-    "build:zip": "zip -r x-search-pro.zip manifest.json popup/ content/ background/ lib/ assets/ LICENSE PRIVACY_POLICY.md -x '*.DS_Store' -x '*/.DS_Store'"
+    "build:zip": "zip -r x-search-pro.zip manifest.json popup/ content/ background/ lib/ assets/ LICENSE PRIVACY_POLICY.md -x '*.DS_Store' -x '*/.DS_Store' -x '*.git/*' -x 'node_modules/*' -x 'tests/*' -x '*.log' -x 'plans/*' -x 'logos/*' -x '.husky/*' -x 'STORE_LISTING.md' -x 'CHANGELOG.md'"
   },
   "keywords": [
     "chrome-extension",
@@ -26,7 +26,7 @@
     "search",
     "browser-extension"
   ],
-  "author": "",
+  "author": "neonwatty",
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.40.0",
@@ -38,8 +38,5 @@
     "eslint": "^9.36.0",
     "husky": "^9.1.7",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "@anthropic-ai/claude-code": "^2.0.0"
   }
 }

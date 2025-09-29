@@ -184,6 +184,8 @@ async function loadSidebarSearches() {
   const listContainer = document.getElementById('sidebarSearchList');
   const emptyState = document.getElementById('sidebarEmptyState');
 
+  if (!listContainer || !emptyState) return; // Elements not initialized yet
+
   if (searches.length === 0) {
     listContainer.innerHTML = '';
     emptyState.style.display = 'block';
@@ -234,6 +236,16 @@ function filterSidebarSearches() {
     }
   });
 }
+
+// Listen for storage changes to update sidebar in real-time
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'sync' && (changes.savedSearches || changes.categories || changes.categoryColors)) {
+    // Reload sidebar searches when relevant data changes
+    if (sidebarElement && sidebarVisible) {
+      loadSidebarSearches();
+    }
+  }
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
