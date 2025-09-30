@@ -38,16 +38,36 @@ export class PopupPage {
   }
 
   async setDateRange(since?: string, until?: string) {
-    if (since) {
+    if (since !== undefined) {
       await this.page.fill('#sinceDate', since);
     }
-    if (until) {
+    if (until !== undefined) {
       await this.page.fill('#untilDate', until);
     }
   }
 
   async clickDatePreset(preset: 'today' | 'week' | 'month') {
     await this.page.click(`.preset-btn[data-preset="${preset}"]`);
+  }
+
+  async getSinceDateValue(): Promise<string> {
+    return await this.page.locator('#sinceDate').inputValue();
+  }
+
+  async getUntilDateValue(): Promise<string> {
+    return await this.page.locator('#untilDate').inputValue();
+  }
+
+  async clickSinceDateInput() {
+    await this.page.click('#sinceDate');
+  }
+
+  async clickUntilDateInput() {
+    await this.page.click('#untilDate');
+  }
+
+  async clearDateRange() {
+    await this.setDateRange('', '');
   }
 
   async setFromUser(username: string) {
@@ -143,7 +163,7 @@ export class PopupPage {
 
   async editSavedSearch(name: string) {
     await this.switchTab('saved');
-    const item = this.page.locator(`.saved-item:has-text("${name}")`);
+    const item = this.page.locator(`.saved-item`).filter({ hasText: name }).first();
     await item.locator('.edit-btn').click();
   }
 
@@ -166,5 +186,28 @@ export class PopupPage {
   async clickImport() {
     await this.switchTab('saved');
     await this.page.click('#importBtn');
+  }
+
+  async isEditingBannerVisible(): Promise<boolean> {
+    const banner = this.page.locator('#editingBanner');
+    return await banner.isVisible();
+  }
+
+  async getEditingSearchName(): Promise<string> {
+    const nameElement = this.page.locator('#editingSearchName');
+    return await nameElement.textContent() || '';
+  }
+
+  async clickCancelEdit() {
+    await this.page.click('#cancelEditBtn');
+  }
+
+  async getSaveButtonText(): Promise<string> {
+    const saveBtn = this.page.locator('#saveBtn');
+    return await saveBtn.textContent() || '';
+  }
+
+  async isInEditMode(): Promise<boolean> {
+    return await this.isEditingBannerVisible();
   }
 }

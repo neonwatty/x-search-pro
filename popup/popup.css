@@ -6,17 +6,20 @@
 
 body {
   width: 500px;
+  min-height: 400px;
   max-height: 600px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
   color: #e7e9ea;
   background: #000000;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100%;
 }
 
 header {
@@ -74,7 +77,7 @@ h1 {
 
 .tab-content {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: visible;
   padding: 16px;
 }
 
@@ -88,6 +91,7 @@ h1 {
   background: #16181c;
   border-radius: 8px;
   border: 1px solid #2f3336;
+  position: relative;
 }
 
 .form-section h3 {
@@ -171,6 +175,17 @@ select:focus {
   outline: none;
   border-color: #1d9bf0;
   box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.1);
+}
+
+/* Date Input Calendar Picker */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1);
+  opacity: 0.7;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
 
 /* Category Selection */
@@ -920,4 +935,47 @@ input[type="radio"] {
 .category-action-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Editing Banner */
+.editing-banner {
+  background: #1d4ed8;
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.editing-banner.hidden {
+  display: none;
+}
+
+#editingMessage {
+  color: #e7e9ea;
+  font-size: 14px;
+}
+
+#editingSearchName {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.btn-cancel-edit {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #e7e9ea;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel-edit:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }

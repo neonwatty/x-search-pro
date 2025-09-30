@@ -82,7 +82,7 @@ test.describe('StorageManager Unit Tests', () => {
       expect(saved.createdAt <= after).toBe(true);
     });
 
-    test('should append to existing searches', async () => {
+    test('should prepend to existing searches', async () => {
       await mockChrome.storage.sync.set({ savedSearches: [mockSearches[0]] });
 
       const newSearch = {
@@ -95,8 +95,8 @@ test.describe('StorageManager Unit Tests', () => {
       const searches = await StorageManager.getSavedSearches();
 
       expect(searches.length).toBe(2);
-      expect(searches[0].name).toBe('Viral Content');
-      expect(searches[1].name).toBe('Second Search');
+      expect(searches[0].name).toBe('Second Search');
+      expect(searches[1].name).toBe('Viral Content');
     });
   });
 

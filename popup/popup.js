@@ -1,4 +1,5 @@
 let currentBuilder = new QueryBuilder();
+let editingSearchId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initializeTemplates();
@@ -27,6 +28,11 @@ function initializeTabs() {
       });
 
       document.getElementById(`${targetTab}-tab`).classList.remove('hidden');
+
+      // Cancel edit mode when switching away from builder tab
+      if (targetTab !== 'builder' && editingSearchId) {
+        cancelEdit();
+      }
 
       if (targetTab === 'saved') {
         loadSavedSearches();
@@ -102,6 +108,7 @@ function initializeButtons() {
   document.getElementById('applyBtn').addEventListener('click', applySearch);
   document.getElementById('saveBtn').addEventListener('click', saveSearch);
   document.getElementById('resetBtn').addEventListener('click', resetForm);
+  document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
   document.getElementById('searchFilter').addEventListener('input', filterSavedSearches);
 }
 
@@ -205,29 +212,70 @@ async function saveSearch() {
     return;
   }
 
-  const name = prompt('Enter a name for this search:');
-  if (!name) return;
-
   const categorySelect = document.getElementById('searchCategory');
   const selectedCategory = categorySelect.value;
   const filters = getFormValues();
 
-  await StorageManager.saveSearch({
-    name: name,
-    query: query,
-    filters: filters,
-    category: selectedCategory
-  });
+  if (editingSearchId) {
+    // Update existing search
+    const searches = await StorageManager.getSavedSearches();
+    const existingSearch = searches.find(s => s.id === editingSearchId);
 
-  const categoryColor = await StorageManager.getCategoryColor(selectedCategory);
-  alert(`Search saved successfully!\nCategory: ${selectedCategory}\nColor: ${categoryColor}`);
-  await loadSavedSearches();
+    if (!existingSearch) {
+      alert('Search not found');
+      cancelEdit();
+      return;
+    }
+
+    await StorageManager.updateSearch(editingSearchId, {
+      query: query,
+      filters: filters,
+      category: selectedCategory,
+      // Update color if category changed and not custom color
+      ...(existingSearch.category !== selectedCategory && !existingSearch.isCustomColor
+        ? { color: await StorageManager.getCategoryColor(selectedCategory) }
+        : {})
+    });
+
+    alert('Search updated successfully!');
+    cancelEdit();
+    await loadSavedSearches();
+  } else {
+    // Create new search
+    const name = prompt('Enter a name for this search:');
+    if (!name) return;
+
+    await StorageManager.saveSearch({
+      name: name,
+      query: query,
+      filters: filters,
+      category: selectedCategory
+    });
+
+    const categoryColor = await StorageManager.getCategoryColor(selectedCategory);
+    alert(`Search saved successfully!\nCategory: ${selectedCategory}\nColor: ${categoryColor}`);
+    await loadSavedSearches();
+  }
 }
 
 function resetForm() {
   document.getElementById('search-form').reset();
   currentBuilder.reset();
+  cancelEdit();
   updateQueryPreview();
+}
+
+function cancelEdit() {
+  editingSearchId = null;
+  document.getElementById('editingBanner').classList.add('hidden');
+  document.getElementById('saveBtn').textContent = 'Save Search';
+}
+
+function enterEditMode(searchId, searchName) {
+  editingSearchId = searchId;
+  document.getElementById('editingSearchName').textContent = searchName;
+  document.getElementById('editingBanner').classList.remove('hidden');
+  document.getElementById('saveBtn').textContent = 'Update Search';
 }
 
 async function loadSavedSearches() {
@@ -364,6 +412,12 @@ async function editSearch(id) {
   document.getElementById('quoteOnly').checked = filters.quoteOnly || false;
   document.getElementById('lang').value = filters.lang || '';
 
+  // Set category
+  const categorySelect = document.getElementById('searchCategory');
+  categorySelect.value = search.category;
+  const colorIndicator = document.getElementById('categoryColorIndicator');
+  colorIndicator.style.backgroundColor = search.color;
+
   if (filters.includeReplies === false) {
     document.querySelector('input[name="replies"][value="exclude"]').checked = true;
   } else if (filters.includeReplies === true) {
@@ -381,6 +435,7 @@ async function editSearch(id) {
   }
 
   updateQueryPreview();
+  enterEditMode(id, search.name);
 }
 
 async function deleteSearch(id) {
