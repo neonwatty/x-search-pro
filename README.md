@@ -1,6 +1,6 @@
 # X Search Pro
 
-A free, open-source Chrome extension that simplifies X/Twitter advanced search with an intuitive UI for creating, saving, and managing complex search queries.
+A Chrome extension for building, saving, categorizing, and managing advanced X/Twitter search queries.
 
 ## Features
 
