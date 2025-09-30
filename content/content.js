@@ -114,7 +114,7 @@ async function initializeSidebar() {
           <p>Click the extension icon to create one!</p>
         </div>
         <div class="sidebar-footer">
-          Made with ❤️ by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
+          Created by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
         </div>
       </div>
     </div>
