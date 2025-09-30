@@ -1,251 +1,146 @@
-# E2E Testing with Playwright
+# Testing Guide
 
-Comprehensive end-to-end testing for the X Search Pro Chrome extension using Playwright.
+Comprehensive testing for X Search Pro using Playwright for E2E and unit tests.
 
 ## Prerequisites
 
 - Node.js 18+
-- Dedicated X.com test account
 - Chrome/Chromium browser
+- Dedicated X.com test account (for E2E tests only)
 
-## Setup
-
-### 1. Install Dependencies
+## Quick Start
 
 ```bash
+# 1. Install dependencies
 npm install
-```
 
-### 2. Install Playwright Browsers
-
-```bash
+# 2. Install Playwright browsers (first time only)
 npm run test:install
-```
 
-### 3. Configure Environment
-
-Copy `.env.example` to `.env` and add your X.com test credentials:
-
-```bash
+# 3. Create .env file for E2E tests
 cp .env.example .env
-```
+# Edit .env and add your X.com test credentials:
+#   TEST_X_USERNAME=your_test_username
+#   TEST_X_PASSWORD=your_test_password
 
-Edit `.env`:
-```bash
-TEST_X_USERNAME=your_test_username
-TEST_X_PASSWORD=your_test_password
+# 4. Run tests
+npm test                 # Unit tests only (no credentials needed)
+npm run test:e2e         # Full E2E suite (requires credentials)
 ```
 
 **Important**: Never commit your `.env` file. It's already in `.gitignore`.
 
 ## Running Tests
 
-### Run All Tests
 ```bash
-npm run test:e2e
+# Quick tests (no X.com credentials needed)
+npm test                      # Unit tests only (~5 seconds)
+npm run lint                  # ESLint
+npm run typecheck             # TypeScript validation
+
+# E2E tests (requires X.com credentials)
+npm run test:e2e              # All E2E tests (headless)
+npm run test:e2e:headed       # E2E with visible browser
+npm run test:e2e:ui           # Playwright UI mode
+npm run test:e2e:debug        # Debug mode with inspector
+
+# Specific test suites
+npm run test:workflows        # Workflow tests only
+npm run test:unit             # Alias for npm test
+
+# View results
+npm run test:report           # Open HTML report
 ```
 
-### Run Tests in Headed Mode (with Browser UI)
-```bash
-npm run test:e2e:headed
-```
-
-### Run Tests with Playwright UI
-```bash
-npm run test:e2e:ui
-```
-
-### Run Specific Test Suite
-```bash
-npm run test:workflows      # Run workflow tests only
-npm run test:unit           # Run unit tests only
-```
-
-### Run Single Test File
-```bash
-npx playwright test tests/e2e/workflows/create-save-search.spec.ts
-```
-
-### Run Tests in Debug Mode
-```bash
-npm run test:e2e:debug
-```
-
-### View Test Report
-```bash
-npm run test:report
-```
+**Pro tip**: Run `npm test` frequently during development. It's fast and catches most issues.
 
 ## Test Structure
 
 ```
 tests/
-├── setup/
-│   └── auth.setup.ts              # X.com authentication
-├── unit/
-│   └── query-builder.spec.ts      # QueryBuilder unit tests
-├── e2e/
-│   ├── workflows/
-│   │   ├── create-save-search.spec.ts
-│   │   └── apply-saved-search.spec.ts
-│   ├── popup/                     # Popup UI tests
-│   ├── content/                   # Content script tests
-│   └── integration/               # Integration tests
-├── fixtures/
-│   └── extension.ts               # Extension context fixture
-├── helpers/
-│   └── x-page-helpers.ts          # X.com page helpers
-└── page-objects/
-    ├── PopupPage.ts               # Popup page object
-    └── SidebarPage.ts             # Sidebar page object
+├── setup/                         # X.com authentication setup
+├── unit/                          # Unit tests (QueryBuilder, etc.)
+├── e2e/workflows/                 # End-to-end workflow tests
+├── fixtures/                      # Test fixtures (extension context)
+├── helpers/                       # Page helpers (X.com interactions)
+└── page-objects/                  # Page object models (PopupPage, SidebarPage)
 ```
 
-## Authentication
+## How Testing Works
 
-Tests use a global setup that:
-1. Logs into X.com once with your test credentials
-2. Saves the authentication state to `tests/.auth/user.json`
-3. Reuses this state across all E2E tests
+### Test Projects
 
-This approach:
-- **Speeds up tests** (no repeated logins)
-- **Tests real X.com integration** with authenticated sessions
-- **Maintains security** (credentials only in `.env`)
+1. **Setup** - Authenticates with X.com once, saves session to `tests/.auth/user.json`
+2. **Unit** - Fast tests for library functions (QueryBuilder, storage, etc.) - no authentication needed
+3. **E2E** - Full workflow tests using saved authentication - tests real X.com integration
 
-## Test Projects
+### Authentication
 
-The test suite is organized into 3 projects:
+E2E tests use a global setup that:
+- Logs into X.com once with your test credentials
+- Saves authentication state to `tests/.auth/user.json`
+- Reuses this state across all tests (no repeated logins)
 
-### 1. Setup (`--project=setup`)
-- Authenticates with X.com
-- Runs before E2E tests
-- Creates `tests/.auth/user.json`
-
-### 2. Unit (`--project=unit`)
-- Tests library functions (QueryBuilder, etc.)
-- No X.com authentication needed
-- Fast execution
-
-### 3. E2E (`--project=e2e`)
-- Tests full user workflows
-- Uses saved authentication state
-- Tests real X.com integration
+This approach is **fast** (single login), **secure** (credentials in `.env` only), and **realistic** (tests actual X.com pages).
 
 ## Writing Tests
 
-### Example: Basic Workflow Test
+Use page objects for clean, maintainable tests:
 
 ```typescript
 import { test, expect } from '../../fixtures/extension';
 import { PopupPage } from '../../page-objects/PopupPage';
 import { XPageHelpers } from '../../helpers/x-page-helpers';
 
-test.describe('My Workflow', () => {
-  test('should do something', async ({ context, extensionId }) => {
-    // Create X.com page (authenticated)
-    const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
+test('create and apply search', async ({ context, extensionId }) => {
+  // Setup X.com page (authenticated)
+  const page = await context.newPage();
+  const xHelper = new XPageHelpers(page);
+  await xHelper.navigateToExplore();
 
-    // Open extension popup
-    const popupPage = new PopupPage(
-      await context.newPage(),
-      extensionId
-    );
-    await popupPage.open();
+  // Open popup and create search
+  const popup = new PopupPage(await context.newPage(), extensionId);
+  await popup.open();
+  await popup.fillKeywords('test');
+  await popup.setMinFaves(50);
+  await popup.clickApply();
 
-    // Test your workflow
-    await popupPage.fillKeywords('test');
-    await popupPage.clickApply();
-
-    // Verify on X.com
-    await xHelper.verifyOnSearchPage();
-  });
+  // Verify on X.com
+  await xHelper.verifySearchApplied('min_faves:50');
 });
 ```
 
-## Page Objects
+### Available Page Objects
 
-Use page objects for cleaner, reusable test code:
-
-### PopupPage
-```typescript
-const popupPage = new PopupPage(page, extensionId);
-await popupPage.open();
-await popupPage.fillKeywords('test');
-await popupPage.setMinFaves(50);
-await popupPage.clickApply();
-```
-
-### SidebarPage
-```typescript
-const sidebar = new SidebarPage(page);
-await sidebar.waitForInjection();
-await sidebar.toggle();
-await sidebar.clickSearch('Viral Content');
-```
-
-### XPageHelpers
-```typescript
-const xHelper = new XPageHelpers(page);
-await xHelper.navigateToExplore();
-await xHelper.verifySearchApplied('min_faves:50');
-await xHelper.verifyOnSearchPage();
-```
+- **PopupPage** - Extension popup interactions
+- **SidebarPage** - Sidebar toggle and search selection
+- **XPageHelpers** - X.com page navigation and verification
 
 ## Test Coverage
 
-Current test coverage includes:
+### Unit Tests (97 tests)
+- QueryBuilder - Engagement, date, user, content type filters
+- Storage operations
+- Template loading
 
-### Workflow Tests
-- ✓ Create & Save Search (with X.com integration)
-- ✓ Apply Saved Search from Sidebar
-- ✓ Apply Saved Search from Popup
-- ✓ Filter Saved Searches
-
-### Unit Tests
-- ✓ QueryBuilder (17 test cases)
-  - Engagement filters
-  - Date filters
-  - User filters
-  - Content type filters
-  - Complex queries
-  - Reset functionality
-
-### Component Tests
-- Popup UI interactions
-- Sidebar injection & behavior
-- Search application on X.com
+### E2E Workflow Tests
+- Create & save search with X.com integration
+- Apply saved searches from sidebar and popup
+- Filter saved searches
+- Category management
 
 ## Troubleshooting
 
-### Authentication Fails
-1. Verify credentials in `.env` are correct
-2. Check if X.com login UI has changed
-3. Try running setup manually: `npm run test:setup`
-4. Delete `tests/.auth/user.json` and re-run
-
-### Extension Not Loading
-1. Verify `manifest.json` is valid
-2. Check extension files are built
-3. Look for errors in Playwright output
-4. Run in headed mode to see browser: `npm run test:e2e:headed`
-
-### Tests Are Flaky
-1. Increase timeouts in test
-2. Add explicit waits for elements
-3. Check network conditions
-4. Verify X.com selectors haven't changed
-
-### Can't Find Element
-1. X.com may have changed their HTML
-2. Update selectors in page helpers
-3. Use Playwright Inspector: `npm run test:e2e:debug`
-4. Check if element is in iframe
+| Issue | Solution |
+|-------|----------|
+| **Authentication fails** | 1. Verify `.env` credentials<br>2. Delete `tests/.auth/user.json` and re-run<br>3. Run `npm run test:setup` manually |
+| **Extension not loading** | 1. Check `manifest.json` is valid<br>2. Run in headed mode: `npm run test:e2e:headed` |
+| **Flaky tests** | 1. Increase timeouts<br>2. Add explicit waits<br>3. Check X.com selectors haven't changed |
+| **Can't find element** | 1. Use debug mode: `npm run test:e2e:debug`<br>2. Update selectors in page helpers<br>3. Check if X.com HTML changed |
 
 ## CI/CD Integration
 
-Tests can run in GitHub Actions:
+Add test credentials to GitHub Actions secrets, then:
 
 ```yaml
 - name: Create .env file
@@ -257,36 +152,16 @@ Tests can run in GitHub Actions:
   run: npm run test:e2e
 ```
 
-Add `TEST_X_USERNAME` and `TEST_X_PASSWORD` to repository secrets.
-
 ## Best Practices
 
-1. **Use Page Objects** - Encapsulate page logic
-2. **Wait for Elements** - Always wait for visibility
-3. **Test Isolation** - Each test should be independent
-4. **Descriptive Names** - Test names should explain intent
-5. **Clean Up** - Close pages/contexts after tests
-6. **Mock When Needed** - Mock prompts, alerts, confirms
-7. **Verify State** - Assert expected outcomes
-8. **Handle Timing** - Use proper waits, not fixed timeouts
-
-## Performance Tips
-
-- Tests run with `workers: 1` (extension requires isolation)
-- Authentication cached (no repeated logins)
-- Unit tests run in parallel to E2E tests
-- Use `--headed=false` in CI for faster execution
+- ✅ Use page objects for reusable code
+- ✅ Wait for elements (avoid fixed timeouts)
+- ✅ Keep tests isolated and independent
+- ✅ Use descriptive test names
+- ✅ Run unit tests frequently during development
+- ✅ Check HTML report after failures: `npm run test:report`
 
 ## Resources
 
 - [Playwright Documentation](https://playwright.dev)
 - [Chrome Extension Testing](https://playwright.dev/docs/chrome-extensions)
-- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
-
-## Support
-
-For issues or questions:
-1. Check test output and screenshots in `test-results/`
-2. View HTML report: `npm run test:report`
-3. Run in debug mode: `npm run test:e2e:debug`
-4. Check X.com selectors are up to date
