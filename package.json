@@ -1,7 +1,7 @@
 {
   "name": "x-search-pro",
   "version": "0.1.0",
-  "description": "Chrome extension to simplify X/Twitter advanced search",
+  "description": "Chrome extension for building advanced X/Twitter search queries",
   "scripts": {
     "prepare": "husky",
     "lint": "eslint . --ext .js,.ts",

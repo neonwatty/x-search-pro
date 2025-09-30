@@ -1,6 +1,6 @@
 # X Search Pro
 
-A Chrome extension that simplifies X/Twitter's advanced search with an intuitive UI for creating, saving, and managing complex search queries without memorizing cryptic syntax.
+A Chrome extension for building, saving, categorizing, and managing advanced X/Twitter search queries.
 
 ## Features
 
