@@ -1,163 +1,149 @@
-# Promotional Images Guide for Chrome Web Store
+# Promotional Images for Chrome Web Store
 
-## Required and Optional Images
+This guide covers the images needed for Chrome Web Store submission.
 
-### ✅ Required Images
+## Current Status
 
-#### 1. Extension Icons (Already Complete ✓)
-- **16x16px** - `assets/icons/icon16.png` ✓
-- **32x32px** - `assets/icons/icon32.png` ✓
-- **48x48px** - `assets/icons/icon48.png` ✓
-- **128x128px** - `assets/icons/icon128.png` ✓
+### ✅ Complete
 
-#### 2. Screenshots (REQUIRED - Need to Create)
-**Specifications:**
+#### Extension Icons
+All required icon sizes are generated and ready:
+- `assets/icons/icon16.png` (16×16px)
+- `assets/icons/icon32.png` (32×32px)
+- `assets/icons/icon48.png` (48×48px)
+- `assets/icons/icon128.png` (128×128px)
+
+#### Promotional Images
+Store promotional images are created and ready:
+- `promo-images/promo-440x280.png` - Small promotional tile (REQUIRED)
+- `promo-images/promo-1400x560.png` - Marquee promotional tile (optional)
+
+#### Source Files
+HTML templates for regenerating images:
+- `promo-images/promo-440x280.html`
+- `promo-images/promo-1400x560.html`
+- `promo-images/convert-to-png.sh` - Script to regenerate PNGs
+- `promo-images/generate-icons.sh` - Script to regenerate icon PNGs
+
+### 📸 TODO: Screenshots
+
+You still need to create **1-5 screenshots** for the Chrome Web Store listing.
+
+**Requirements:**
 - Format: PNG or JPEG
-- Dimensions: 1280x800px or 640x400px
-- Minimum: 1 screenshot
+- Dimensions: 1280×800px or 640×400px
+- Minimum: 1 screenshot (required)
 - Maximum: 5 screenshots
 - File size: Max 1MB each
 
-**Suggested Screenshots to Create:**
-1. **Main Popup Interface** - Show the search builder with various filters
-2. **Saved Searches Grid** - Display the saved searches tab with templates
-3. **Sidebar on X.com** - Show the sidebar integrated on X/Twitter
-4. **Search in Action** - Demonstrate applying a search to X/Twitter
-5. **Settings/Export** - Show the settings tab or import/export functionality
+**Suggested Screenshots:**
+1. **Search Builder** - Show the popup with various filters being used
+2. **Saved Searches** - Display the saved searches tab with categories
+3. **Sidebar Integration** - Show the sidebar on X.com with saved searches
+4. **Search Applied** - Demonstrate a search being applied on X/Twitter
+5. **Category Management** - Show the categories tab with color customization
 
-#### 3. Small Promotional Tile (REQUIRED)
-**Specifications:**
-- Dimensions: 440x280px
-- Format: PNG or JPEG
-- File size: Max 1MB
-- Purpose: Displayed in Chrome Web Store search results
+**Save screenshots to:** `screenshots/` directory (already exists with some images)
 
-**Design Suggestions:**
-- Include the extension name and logo
-- Show key benefit: "Simplify X/Twitter Advanced Search"
-- Use brand colors
-- Include visual of the interface
+## Image Specifications
 
-### 🔸 Optional Images (Recommended)
+### Required
 
-#### 4. Large Promotional Tile
-**Specifications:**
-- Dimensions: 920x680px
-- Format: PNG or JPEG
-- File size: Max 1MB
-- Purpose: Featured placement in Chrome Web Store
+| Image Type | Dimensions | Format | Max Size | Location |
+|------------|-----------|--------|----------|----------|
+| Extension Icons | 16×16, 32×32, 48×48, 128×128 | PNG | 1MB | `assets/icons/` ✅ |
+| Small Promo Tile | 440×280 | PNG/JPEG | 1MB | `promo-images/` ✅ |
+| Screenshots | 1280×800 or 640×400 | PNG/JPEG | 1MB each | `screenshots/` ⚠️ |
 
-#### 5. Marquee Promotional Tile
-**Specifications:**
-- Dimensions: 1400x560px
-- Format: PNG or JPEG
-- File size: Max 1MB
-- Purpose: Premium featured placement
+### Optional (But Recommended)
 
-## Image Creation Checklist
+| Image Type | Dimensions | Format | Max Size | Location |
+|------------|-----------|--------|----------|----------|
+| Marquee Promo Tile | 1400×560 | PNG/JPEG | 1MB | `promo-images/` ✅ |
 
-### Screenshots Creation Steps:
-1. Load the extension in Chrome
-2. Navigate to X.com
-3. Take screenshots of:
-   - [ ] Popup with search builder active
-   - [ ] Popup with saved searches displayed
-   - [ ] Sidebar open on X.com
-   - [ ] Search being applied
-   - [ ] Settings or import/export dialog
+## Creating Screenshots
 
-### Promotional Tiles Creation Steps:
-1. Create 440x280px small tile (REQUIRED):
-   - [ ] Extension logo
-   - [ ] Extension name "X Search Pro"
-   - [ ] Tagline: "Master X/Twitter Search"
-   - [ ] Visual elements showing the interface
+### Quick Method
+1. Load extension in Chrome
+2. Visit x.com
+3. Take screenshots using:
+   - **macOS**: Cmd+Shift+4 (select area)
+   - **Windows**: Win+Shift+S (snipping tool)
+   - **Chrome DevTools**: Toggle device toolbar, set custom dimensions
 
-2. Create 920x680px large tile (optional):
-   - [ ] More detailed view of features
-   - [ ] Multiple interface elements
-   - [ ] Feature highlights
+### Resize if Needed
+If screenshots aren't exactly 1280×800 or 640×400:
+- Use Preview (macOS) or Paint (Windows)
+- Or online tool: [ResizeImage.net](https://resizeimage.net)
 
-3. Create 1400x560px marquee tile (optional):
-   - [ ] Wide banner format
-   - [ ] Feature showcase
-   - [ ] Professional design
+## Regenerating Promotional Images
+
+If you need to update the promo images:
+
+```bash
+cd promo-images
+./convert-to-png.sh
+```
+
+To regenerate extension icons:
+
+```bash
+cd promo-images
+./generate-icons.sh
+```
 
 ## Design Guidelines
 
-### Brand Colors to Use:
-- Primary: Blue (matches X/Twitter theme)
-- Accent: Use colors from the category badges in the extension
-- Background: Clean white or light gray
+### Promotional Images
+- Use dark theme to match extension branding
+- Include blue accent color (#3b82f6)
+- Show the X Search Pro logo (blue X with white magnifying glass)
+- Keep text minimal and readable
+- Show actual UI elements
 
-### Text Guidelines:
-- Use clear, readable fonts
-- Ensure text is legible at thumbnail sizes
-- Keep text minimal and impactful
-
-### Visual Elements:
-- Show actual interface elements
-- Include X/Twitter branding context (but not logos)
-- Use clean, professional design
-- Ensure images are not cluttered
-
-## File Naming Convention
-
-Place all images in the `store_assets/images/` directory:
-
-```
-store_assets/
-├── images/
-│   ├── screenshots/
-│   │   ├── screenshot_1_popup_builder.png
-│   │   ├── screenshot_2_saved_searches.png
-│   │   ├── screenshot_3_sidebar.png
-│   │   ├── screenshot_4_search_applied.png
-│   │   └── screenshot_5_settings.png
-│   └── promotional/
-│       ├── small_tile_440x280.png (REQUIRED)
-│       ├── large_tile_920x680.png (optional)
-│       └── marquee_tile_1400x560.png (optional)
-```
+### Screenshots
+- Capture real functionality
+- Use clean test data (no personal info)
+- Show the extension in action
+- Ensure good contrast and readability
+- Crop to exact dimensions
 
 ## Quality Checklist
 
-Before submitting images:
-- [ ] All images are high quality (no pixelation)
+Before submitting:
+- [ ] All images are high resolution (no pixelation)
 - [ ] Screenshots show actual functionality
-- [ ] No personal information visible in screenshots
-- [ ] Images comply with Chrome Web Store policies
-- [ ] File sizes are under 1MB each
+- [ ] No personal information visible
+- [ ] File sizes under 1MB each
 - [ ] Dimensions are exactly as specified
 - [ ] Images accurately represent the extension
+- [ ] Professional quality and polish
 
-## Tools for Creating Images
+## File Structure
 
-### For Screenshots:
-- Chrome DevTools (responsive mode for consistent sizing)
-- macOS: Command+Shift+4 (area screenshot)
-- Windows: Win+Shift+S (snipping tool)
-- Third-party: Lightshot, ShareX
+```
+x-search-pro/
+├── assets/icons/          # Extension icons (✅ complete)
+│   ├── icon16.png
+│   ├── icon32.png
+│   ├── icon48.png
+│   └── icon128.png
+├── promo-images/          # Promotional tiles (✅ complete)
+│   ├── promo-440x280.png
+│   ├── promo-1400x560.png
+│   ├── promo-440x280.html
+│   ├── promo-1400x560.html
+│   ├── convert-to-png.sh
+│   └── generate-icons.sh
+└── screenshots/           # Chrome Web Store screenshots (⚠️ TODO)
+    └── (add 1-5 screenshots here)
+```
 
-### For Promotional Tiles:
-- Figma (free web-based design tool)
-- Canva (templates available)
-- Adobe Photoshop/Illustrator
-- GIMP (free alternative)
+## Resources
 
-### For Image Optimization:
-- TinyPNG.com (reduce file size)
-- ImageOptim (Mac)
-- RIOT (Windows)
-
-## Important Notes
-
-1. **No Misleading Content**: Images must accurately represent the extension
-2. **No Inappropriate Content**: Follow Chrome Web Store content policies
-3. **Professional Quality**: Images represent your extension's first impression
-4. **Consistent Branding**: Maintain visual consistency across all images
-5. **Update Regularly**: Keep screenshots current with latest version
+- [Chrome Web Store Image Requirements](https://developer.chrome.com/docs/webstore/images/)
+- [Chrome Web Store Best Practices](https://developer.chrome.com/docs/webstore/best_practices/)
 
 ---
 
-**Remember**: The small promotional tile (440x280px) and at least one screenshot are REQUIRED for Chrome Web Store submission. Create these before attempting to submit the extension.
+**Next Step:** Create 1-5 screenshots and save them to the `screenshots/` directory, then you're ready for Chrome Web Store submission!

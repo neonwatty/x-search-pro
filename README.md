@@ -1,6 +1,6 @@
 # X Search Pro
 
-A Chrome extension that simplifies X/Twitter's advanced search with an intuitive UI for creating, saving, and managing complex search queries without memorizing cryptic syntax.
+A free, open-source Chrome extension that simplifies X/Twitter advanced search with an intuitive UI for creating, saving, and managing complex search queries.
 
 ## Features
 
@@ -130,25 +130,14 @@ The extension comes with 10 ready-to-use templates:
 ## Project Structure
 
 ```
-x-search-tabs/
-├── manifest.json              # Extension configuration
-├── popup/
-│   ├── popup.html            # Popup interface
-│   ├── popup.css             # Popup styles
-│   └── popup.js              # Popup logic
-├── content/
-│   ├── content.js            # Content script for X.com
-│   └── sidebar.css           # Sidebar styles
-├── background/
-│   └── service-worker.js     # Background service worker
-├── lib/
-│   ├── storage.js            # Chrome Storage wrapper
-│   ├── query-builder.js      # Query building logic
-│   └── templates.js          # Default search templates
-├── assets/
-│   └── icons/                # Extension icons
-└── plans/
-    └── extension-plan.md     # Detailed planning document
+x-search-pro/
+├── manifest.json           # Extension configuration
+├── popup/                  # Extension popup UI
+├── content/                # Content scripts for X.com
+├── background/             # Service worker
+├── lib/                    # Shared utilities (query-builder, storage, templates)
+├── assets/                 # Icons and images
+└── tests/                  # Playwright E2E and unit tests
 ```
 
 ## Technical Details
@@ -161,18 +150,57 @@ x-search-tabs/
 
 ## Development
 
-### Testing Locally
+### Local Testing
 
-1. Make changes to source files
-2. Go to `chrome://extensions/`
-3. Click the refresh icon on the X Search Pro card
-4. Test on x.com or twitter.com
+1. Make code changes
+2. Reload extension at `chrome://extensions/`
+3. Test on x.com or twitter.com
+
+### Testing & Quality
+
+```bash
+npm install              # Install dependencies
+npm run test:install     # Install Playwright browsers (first time only)
+
+# Run tests
+npm test                 # Unit tests only (fast)
+npm run test:e2e         # Full E2E tests with X.com integration
+npm run test:e2e:headed  # E2E tests with browser UI visible
+
+# Code quality
+npm run lint             # ESLint
+npm run typecheck        # TypeScript validation
+```
+
+**Test Requirements:**
+- Node.js 18+
+- Create `.env` file with X.com test credentials (see `tests/README.md`)
+- E2E tests require Chrome/Chromium and internet connection
+
+For detailed testing documentation, see [`tests/README.md`](tests/README.md).
+
+### Pre-Push Hook
+
+This project uses **Husky** to enforce code quality before pushing to remote:
+
+**What runs automatically on `git push`:**
+1. 🔍 **ESLint** - Code linting
+2. 📝 **TypeScript** - Type checking
+3. 🧪 **Unit Tests** - 97 unit tests
+4. 🎭 **E2E Tests** - Full workflow tests on real X.com
+
+**Total time:** ~2-3 minutes
+
+**To bypass** (emergency only): `git push --no-verify`
+
+The hook ensures all code pushed to remote is tested and working. Configure your test credentials in `.env` before your first push.
 
 ### Debugging
 
 - **Popup**: Right-click extension icon → Inspect popup
 - **Content Script**: Open DevTools on x.com (F12) → Check console
-- **Service Worker**: Go to `chrome://extensions/` → Click "service worker" link under extension
+- **Service Worker**: `chrome://extensions/` → Click "service worker" link
+- **Tests**: `npm run test:e2e:debug` for Playwright inspector
 
 ## Privacy
 

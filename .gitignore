@@ -143,3 +143,7 @@ tests/.auth/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# macOS files
+.DS_Store
+**/.DS_Store
