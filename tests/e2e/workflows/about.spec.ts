@@ -48,9 +48,9 @@ test.describe('About Tab', () => {
     const aboutTab = page.locator('[data-tab="about"]');
     await aboutTab.click();
 
-    // Verify "Made with ❤️ by neonwatty" with link to X profile
+    // Verify "Created by neonwatty" with link to X profile
     const creator = page.locator('.about-creator');
-    await expect(creator).toContainText('Made with ❤️ by');
+    await expect(creator).toContainText('Created by');
 
     const creatorLink = creator.locator('a[href="https://x.com/neonwatty"]');
     await expect(creatorLink).toBeVisible();

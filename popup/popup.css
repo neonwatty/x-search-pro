@@ -30,6 +30,15 @@ h1 {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .tabs {
