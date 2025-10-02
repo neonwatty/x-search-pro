@@ -16,7 +16,6 @@ test.describe('Workflow 1: Create & Save Search', () => {
     await popupPage.setMinFaves(100);
     await popupPage.setMinRetweets(50);
     await popupPage.checkHasVideos();
-    await popupPage.checkVerified();
     await popupPage.setRepliesFilter('exclude');
     await popupPage.selectLanguage('en');
 
@@ -25,7 +24,6 @@ test.describe('Workflow 1: Create & Save Search', () => {
     expect(preview).toContain('min_faves:100');
     expect(preview).toContain('min_retweets:50');
     expect(preview).toContain('filter:videos');
-    expect(preview).toContain('filter:verified');
     expect(preview).toContain('-filter:replies');
     expect(preview).toContain('lang:en');
 

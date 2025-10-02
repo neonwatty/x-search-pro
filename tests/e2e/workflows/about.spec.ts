@@ -17,7 +17,7 @@ test.describe('About Tab', () => {
     await expect(header).toHaveText('X Search Pro');
 
     const tagline = aboutContent.locator('.about-tagline');
-    await expect(tagline).toContainText('Advanced search made simple');
+    await expect(tagline).toContainText('Build your personal X/Twitter search library');
   });
 
   test('should display social links', async ({ page, extensionId }) => {

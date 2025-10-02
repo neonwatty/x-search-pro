@@ -9,39 +9,64 @@
 **Language**: English
 
 ## Short Description (132 characters max)
-Transform X/Twitter search with an intuitive UI for creating, saving & managing complex queries without memorizing cryptic syntax
+Build your personal X search library. Save, categorize, color-code & organize searches you use repeatedly. Never rebuild queries.
 
 ## Detailed Description (up to 16,000 characters)
 
-**Master X/Twitter Search Without the Complexity**
+**Build Your Personal X/Twitter Search Library**
 
-X Search Pro revolutionizes how you search on X (formerly Twitter) by replacing the platform's cryptic search operators with an intuitive, user-friendly interface. No more memorizing complex syntax or repeatedly typing the same searches – build, save, and apply powerful search queries with just a few clicks.
+X.com has advanced search (`x.com/search-advanced`), but it has no memory. Every time you need to monitor brand mentions, track competitors, or find viral content, you rebuild the same complex query from scratch.
 
-**🎯 Single Purpose**
-Our extension has one clear mission: to simplify and enhance X/Twitter's advanced search functionality. Every feature is designed to make searching faster, easier, and more powerful.
+X Search Pro solves this by letting you **save your searches** and build a personal library you can organize with categories, colors, and quick filters.
+
+**🎯 What X.com's Advanced Search Can't Do**
+
+| Feature | X.com Advanced Search | X Search Pro |
+|---------|----------------------|--------------|
+| Build complex queries | ✅ | ✅ |
+| **Save searches** | ❌ | ✅ Unlimited |
+| **Categorize** | ❌ | ✅ Custom categories |
+| **Color coding** | ❌ | ✅ Visual organization |
+| **Quick access** | ❌ Navigate to `/search-advanced` | ✅ Sidebar + popup |
+| **Templates** | ❌ | ✅ 10 pre-loaded |
+| **Filter your library** | ❌ | ✅ Instant search |
+| **Search counts** | ❌ | ✅ Per category |
+
+**Bottom line:** X.com's advanced search is a tool you use once. X Search Pro is a library you build over time.
 
 **Key Features:**
 
-📍 **Smart Search Builder**
-• Visual interface for creating complex searches
-• Real-time query preview as you build
-• No syntax memorization required
-• Support for all X/Twitter search operators
+💾 **Build Your Search Library**
 
-🔍 **Advanced Filters at Your Fingertips**
+📚 **Save**
+• Save unlimited custom searches with descriptive names
+• 10 pre-loaded templates to start from (Viral Content, Video Posts, Questions, etc.)
+• Never rebuild the same query twice
+
+🏷️ **Categorize**
+• Organize searches by topic, project, or purpose
+• Create custom categories (e.g., "Brand Monitoring", "Competitors", "Research")
+• Filter your library by category
+
+🎨 **Color Code**
+• Assign custom colors to each category
+• Visual scanning for instant recognition
+• Make your library intuitive and organized
+
+🗂️ **Organize**
+• Quick filter: search your saved queries by name, content, or category
+• Track search counts per category
+• Edit saved searches without starting over
+• Delete outdated searches
+
+🔍 **Advanced Search Builder**
 • Engagement metrics (minimum likes, retweets, replies)
 • Date ranges with quick presets (today, last week, last month)
 • User-specific searches (from user, to user, mentions)
 • Content types (images, videos, links, quotes)
 • Language filtering
 • Include/exclude replies and retweets
-
-💾 **Unlimited Saved Searches**
-• Save custom searches with descriptive names
-• Organize with color-coded categories
-• Track usage statistics for each search
-• Quick search within your saved items
-• Edit or delete anytime
+• Real-time query preview as you build
 
 📦 **10 Pre-loaded Templates to Get You Started**
 • Viral Content - Posts with 100+ likes and 50+ retweets
@@ -56,18 +81,28 @@ Our extension has one clear mission: to simplify and enhance X/Twitter's advance
 • Quote Tweets - Quote tweets with 5+ likes
 
 🎨 **Seamless Integration**
-• Popup Interface - Full search builder accessible via extension icon
-• Sidebar on X.com - Quick access floating sidebar on X/Twitter pages
+• Popup Interface - Full search builder and library accessible via extension icon
+• Sidebar on X.com - Quick access to your entire search library with a floating toggle button
 • One-Click Apply - Instantly apply any saved search
-• Cross-device Sync - Access your searches on all your Chrome browsers
+• Always Available - Access your library from anywhere on X.com
 
 **How It Works:**
 
-1. Click the X Search Pro icon in your Chrome toolbar
-2. Use the visual builder to create your search criteria
-3. See your query build in real-time
-4. Save it for later or apply immediately to X/Twitter
-5. Access saved searches anytime via popup or sidebar
+1. **Create your first search:**
+   - Click the X Search Pro icon
+   - Use the visual builder to set your criteria
+   - See your query build in real-time
+   - Save it with a descriptive name
+
+2. **Organize your library:**
+   - Create categories (e.g., "Brand Monitoring", "Competitors")
+   - Assign colors to categories
+   - Add more searches as your needs grow
+
+3. **Use your library:**
+   - Access from sidebar on X.com or extension popup
+   - Click any search to apply it instantly
+   - Never rebuild the same query twice
 
 **Privacy First Approach:**
 • All data stored locally on your device
@@ -85,9 +120,11 @@ Our extension has one clear mission: to simplify and enhance X/Twitter's advance
 
 **Why Choose X Search Pro?**
 
-Unlike X/Twitter's native advanced search, our extension remembers your searches, provides templates, and eliminates the need to memorize syntax. What once required documentation and memorization now happens with intuitive clicks and selections.
+X.com's advanced search exists, but you can't save it. Every time you need that same complex query for monitoring your brand, tracking competitors, or finding viral content, you rebuild it from scratch.
 
-Stop wrestling with search operators. Start finding what matters.
+X Search Pro gives X.com's advanced search what it's been missing: **memory**. Build your search library once, organize it with categories and colors, and access it with one click.
+
+Stop rebuilding. Start organizing.
 
 **Technical Details:**
 • Manifest V3 compliant
@@ -132,11 +169,11 @@ This focused approach ensures users know exactly what the extension does and mai
 
 **Version 0.1.0** (Current)
 - Initial release
-- Core search builder functionality
+- Search library management (save, categorize, color code, organize)
+- Advanced search builder with real-time preview
 - 10 pre-loaded templates
-- Save/manage unlimited searches
-- Sidebar integration
-- Cross-device sync via Chrome
+- Sidebar integration on X.com
+- Category search counts
 
 ## Planned Features
 

@@ -1,3 +1,6 @@
+# Locals
+*.zip
+
 # Logs
 logs
 *.log
@@ -143,6 +146,9 @@ tests/.auth/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Demo videos (large files)
+videos/
 
 # macOS files
 .DS_Store

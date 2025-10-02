@@ -1,8 +1,52 @@
 # X Search Pro
 
-A Chrome extension for building, saving, categorizing, and managing advanced X/Twitter search queries.
+**Build your personal X/Twitter search library.**
+
+A Chrome extension that saves, organizes, and color-codes your advanced X searches so you never have to rebuild them again.
+
+## Why X Search Pro?
+
+**The Problem:** X.com has advanced search (`x.com/search-advanced`), but it has no memory. Every time you need to monitor brand mentions, track competitors, or find viral content, you rebuild the same complex query from scratch.
+
+**The Solution:** X Search Pro lets you **save your searches** and build a personal library you can organize with categories, colors, and quick filters.
+
+| Feature | X.com Advanced Search | X Search Pro |
+|---------|----------------------|--------------|
+| Build complex queries | ✅ | ✅ |
+| **Save searches** | ❌ | ✅ Unlimited |
+| **Categorize** | ❌ | ✅ Custom categories |
+| **Color coding** | ❌ | ✅ Visual organization |
+| **Quick access** | ❌ Navigate to `/search-advanced` | ✅ Sidebar + popup |
+| **Templates** | ❌ | ✅ 10 pre-loaded |
+| **Filter your library** | ❌ | ✅ Instant search |
+| **Search counts** | ❌ | ✅ Per category |
+
+**Bottom line:** X.com's advanced search is a tool you use once. X Search Pro is a library you build over time.
 
 ## Features
+
+### 💾 Build Your Search Library
+
+#### 📚 **Save**
+- Save unlimited custom searches with descriptive names
+- 10 pre-loaded templates to start from (Viral Content, Video Posts, Questions, etc.)
+- Never rebuild the same query twice
+
+#### 🏷️ **Categorize**
+- Organize searches by topic, project, or purpose
+- Create custom categories (e.g., "Brand Monitoring", "Competitors", "Research")
+- Filter your library by category
+
+#### 🎨 **Color Code**
+- Assign custom colors to each category
+- Visual scanning for instant recognition
+- Make your library intuitive and organized
+
+#### 🗂️ **Organize**
+- Quick filter: search your saved queries by name, content, or category
+- Track search counts per category
+- Edit saved searches without starting over
+- Delete outdated searches
 
 ### 🔍 Advanced Search Builder
 - **Engagement Filters**: Set minimum likes, retweets, and replies
@@ -12,18 +56,11 @@ A Chrome extension for building, saving, categorizing, and managing advanced X/T
 - **Language Support**: Search in specific languages
 - **Real-time Preview**: See your generated query as you build it
 
-### 💾 Save & Manage Searches
-- Save unlimited custom searches with names and categories
-- 10 pre-loaded templates for common searches (Viral Content, Recent & Popular, Video Content, etc.)
-- Color-coded categories for easy organization
-- Usage analytics (track how often you use each search)
-- Quick filter to find saved searches
-
 ### 🎨 Seamless Integration
-- **Popup Interface**: Full-featured search builder accessible via extension icon
-- **Sidebar on X.com**: Quick access to saved searches with a floating toggle button
+- **Popup Interface**: Full-featured search builder and library accessible via extension icon
+- **Sidebar on X.com**: Quick access to your entire search library with a floating toggle button
 - **One-Click Apply**: Instantly apply any saved search to X/Twitter's search box
-- Cross-device sync via Chrome Storage Sync
+- **Always Available**: Access your library from anywhere on X.com
 
 ## Installation
 
@@ -51,30 +88,38 @@ A Chrome extension for building, saving, categorizing, and managing advanced X/T
 
 ## Usage
 
-### Creating a Search
+### Building Your Search Library
 
-1. Click the X Search Pro extension icon
-2. Switch to "Search Builder" tab
-3. Fill in your desired criteria:
-   - Enter keywords
-   - Set engagement thresholds (min likes, retweets, replies)
-   - Choose date ranges
-   - Select content filters
-4. Watch the query preview update in real-time
-5. Click "Apply Search" to search immediately, or "Save Search" to save for later
+1. **Create your first search:**
+   - Click the X Search Pro extension icon
+   - Switch to "Search Builder" tab
+   - Fill in your criteria (keywords, engagement, dates, content type)
+   - Watch the query preview update in real-time
+   - Click "Save Search" and give it a name
 
-### Using Saved Searches
+2. **Organize your library:**
+   - Create categories (e.g., "Brand Monitoring", "Competitors")
+   - Assign colors to categories for visual recognition
+   - Add more searches as your needs grow
+
+3. **Start with templates:**
+   - Switch to "Saved Searches" tab
+   - Explore 10 pre-loaded templates
+   - Use them as-is or customize and save your own versions
+
+### Using Your Search Library
+
+**From X.com Sidebar (Recommended):**
+1. Visit x.com or twitter.com
+2. Click the blue toggle button on the right edge of the screen
+3. Browse your organized library in the sidebar
+4. Click any search to apply it instantly
 
 **From Popup:**
 1. Click the extension icon
 2. Switch to "Saved Searches" tab
-3. Click any saved search to apply it
-
-**From X.com Sidebar:**
-1. Visit x.com or twitter.com
-2. Click the blue toggle button on the right edge of the screen
-3. Browse your saved searches in the sidebar
-4. Click any search to apply it instantly
+3. Filter by category or search by name
+4. Click any saved search to apply it
 
 ### Pre-loaded Templates
 
@@ -90,11 +135,13 @@ The extension comes with 10 ready-to-use templates:
 - **Trending Today** - Today's highly engaged posts
 - **Quote Tweets** - Quote tweets with 5+ likes
 
-### Managing Searches
+### Managing Your Library
 
-- **Edit**: Click the pencil icon on any saved search to modify it
-- **Delete**: Click the trash icon to remove a search
-- **Filter**: Use the search box in "Saved Searches" tab to filter by name, query, or category
+- **Edit**: Click the pencil icon on any saved search to modify criteria without rebuilding
+- **Delete**: Click the trash icon to remove outdated searches
+- **Filter**: Use the search box to instantly find searches by name, query, or category
+- **Categorize**: Assign searches to categories and apply custom colors
+- **View Counts**: See how many searches are in each category
 
 ## Search Operators Supported
 
@@ -145,7 +192,7 @@ x-search-pro/
 - **Manifest Version**: V3 (latest Chrome extension standard)
 - **Permissions**: `storage`, `activeTab`
 - **Host Permissions**: `x.com`, `twitter.com`
-- **Storage**: Chrome Storage Sync API (syncs across devices)
+- **Storage**: Chrome Storage API (local storage)
 - **Framework**: Vanilla JavaScript (no dependencies)
 
 ## Development
@@ -204,10 +251,10 @@ The hook ensures all code pushed to remote is tested and working. Configure your
 
 ## Privacy
 
-- All data stored locally via Chrome Storage Sync
+- All data stored locally in your browser
 - No external servers or analytics
 - No data collection or tracking
-- Searches sync across your Chrome browsers when signed in
+- Your search library never leaves your device
 
 ## Support
 
@@ -219,4 +266,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-**Enjoy powerful X/Twitter searches made simple!** 🚀
+**Stop rebuilding. Start organizing. Build your X search library today.** 🚀

@@ -11,7 +11,7 @@ export class PopupPage {
     await this.page.waitForLoadState('domcontentloaded');
   }
 
-  async switchTab(tabName: 'builder' | 'saved') {
+  async switchTab(tabName: 'builder' | 'saved' | 'categories' | 'settings' | 'about') {
     const tab = this.page.locator(`.tab[data-tab="${tabName}"]`);
     await tab.click();
     await expect(tab).toHaveClass(/active/);
@@ -80,10 +80,6 @@ export class PopupPage {
 
   async setMentionsUser(username: string) {
     await this.page.fill('#mentionsUser', username);
-  }
-
-  async checkVerified() {
-    await this.page.check('#verified');
   }
 
   async checkBlueVerified() {
@@ -209,5 +205,36 @@ export class PopupPage {
 
   async isInEditMode(): Promise<boolean> {
     return await this.isEditingBannerVisible();
+  }
+
+  async saveSearch(name: string, category?: string) {
+    // Select category if provided
+    if (category) {
+      await this.page.selectOption('#searchCategory', category);
+      await this.page.waitForTimeout(200);
+    }
+
+    // Set up dialog handler for the prompt
+    this.page.once('dialog', async dialog => {
+      await dialog.accept(name);
+    });
+
+    // Click save button
+    await this.page.click('#saveBtn');
+
+    // Wait for save to complete
+    await this.page.waitForTimeout(500);
+  }
+
+  async createCategory(name: string, color?: string) {
+    await this.switchTab('categories');
+    await this.page.fill('#newCategoryName', name);
+
+    if (color) {
+      await this.page.fill('#newCategoryColor', color);
+    }
+
+    await this.page.click('#addCategoryBtn');
+    await this.page.waitForTimeout(500);
   }
 }
