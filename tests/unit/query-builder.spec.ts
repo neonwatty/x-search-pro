@@ -59,15 +59,14 @@ test.describe('QueryBuilder Unit Tests', () => {
     expect(query).toBe('from:elonmusk to:openai @anthropic');
   });
 
-  test('should build verified and follows filters', () => {
+  test('should build blue verified and follows filters', () => {
     const builder = new QueryBuilder();
     const query = builder
-      .setVerified(true)
       .setBlueVerified(true)
       .setFollows(true)
       .build();
 
-    expect(query).toBe('filter:verified filter:blue_verified filter:follows');
+    expect(query).toBe('filter:blue_verified filter:follows');
   });
 
   test('should build content type filters', () => {
@@ -140,7 +139,6 @@ test.describe('QueryBuilder Unit Tests', () => {
       .setMinFaves(100)
       .setMinRetweets(50)
       .setSinceDate('2025-01-01')
-      .setVerified(true)
       .setHasVideos(true)
       .setIncludeReplies(false)
       .setLang('en')
@@ -150,7 +148,6 @@ test.describe('QueryBuilder Unit Tests', () => {
     expect(query).toContain('min_faves:100');
     expect(query).toContain('min_retweets:50');
     expect(query).toContain('since:2025-01-01');
-    expect(query).toContain('filter:verified');
     expect(query).toContain('filter:videos');
     expect(query).toContain('-filter:replies');
     expect(query).toContain('lang:en');
@@ -161,7 +158,7 @@ test.describe('QueryBuilder Unit Tests', () => {
     builder
       .setKeywords('test')
       .setMinFaves(50)
-      .setVerified(true);
+      .setBlueVerified(true);
 
     let query = builder.build();
     expect(query).not.toBe('');
@@ -177,7 +174,6 @@ test.describe('QueryBuilder Unit Tests', () => {
       keywords: 'test query',
       minFaves: 25,
       hasVideos: true,
-      verified: true,
     };
 
     const query = builder.fromFilters(filters).build();
@@ -185,7 +181,6 @@ test.describe('QueryBuilder Unit Tests', () => {
     expect(query).toContain('"test query"');
     expect(query).toContain('min_faves:25');
     expect(query).toContain('filter:videos');
-    expect(query).toContain('filter:verified');
   });
 
   test('should handle empty query', () => {

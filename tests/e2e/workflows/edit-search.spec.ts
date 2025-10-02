@@ -105,10 +105,19 @@ test.describe('Workflow: Edit Saved Search', () => {
     await popupPage.setMinFaves(100);
     await popupPage.checkHasImages();
 
-    // Handle the alert for successful update
+    // Handle dialogs in sequence: name prompt, then success alert
+    let dialogCount = 0;
     popupPage.page.on('dialog', async dialog => {
-      expect(dialog.message()).toContain('Search updated successfully');
-      await dialog.accept();
+      dialogCount++;
+      if (dialogCount === 1) {
+        // First dialog: name prompt
+        expect(dialog.message()).toContain('Enter a name for this search');
+        await dialog.accept('Test Search'); // Keep existing name
+      } else if (dialogCount === 2) {
+        // Second dialog: success alert
+        expect(dialog.message()).toContain('Search updated successfully');
+        await dialog.accept();
+      }
     });
 
     // Click Update Search button
@@ -135,6 +144,50 @@ test.describe('Workflow: Edit Saved Search', () => {
     expect(queryText).toContain('updated test');
     expect(queryText).toContain('min_faves:100');
     expect(queryText).toContain('filter:images');
+
+    await popupPage.page.close();
+  });
+
+  test('should update search name and reflect in saved list', async ({ context, extensionId }) => {
+    const popupPage = new PopupPage(await context.newPage(), extensionId);
+    await popupPage.open();
+    await popupPage.page.waitForTimeout(1000);
+
+    // Click edit button
+    await popupPage.editSavedSearch('Test Search');
+    await popupPage.page.waitForTimeout(500);
+
+    // Handle dialogs: name prompt with NEW name, then success alert
+    let dialogCount = 0;
+    popupPage.page.on('dialog', async dialog => {
+      dialogCount++;
+      if (dialogCount === 1) {
+        // First dialog: name prompt - change the name
+        expect(dialog.message()).toContain('Enter a name for this search');
+        await dialog.accept('Updated Test Search');
+      } else if (dialogCount === 2) {
+        // Second dialog: success alert
+        expect(dialog.message()).toContain('Search updated successfully');
+        await dialog.accept();
+      }
+    });
+
+    // Click Update Search button
+    await popupPage.clickSave();
+    await popupPage.page.waitForTimeout(1000);
+
+    // Switch to saved tab to verify name change
+    await popupPage.switchTab('saved');
+    await popupPage.page.waitForTimeout(500);
+
+    // Verify new name appears
+    const updatedTitle = popupPage.page.locator('.saved-item-title').filter({ hasText: 'Updated Test Search' });
+    await expect(updatedTitle).toBeVisible();
+
+    // Verify old name is gone (check for exact match by looking at all titles)
+    const allTitles = await popupPage.page.locator('.saved-item-title').allTextContents();
+    expect(allTitles).toContain('Updated Test Search');
+    expect(allTitles).not.toContain('Test Search');
 
     await popupPage.page.close();
   });
@@ -266,9 +319,15 @@ test.describe('Workflow: Edit Saved Search', () => {
     // Modify the search
     await popupPage.fillKeywords('modified content');
 
-    // Handle the alert for successful update
+    // Handle dialogs in sequence: name prompt, then success alert
+    let dialogCount = 0;
     popupPage.page.on('dialog', async dialog => {
-      await dialog.accept();
+      dialogCount++;
+      if (dialogCount === 1) {
+        await dialog.accept('Test Search'); // Keep existing name
+      } else if (dialogCount === 2) {
+        await dialog.accept(); // Success alert
+      }
     });
 
     // Click Update Search button
@@ -296,15 +355,18 @@ test.describe('Workflow: Edit Saved Search', () => {
     // Modify and update the search
     await popupPage.fillKeywords('updated');
 
-    // Handle the alert for successful update
+    // Handle dialogs for update (name prompt, then success alert)
     let dialogCount = 0;
     popupPage.page.on('dialog', async dialog => {
       dialogCount++;
       if (dialogCount === 1) {
-        // First dialog: update confirmation
+        // First dialog: name prompt for update
+        await dialog.accept('Test Search');
+      } else if (dialogCount === 2) {
+        // Second dialog: update success
         await dialog.accept();
       } else {
-        // Second dialog: name for new search
+        // Third dialog: name for new search
         await dialog.accept('New Search');
       }
     });

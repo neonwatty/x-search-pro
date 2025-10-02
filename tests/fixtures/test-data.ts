@@ -2,12 +2,11 @@ export const mockSearches = [
   {
     id: 'search_1234567890_abc123',
     name: 'Viral Content',
-    query: 'min_faves:1000 min_retweets:500 filter:verified',
+    query: 'min_faves:1000 min_retweets:500',
     filters: {
       keywords: '',
       minFaves: 1000,
-      minRetweets: 500,
-      verified: true
+      minRetweets: 500
     },
     category: 'Popular',
     color: '#ef4444',
@@ -33,11 +32,10 @@ export const mockSearches = [
   {
     id: 'search_1122334455_ghi789',
     name: 'Video Posts',
-    query: 'filter:videos filter:verified',
+    query: 'filter:videos',
     filters: {
       keywords: '',
-      hasVideos: true,
-      verified: true
+      hasVideos: true
     },
     category: 'Media',
     color: '#8b5cf6',

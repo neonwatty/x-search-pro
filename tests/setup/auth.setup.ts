@@ -8,22 +8,30 @@ const authFile = 'tests/.auth/user.json';
 setup('authenticate with X.com', async ({ page }) => {
   console.log('Starting X.com authentication...');
 
+  if (!process.env.TEST_X_USERNAME || !process.env.TEST_X_PASSWORD) {
+    throw new Error('TEST_X_USERNAME and TEST_X_PASSWORD must be set in .env file');
+  }
+
   await page.goto('https://x.com/login');
 
-  await page.fill('input[name="text"]', process.env.TEST_X_USERNAME!);
+  // Wait for and fill username
+  const usernameInput = page.locator('input[name="text"]');
+  await expect(usernameInput).toBeVisible({ timeout: 20000 });
+  await usernameInput.fill(process.env.TEST_X_USERNAME!);
   console.log('✓ Entered username');
 
+  // Click Next and wait for navigation
   await page.click('button:has-text("Next")');
-  await page.waitForTimeout(2000);
 
+  // Wait for either password field or error message
   const passwordInput = page.locator('input[name="password"]');
-  await expect(passwordInput).toBeVisible({ timeout: 10000 });
+  await expect(passwordInput).toBeVisible({ timeout: 30000 });
   await passwordInput.fill(process.env.TEST_X_PASSWORD!);
   console.log('✓ Entered password');
 
   await page.click('button[data-testid="LoginForm_Login_Button"]');
 
-  await page.waitForURL('**/home', { timeout: 30000 });
+  await page.waitForURL('**/home', { timeout: 60000 });
   console.log('✓ Logged in successfully');
 
   // Try multiple selectors to verify login state, with longer timeouts

@@ -123,7 +123,6 @@ function getFormValues() {
     fromUser: document.getElementById('fromUser').value || null,
     toUser: document.getElementById('toUser').value || null,
     mentionsUser: document.getElementById('mentionsUser').value || null,
-    verified: document.getElementById('verified').checked,
     blueVerified: document.getElementById('blueVerified').checked,
     follows: document.getElementById('follows').checked,
     hasMedia: document.getElementById('hasMedia').checked,
@@ -227,7 +226,11 @@ async function saveSearch() {
       return;
     }
 
+    const name = prompt('Enter a name for this search:', existingSearch.name);
+    if (!name) return;
+
     await StorageManager.updateSearch(editingSearchId, {
+      name: name,
       query: query,
       filters: filters,
       category: selectedCategory,
@@ -402,7 +405,6 @@ async function editSearch(id) {
   document.getElementById('fromUser').value = filters.fromUser || '';
   document.getElementById('toUser').value = filters.toUser || '';
   document.getElementById('mentionsUser').value = filters.mentionsUser || '';
-  document.getElementById('verified').checked = filters.verified || false;
   document.getElementById('blueVerified').checked = filters.blueVerified || false;
   document.getElementById('follows').checked = filters.follows || false;
   document.getElementById('hasMedia').checked = filters.hasMedia || false;
