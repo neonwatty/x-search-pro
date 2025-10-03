@@ -40,9 +40,13 @@ export class PopupPage {
   async setDateRange(since?: string, until?: string) {
     if (since !== undefined) {
       await this.page.fill('#sinceDate', since);
+      // Trigger input event to ensure listeners fire
+      await this.page.locator('#sinceDate').dispatchEvent('input');
     }
     if (until !== undefined) {
       await this.page.fill('#untilDate', until);
+      // Trigger input event to ensure listeners fire
+      await this.page.locator('#untilDate').dispatchEvent('input');
     }
   }
 
@@ -236,5 +240,48 @@ export class PopupPage {
 
     await this.page.click('#addCategoryBtn');
     await this.page.waitForTimeout(500);
+  }
+
+  // Sliding Window helper methods
+  async selectSlidingWindow(option: '' | '1d' | '1w' | '1m') {
+    await this.page.selectOption('#slidingWindow', option);
+    await this.page.waitForTimeout(200);
+  }
+
+  async getSlidingWindowValue(): Promise<string> {
+    return await this.page.locator('#slidingWindow').inputValue();
+  }
+
+  async isSlidingWindowInfoVisible(): Promise<boolean> {
+    const info = this.page.locator('#slidingWindowInfo');
+    return await info.isVisible();
+  }
+
+  async areDateInputsDisabled(): Promise<boolean> {
+    const sinceReadOnly = await this.page.locator('#sinceDate').evaluate(el => (el as HTMLInputElement).readOnly);
+    const untilReadOnly = await this.page.locator('#untilDate').evaluate(el => (el as HTMLInputElement).readOnly);
+    return sinceReadOnly && untilReadOnly;
+  }
+
+  async areDateInputsEnabled(): Promise<boolean> {
+    const disabled = await this.areDateInputsDisabled();
+    return !disabled;
+  }
+
+  async getSlidingWindowBadgeText(searchName: string): Promise<string | null> {
+    await this.switchTab('saved');
+    const item = this.page.locator(`.saved-item`).filter({ hasText: searchName }).first();
+    const badge = item.locator('.sliding-window-badge');
+
+    if (await badge.count() === 0) {
+      return null;
+    }
+
+    return await badge.textContent();
+  }
+
+  async hasSlidingWindowBadge(searchName: string): Promise<boolean> {
+    const badgeText = await this.getSlidingWindowBadgeText(searchName);
+    return badgeText !== null;
   }
 }

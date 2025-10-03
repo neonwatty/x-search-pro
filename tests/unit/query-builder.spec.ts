@@ -198,4 +198,120 @@ test.describe('QueryBuilder Unit Tests', () => {
 
     expect(query).toBe('discussion min_replies:100');
   });
+
+  test('should calculate sliding window dates for 1 day', () => {
+    const builder = new QueryBuilder();
+    builder.fromFilters({ slidingWindow: '1d' });
+
+    const { sinceDate, untilDate } = builder.calculateSlidingDates();
+
+    // Until date should be today
+    const today = new Date().toISOString().split('T')[0];
+    expect(untilDate).toBe(today);
+
+    // Since date should be 1 day ago
+    const oneDayAgo = new Date();
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    const expectedSince = oneDayAgo.toISOString().split('T')[0];
+    expect(sinceDate).toBe(expectedSince);
+  });
+
+  test('should calculate sliding window dates for 1 week', () => {
+    const builder = new QueryBuilder();
+    builder.fromFilters({ slidingWindow: '1w' });
+
+    const { sinceDate, untilDate } = builder.calculateSlidingDates();
+
+    // Until date should be today
+    const today = new Date().toISOString().split('T')[0];
+    expect(untilDate).toBe(today);
+
+    // Since date should be 7 days ago
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const expectedSince = oneWeekAgo.toISOString().split('T')[0];
+    expect(sinceDate).toBe(expectedSince);
+  });
+
+  test('should calculate sliding window dates for 1 month', () => {
+    const builder = new QueryBuilder();
+    builder.fromFilters({ slidingWindow: '1m' });
+
+    const { sinceDate, untilDate } = builder.calculateSlidingDates();
+
+    // Until date should be today
+    const today = new Date().toISOString().split('T')[0];
+    expect(untilDate).toBe(today);
+
+    // Since date should be 1 month ago
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const expectedSince = oneMonthAgo.toISOString().split('T')[0];
+    expect(sinceDate).toBe(expectedSince);
+  });
+
+  test('should use sliding window dates in build when slidingWindow is set', () => {
+    const builder = new QueryBuilder();
+    builder.fromFilters({
+      keywords: 'test',
+      slidingWindow: '1w',
+      sinceDate: '2020-01-01', // Should be ignored
+      untilDate: '2020-12-31'  // Should be ignored
+    });
+
+    const query = builder.build();
+
+    // Should use calculated dates, not fixed dates
+    expect(query).not.toContain('2020');
+    expect(query).toContain('since:');
+    expect(query).toContain('until:');
+
+    // Verify it contains today's date
+    const today = new Date().toISOString().split('T')[0];
+    expect(query).toContain(today);
+  });
+
+  test('should fall back to fixed dates when slidingWindow is null', () => {
+    const builder = new QueryBuilder();
+    builder.fromFilters({
+      keywords: 'test',
+      slidingWindow: null,
+      sinceDate: '2024-01-01',
+      untilDate: '2024-12-31'
+    });
+
+    const query = builder.build();
+
+    expect(query).toContain('since:2024-01-01');
+    expect(query).toContain('until:2024-12-31');
+  });
+
+  test('should reset slidingWindow with reset method', () => {
+    const builder = new QueryBuilder();
+    builder.fromFilters({ slidingWindow: '1w', keywords: 'test' });
+
+    let query = builder.build();
+    expect(query).toContain('since:');
+
+    builder.reset();
+    query = builder.build();
+    expect(query).toBe('');
+  });
+
+  test('should handle fromFilters with slidingWindow property', () => {
+    const builder = new QueryBuilder();
+    const filters = {
+      keywords: 'trending',
+      minFaves: 100,
+      slidingWindow: '1d'
+    };
+
+    builder.fromFilters(filters);
+    const query = builder.build();
+
+    expect(query).toContain('trending');
+    expect(query).toContain('min_faves:100');
+    expect(query).toContain('since:');
+    expect(query).toContain('until:');
+  });
 });

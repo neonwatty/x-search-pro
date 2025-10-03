@@ -35,7 +35,7 @@
   right: 320px;
 }
 
-.sidebar-panel.collapsed ~ .sidebar-toggle.active {
+.x-search-tabs-sidebar.collapsed .sidebar-toggle.active {
   right: 120px;
 }
 
@@ -85,6 +85,16 @@
   gap: 8px;
 }
 
+.sidebar-logo {
+  display: none;
+}
+
+.sidebar-panel.collapsed .sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .sidebar-header h3 {
   margin: 0;
   font-size: 18px;
@@ -92,9 +102,7 @@
 }
 
 .sidebar-panel.collapsed .sidebar-header h3 {
-  font-size: 12px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
+  display: none;
 }
 
 .sidebar-header-actions {
@@ -192,6 +200,31 @@
   color: #e7e9ea;
 }
 
+.sidebar-item-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sidebar-sliding-window-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #1d4ed8;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #e7e9ea;
+  font-weight: 500;
+}
+
+.sidebar-badge-full {
+  font-size: 11px;
+}
+
+.sidebar-badge-short {
+  font-size: 10px;
+}
+
 .sidebar-item-category {
   font-size: 11px;
   padding: 2px 8px;
@@ -211,12 +244,18 @@
 
 .sidebar-item-name-only {
   display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.sidebar-item-collapsed-name {
   font-size: 12px;
   font-weight: 600;
   color: #e7e9ea;
-  writing-mode: horizontal-tb;
   text-align: center;
-  padding: 4px 0;
+  writing-mode: horizontal-tb;
 }
 
 .sidebar-panel.collapsed .sidebar-item-header,
@@ -225,7 +264,7 @@
 }
 
 .sidebar-panel.collapsed .sidebar-item-name-only {
-  display: block;
+  display: flex;
 }
 
 .sidebar-panel.collapsed .sidebar-search-item {
@@ -283,9 +322,20 @@
   text-decoration: underline;
 }
 
+.footer-collapsed {
+  display: none;
+}
+
+.sidebar-panel.collapsed .footer-full {
+  display: none;
+}
+
+.sidebar-panel.collapsed .footer-collapsed {
+  display: inline;
+}
+
 .sidebar-panel.collapsed .sidebar-footer {
-  font-size: 9px;
+  font-size: 10px;
   padding: 8px 4px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
+  writing-mode: horizontal-tb;
 }
