@@ -186,8 +186,11 @@ test.describe('Workflow: Edit Saved Search', () => {
 
     // Verify old name is gone (check for exact match by looking at all titles)
     const allTitles = await popupPage.page.locator('.saved-item-title').allTextContents();
-    expect(allTitles).toContain('Updated Test Search');
-    expect(allTitles).not.toContain('Test Search');
+    // Strip drag handle icon (⋮⋮) from titles for accurate comparison
+    const trimmedTitles = allTitles.map(t => t.replace(/⋮⋮\s*/, '').trim());
+
+    expect(trimmedTitles).toContain('Updated Test Search');
+    expect(trimmedTitles).not.toContain('Test Search');
 
     await popupPage.page.close();
   });

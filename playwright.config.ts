@@ -41,14 +41,14 @@ export default defineConfig({
     {
       name: 'e2e',
       testMatch: /tests\/e2e\/.*\.spec\.ts$/,
-      testIgnore: ['**/apply-saved-search.spec.ts', '**/auth-verification.spec.ts'],
+      testIgnore: ['**/apply-saved-search.spec.ts', '**/auth-verification.spec.ts', '**/drag-and-drop-reorder.spec.ts'],
       use: {
         ...devices['Desktop Chrome'],
       },
     },
     {
       name: 'e2e-with-auth',
-      testMatch: /tests\/e2e\/(workflows\/apply-saved-search|workflows\/auth-verification).*\.spec\.ts$/,
+      testMatch: /tests\/e2e\/(workflows\/apply-saved-search|workflows\/auth-verification|workflows\/drag-and-drop-reorder).*\.spec\.ts$/,
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],

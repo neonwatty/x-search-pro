@@ -1,16 +1,27 @@
 import { test as setup, expect } from '@playwright/test';
 import dotenv from 'dotenv';
+import * as fs from 'fs';
 
 dotenv.config();
 
 const authFile = 'tests/.auth/user.json';
 
 setup('authenticate with X.com', async ({ page }) => {
-  console.log('Starting X.com authentication...');
+  // Skip if auth file already exists or credentials not provided
+  if (fs.existsSync(authFile)) {
+    console.log('✓ Auth file already exists, skipping authentication');
+    setup.skip();
+    return;
+  }
 
   if (!process.env.TEST_X_USERNAME || !process.env.TEST_X_PASSWORD) {
-    throw new Error('TEST_X_USERNAME and TEST_X_PASSWORD must be set in .env file');
+    console.log('⚠ TEST_X_USERNAME and TEST_X_PASSWORD not set in .env file');
+    console.log('⚠ Skipping authentication - will use existing auth file if available');
+    setup.skip();
+    return;
   }
+
+  console.log('Starting X.com authentication...');
 
   await page.goto('https://x.com/login');
 

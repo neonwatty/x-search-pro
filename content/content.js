@@ -247,9 +247,12 @@ async function loadSidebarSearches() {
     }
 
     return `
-      <div class="sidebar-search-item" data-id="${search.id}" style="border-left-color: ${search.color}">
+      <div class="sidebar-search-item" data-id="${search.id}" draggable="true" style="border-left-color: ${search.color}">
         <div class="sidebar-item-header">
-          <span class="sidebar-item-name">${search.name}</span>
+          <span class="sidebar-item-name">
+            <span class="sidebar-drag-handle" title="Drag to reorder">⋮⋮</span>
+            ${search.name}
+          </span>
           <div class="sidebar-item-badges">
             ${slidingWindowBadgeFull}
             <span class="sidebar-item-category">${search.category}</span>
@@ -258,6 +261,7 @@ async function loadSidebarSearches() {
         <div class="sidebar-item-query">${displayQuery}</div>
         <div class="sidebar-item-name-only">
           ${slidingWindowBadgeShort}
+          <span class="sidebar-drag-handle-collapsed" title="Drag to reorder">⋮⋮</span>
           <span class="sidebar-item-collapsed-name">${search.name}</span>
         </div>
       </div>
@@ -265,7 +269,12 @@ async function loadSidebarSearches() {
   }).join('');
 
   listContainer.querySelectorAll('.sidebar-search-item').forEach(item => {
-    item.addEventListener('click', async () => {
+    item.addEventListener('click', async (e) => {
+      // Don't trigger click on drag handle
+      if (e.target.closest('.sidebar-drag-handle') || e.target.closest('.sidebar-drag-handle-collapsed')) {
+        return;
+      }
+
       const id = item.dataset.id;
       const search = searches.find(s => s.id === id);
       if (search) {
@@ -285,6 +294,9 @@ async function loadSidebarSearches() {
       }
     });
   });
+
+  // Enable drag and drop
+  initializeSidebarDragAndDrop();
 }
 
 function filterSidebarSearches() {
@@ -302,6 +314,88 @@ function filterSidebarSearches() {
       item.style.display = 'none';
     }
   });
+}
+
+// Drag and Drop functionality for Sidebar
+let sidebarDraggedElement = null;
+
+function initializeSidebarDragAndDrop() {
+  const listContainer = document.getElementById('sidebarSearchList');
+  if (!listContainer) return;
+
+  const items = listContainer.querySelectorAll('.sidebar-search-item');
+
+  items.forEach(item => {
+    item.addEventListener('dragstart', handleSidebarDragStart);
+    item.addEventListener('dragend', handleSidebarDragEnd);
+    item.addEventListener('dragover', handleSidebarDragOver);
+    item.addEventListener('drop', handleSidebarDrop);
+    item.addEventListener('dragenter', handleSidebarDragEnter);
+    item.addEventListener('dragleave', handleSidebarDragLeave);
+  });
+}
+
+function handleSidebarDragStart(e) {
+  const element = e.currentTarget;
+  sidebarDraggedElement = element;
+  element.classList.add('sidebar-dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', element.innerHTML);
+}
+
+function handleSidebarDragEnd(_e) {
+  const element = _e.currentTarget;
+  element.classList.remove('sidebar-dragging');
+  document.querySelectorAll('.sidebar-search-item').forEach(item => {
+    item.classList.remove('sidebar-drag-over');
+  });
+}
+
+function handleSidebarDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleSidebarDragEnter(_e) {
+  const element = _e.currentTarget;
+  if (element !== sidebarDraggedElement) {
+    element.classList.add('sidebar-drag-over');
+  }
+}
+
+function handleSidebarDragLeave(_e) {
+  const element = _e.currentTarget;
+  element.classList.remove('sidebar-drag-over');
+}
+
+async function handleSidebarDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+
+  const element = e.currentTarget;
+  if (sidebarDraggedElement !== element) {
+    const listContainer = document.getElementById('sidebarSearchList');
+    const allItems = Array.from(listContainer.querySelectorAll('.sidebar-search-item'));
+    const draggedIndex = allItems.indexOf(sidebarDraggedElement);
+    const targetIndex = allItems.indexOf(element);
+
+    if (draggedIndex < targetIndex) {
+      element.parentNode.insertBefore(sidebarDraggedElement, element.nextSibling);
+    } else {
+      element.parentNode.insertBefore(sidebarDraggedElement, element);
+    }
+
+    // Get new order and save to storage
+    const newOrder = Array.from(listContainer.querySelectorAll('.sidebar-search-item')).map(item => item.dataset.id);
+    await StorageManager.reorderSearches(newOrder);
+  }
+
+  element.classList.remove('sidebar-drag-over');
+  return false;
 }
 
 // Listen for storage changes to update sidebar in real-time

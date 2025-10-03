@@ -71,7 +71,7 @@ function initializeDefaultDates() {
 function initializeDatePresets() {
   const presetButtons = document.querySelectorAll('.preset-btn');
   presetButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', (_e) => {
       const slidingWindowSelect = document.getElementById('slidingWindow');
 
       // Clear sliding window first if it's set
@@ -394,7 +394,7 @@ async function loadSavedSearches() {
 
   container.querySelectorAll('.saved-item').forEach(item => {
     item.addEventListener('click', (e) => {
-      if (!e.target.closest('.icon-btn')) {
+      if (!e.target.closest('.icon-btn') && !e.target.closest('.drag-handle')) {
         applySavedSearch(item.dataset.id);
       }
     });
@@ -413,6 +413,9 @@ async function loadSavedSearches() {
       deleteSearch(btn.closest('.saved-item').dataset.id);
     });
   });
+
+  // Enable drag and drop
+  initializePopupDragAndDrop();
 }
 
 function createSavedSearchItem(search) {
@@ -438,9 +441,12 @@ function createSavedSearchItem(search) {
   }
 
   return `
-    <div class="saved-item" data-id="${search.id}" style="border-left-color: ${search.color}">
+    <div class="saved-item" data-id="${search.id}" draggable="true" style="border-left-color: ${search.color}">
       <div class="saved-item-header">
-        <div class="saved-item-title">${search.name}</div>
+        <div class="saved-item-title">
+          <span class="drag-handle" title="Drag to reorder">⋮⋮</span>
+          ${search.name}
+        </div>
         <div class="saved-item-actions">
           <button class="icon-btn edit-btn" title="Edit">✏️</button>
           <button class="icon-btn delete-btn" title="Delete">🗑️</button>
@@ -796,6 +802,86 @@ async function populateCategoryDropdown() {
   if (categories.includes('Uncategorized')) {
     categorySelect.value = 'Uncategorized';
   }
+}
+
+// Drag and Drop functionality for Popup
+let draggedElement = null;
+
+function initializePopupDragAndDrop() {
+  const container = document.getElementById('savedSearches');
+  const items = container.querySelectorAll('.saved-item');
+
+  items.forEach(item => {
+    item.addEventListener('dragstart', handlePopupDragStart);
+    item.addEventListener('dragend', handlePopupDragEnd);
+    item.addEventListener('dragover', handlePopupDragOver);
+    item.addEventListener('drop', handlePopupDrop);
+    item.addEventListener('dragenter', handlePopupDragEnter);
+    item.addEventListener('dragleave', handlePopupDragLeave);
+  });
+}
+
+function handlePopupDragStart(e) {
+  const element = e.currentTarget;
+  draggedElement = element;
+  element.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', element.innerHTML);
+}
+
+function handlePopupDragEnd(_e) {
+  const element = _e.currentTarget;
+  element.classList.remove('dragging');
+  document.querySelectorAll('.saved-item').forEach(item => {
+    item.classList.remove('drag-over');
+  });
+}
+
+function handlePopupDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handlePopupDragEnter(_e) {
+  const element = _e.currentTarget;
+  if (element !== draggedElement) {
+    element.classList.add('drag-over');
+  }
+}
+
+function handlePopupDragLeave(_e) {
+  const element = _e.currentTarget;
+  element.classList.remove('drag-over');
+}
+
+async function handlePopupDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+
+  const element = e.currentTarget;
+  if (draggedElement !== element) {
+    const container = document.getElementById('savedSearches');
+    const allItems = Array.from(container.querySelectorAll('.saved-item'));
+    const draggedIndex = allItems.indexOf(draggedElement);
+    const targetIndex = allItems.indexOf(element);
+
+    if (draggedIndex < targetIndex) {
+      element.parentNode.insertBefore(draggedElement, element.nextSibling);
+    } else {
+      element.parentNode.insertBefore(draggedElement, element);
+    }
+
+    // Get new order and save to storage
+    const newOrder = Array.from(container.querySelectorAll('.saved-item')).map(item => item.dataset.id);
+    await StorageManager.reorderSearches(newOrder);
+  }
+
+  element.classList.remove('drag-over');
+  return false;
 }
 
 async function loadSettings() {
