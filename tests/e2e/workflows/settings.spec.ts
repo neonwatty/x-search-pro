@@ -72,7 +72,7 @@ test.describe('Settings Management', () => {
     await expect(toggleSwitch).toBeVisible();
 
     const toggleText = page.locator('.toggle-text strong');
-    await expect(toggleText).toHaveText('Show sidebar by default');
+    await expect(toggleText).toHaveText('Show Sidebar');
 
     const toggleDescription = page.locator('.toggle-text small');
     await expect(toggleDescription).toContainText('Display saved searches sidebar');

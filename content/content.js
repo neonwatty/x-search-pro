@@ -15,9 +15,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('[CONTENT SCRIPT] Search applied, sending success response');
     sendResponse({ success: true });
   } else if (request.action === 'updateSidebarVisibility') {
-    sidebarVisible = request.visible;
-    updateSidebarVisibility();
-    sendResponse({ success: true });
+    if (request.visible) {
+      // Initialize sidebar (will check login status internally)
+      initializeSidebar().then(() => {
+        sendResponse({ success: true });
+      });
+    } else {
+      // Remove sidebar from DOM
+      removeSidebar();
+      sendResponse({ success: true });
+    }
   }
   return true;
 });
@@ -81,9 +88,12 @@ function applySearchToPage(query) {
 async function initializeSidebar() {
   if (sidebarElement) return;
 
-  const settings = await chrome.storage.sync.get(['sidebarVisible', 'sidebarCollapsed']);
-  sidebarVisible = settings.sidebarVisible !== false;
-  sidebarCollapsed = settings.sidebarCollapsed || false;
+  // Get sidebar settings from storage
+  const storageData = await chrome.storage.sync.get(['sidebarVisible', 'sidebarCollapsed']);
+
+  // Always initialize sidebar, but respect visibility setting
+  sidebarVisible = storageData.sidebarVisible !== false;
+  sidebarCollapsed = storageData.sidebarCollapsed || false;
 
   sidebarElement = document.createElement('div');
   sidebarElement.id = 'x-search-tabs-sidebar';
@@ -158,9 +168,19 @@ async function initializeSidebar() {
   loadSidebarSearches();
 }
 
+function removeSidebar() {
+  if (sidebarElement && sidebarElement.parentNode) {
+    console.log('[SIDEBAR] Removing sidebar from DOM');
+    sidebarElement.parentNode.removeChild(sidebarElement);
+    sidebarElement = null;
+  }
+}
+
 async function toggleSidebar() {
   sidebarVisible = !sidebarVisible;
   await chrome.storage.sync.set({ sidebarVisible });
+
+  // Just hide/show with CSS, don't remove from DOM
   updateSidebarVisibility();
   if (sidebarVisible) {
     loadSidebarSearches();
