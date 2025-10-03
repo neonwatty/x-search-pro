@@ -96,6 +96,33 @@ async function initializeSidebar() {
     </div>
     <div class="sidebar-panel" id="sidebarPanel">
       <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <svg width="36" height="36" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(64, 64)">
+              <g stroke="#3b82f6" stroke-width="11" fill="none" stroke-linecap="round">
+                <line x1="-56" y1="-56" x2="-19" y2="-19"/>
+                <line x1="56" y1="-56" x2="19" y2="-19"/>
+                <line x1="-56" y1="56" x2="-19" y2="19"/>
+              </g>
+              <defs>
+                <mask id="handleMask">
+                  <rect x="-64" y="-64" width="128" height="128" fill="white"/>
+                  <circle cx="0" cy="0" r="19" fill="black"/>
+                </mask>
+              </defs>
+              <path d="M 13.5 13.5 L 56 56"
+                    stroke="#FFFFFF"
+                    stroke-width="11"
+                    stroke-linecap="round"
+                    mask="url(#handleMask)"/>
+              <line x1="13.5" y1="13.5" x2="20" y2="20"
+                    stroke="#FFFFFF"
+                    stroke-width="5"
+                    stroke-linecap="round"/>
+              <circle cx="0" cy="0" r="19" stroke="#FFFFFF" stroke-width="11" fill="none"/>
+            </g>
+          </svg>
+        </div>
         <h3>Saved Searches</h3>
         <div class="sidebar-header-actions">
           <button class="icon-action-btn" id="collapseSidebar" title="Minimize">
@@ -103,7 +130,6 @@ async function initializeSidebar() {
               <path d="M19 12.998H5v-2h14z"/>
             </svg>
           </button>
-          <button class="icon-action-btn" id="closeSidebar" title="Hide">×</button>
         </div>
       </div>
       <div class="sidebar-content">
@@ -114,7 +140,8 @@ async function initializeSidebar() {
           <p>Click the extension icon to create one!</p>
         </div>
         <div class="sidebar-footer">
-          Created by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
+          <span class="footer-full">Created by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a></span>
+          <span class="footer-collapsed">by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a></span>
         </div>
       </div>
     </div>
@@ -123,11 +150,6 @@ async function initializeSidebar() {
   document.body.appendChild(sidebarElement);
 
   document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
-  document.getElementById('closeSidebar').addEventListener('click', async () => {
-    sidebarVisible = false;
-    await chrome.storage.sync.set({ sidebarVisible: false });
-    updateSidebarVisibility();
-  });
   document.getElementById('collapseSidebar').addEventListener('click', toggleCollapse);
 
   document.getElementById('sidebarSearchFilter').addEventListener('input', filterSidebarSearches);
@@ -162,12 +184,14 @@ function updateSidebarVisibility() {
 
     if (sidebarCollapsed) {
       panel.classList.add('collapsed');
+      sidebarElement.classList.add('collapsed');
       if (collapseBtn) {
         collapseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 13H5v-2h14v2z"/><path d="M13 17h-2v-4h2v4zm0-6h-2V7h2v4z"/></svg>';
         collapseBtn.title = 'Expand';
       }
     } else {
       panel.classList.remove('collapsed');
+      sidebarElement.classList.remove('collapsed');
       if (collapseBtn) {
         collapseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 12.998H5v-2h14z"/></svg>';
         collapseBtn.title = 'Minimize';
@@ -194,16 +218,51 @@ async function loadSidebarSearches() {
 
   emptyState.style.display = 'none';
 
-  listContainer.innerHTML = searches.map(search => `
-    <div class="sidebar-search-item" data-id="${search.id}" style="border-left-color: ${search.color}">
-      <div class="sidebar-item-header">
-        <span class="sidebar-item-name">${search.name}</span>
-        <span class="sidebar-item-category">${search.category}</span>
+  const slidingWindowLabelsFull = {
+    '1d': 'Last 1 Day',
+    '1w': 'Last 1 Week',
+    '1m': 'Last 1 Month'
+  };
+
+  const slidingWindowLabelsShort = {
+    '1d': '1D',
+    '1w': '1W',
+    '1m': '1M'
+  };
+
+  listContainer.innerHTML = searches.map(search => {
+    const slidingWindowBadgeFull = search.filters?.slidingWindow
+      ? `<span class="sidebar-sliding-window-badge sidebar-badge-full" title="Dynamic time range">🕒 ${slidingWindowLabelsFull[search.filters.slidingWindow]}</span>`
+      : '';
+
+    const slidingWindowBadgeShort = search.filters?.slidingWindow
+      ? `<span class="sidebar-sliding-window-badge sidebar-badge-short" title="Dynamic time range">🕒 ${slidingWindowLabelsShort[search.filters.slidingWindow]}</span>`
+      : '';
+
+    // Rebuild query with current dates if sliding window is active
+    let displayQuery = search.query;
+    if (search.filters?.slidingWindow) {
+      const builder = new QueryBuilder().fromFilters(search.filters);
+      displayQuery = builder.build();
+    }
+
+    return `
+      <div class="sidebar-search-item" data-id="${search.id}" style="border-left-color: ${search.color}">
+        <div class="sidebar-item-header">
+          <span class="sidebar-item-name">${search.name}</span>
+          <div class="sidebar-item-badges">
+            ${slidingWindowBadgeFull}
+            <span class="sidebar-item-category">${search.category}</span>
+          </div>
+        </div>
+        <div class="sidebar-item-query">${displayQuery}</div>
+        <div class="sidebar-item-name-only">
+          ${slidingWindowBadgeShort}
+          <span class="sidebar-item-collapsed-name">${search.name}</span>
+        </div>
       </div>
-      <div class="sidebar-item-query">${search.query}</div>
-      <div class="sidebar-item-name-only">${search.name}</div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   listContainer.querySelectorAll('.sidebar-search-item').forEach(item => {
     item.addEventListener('click', async () => {
@@ -211,7 +270,15 @@ async function loadSidebarSearches() {
       const search = searches.find(s => s.id === id);
       if (search) {
         await StorageManager.incrementUseCount(id);
-        applySearchToPage(search.query);
+
+        // Rebuild query with dynamic dates if sliding window is used
+        let query = search.query;
+        if (search.filters && search.filters.slidingWindow) {
+          const builder = new QueryBuilder().fromFilters(search.filters);
+          query = builder.build();
+        }
+
+        applySearchToPage(query);
         sidebarVisible = false;
         await chrome.storage.sync.set({ sidebarVisible: false });
         updateSidebarVisibility();

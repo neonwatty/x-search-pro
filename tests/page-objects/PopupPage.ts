@@ -23,6 +23,8 @@ export class PopupPage {
 
   async fillKeywords(keywords: string) {
     await this.page.fill('#keywords', keywords);
+    // Trigger input event to ensure listeners fire
+    await this.page.locator('#keywords').dispatchEvent('input');
   }
 
   async setMinFaves(count: number) {
@@ -40,9 +42,13 @@ export class PopupPage {
   async setDateRange(since?: string, until?: string) {
     if (since !== undefined) {
       await this.page.fill('#sinceDate', since);
+      // Trigger input event to ensure listeners fire
+      await this.page.locator('#sinceDate').dispatchEvent('input');
     }
     if (until !== undefined) {
       await this.page.fill('#untilDate', until);
+      // Trigger input event to ensure listeners fire
+      await this.page.locator('#untilDate').dispatchEvent('input');
     }
   }
 
@@ -159,7 +165,14 @@ export class PopupPage {
 
   async editSavedSearch(name: string) {
     await this.switchTab('saved');
+    await this.page.waitForTimeout(500); // Wait for tab to load
+
+    // Wait for saved searches to be loaded
+    await this.page.waitForSelector('.saved-item', { timeout: 10000 });
+
     const item = this.page.locator(`.saved-item`).filter({ hasText: name }).first();
+    // Wait for the item to be visible before trying to click
+    await item.waitFor({ state: 'visible', timeout: 10000 });
     await item.locator('.edit-btn').click();
   }
 
@@ -214,16 +227,26 @@ export class PopupPage {
       await this.page.waitForTimeout(200);
     }
 
-    // Set up dialog handler for the prompt
-    this.page.once('dialog', async dialog => {
+    // Handle all dialogs (prompt and alert)
+    const dialogHandler = async (dialog: any) => {
       await dialog.accept(name);
-    });
+    };
 
-    // Click save button
-    await this.page.click('#saveBtn');
+    this.page.on('dialog', dialogHandler);
 
-    // Wait for save to complete
-    await this.page.waitForTimeout(500);
+    try {
+      // Click save button
+      await this.clickSave();
+
+      // Wait for dialogs to complete
+      await this.page.waitForTimeout(1000);
+    } finally {
+      // Clean up the handler
+      this.page.off('dialog', dialogHandler);
+    }
+
+    // Wait for storage sync and UI update
+    await this.page.waitForTimeout(1000);
   }
 
   async createCategory(name: string, color?: string) {
@@ -236,5 +259,48 @@ export class PopupPage {
 
     await this.page.click('#addCategoryBtn');
     await this.page.waitForTimeout(500);
+  }
+
+  // Sliding Window helper methods
+  async selectSlidingWindow(option: '' | '1d' | '1w' | '1m') {
+    await this.page.selectOption('#slidingWindow', option);
+    await this.page.waitForTimeout(200);
+  }
+
+  async getSlidingWindowValue(): Promise<string> {
+    return await this.page.locator('#slidingWindow').inputValue();
+  }
+
+  async isSlidingWindowInfoVisible(): Promise<boolean> {
+    const info = this.page.locator('#slidingWindowInfo');
+    return await info.isVisible();
+  }
+
+  async areDateInputsDisabled(): Promise<boolean> {
+    const sinceReadOnly = await this.page.locator('#sinceDate').evaluate(el => (el as HTMLInputElement).readOnly);
+    const untilReadOnly = await this.page.locator('#untilDate').evaluate(el => (el as HTMLInputElement).readOnly);
+    return sinceReadOnly && untilReadOnly;
+  }
+
+  async areDateInputsEnabled(): Promise<boolean> {
+    const disabled = await this.areDateInputsDisabled();
+    return !disabled;
+  }
+
+  async getSlidingWindowBadgeText(searchName: string): Promise<string | null> {
+    await this.switchTab('saved');
+    const item = this.page.locator(`.saved-item`).filter({ hasText: searchName }).first();
+    const badge = item.locator('.sliding-window-badge');
+
+    if (await badge.count() === 0) {
+      return null;
+    }
+
+    return await badge.textContent();
+  }
+
+  async hasSlidingWindowBadge(searchName: string): Promise<boolean> {
+    const badgeText = await this.getSlidingWindowBadgeText(searchName);
+    return badgeText !== null;
   }
 }

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initializeCollapsibleSections();
   initializeDefaultDates();
   initializeDatePresets();
+  initializeSlidingWindow();
   initializeFormListeners();
   initializeButtons();
   await loadSavedSearches();
@@ -70,7 +71,15 @@ function initializeDefaultDates() {
 function initializeDatePresets() {
   const presetButtons = document.querySelectorAll('.preset-btn');
   presetButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      const slidingWindowSelect = document.getElementById('slidingWindow');
+
+      // Clear sliding window first if it's set
+      if (slidingWindowSelect.value) {
+        slidingWindowSelect.value = '';
+        toggleDateInputs();
+      }
+
       const preset = btn.dataset.preset;
       const today = new Date();
       const sinceDate = document.getElementById('sinceDate');
@@ -96,6 +105,90 @@ function initializeDatePresets() {
   });
 }
 
+function initializeSlidingWindow() {
+  const slidingWindowSelect = document.getElementById('slidingWindow');
+  const sinceDateInput = document.getElementById('sinceDate');
+  const untilDateInput = document.getElementById('untilDate');
+
+  slidingWindowSelect.addEventListener('change', () => {
+    toggleDateInputs();
+    updateQueryPreview();
+  });
+
+  // Clear sliding window when clicking on disabled date inputs
+  const clearSlidingWindowAndEnableInput = (input) => {
+    if (slidingWindowSelect.value) {
+      slidingWindowSelect.value = '';
+      toggleDateInputs();
+      updateQueryPreview();
+      // Focus the input after enabling it
+      setTimeout(() => input.focus(), 0);
+    }
+  };
+
+  sinceDateInput.addEventListener('click', () => {
+    clearSlidingWindowAndEnableInput(sinceDateInput);
+  });
+
+  untilDateInput.addEventListener('click', () => {
+    clearSlidingWindowAndEnableInput(untilDateInput);
+  });
+
+  // Also clear sliding window when user manually edits date inputs
+  sinceDateInput.addEventListener('input', () => {
+    if (sinceDateInput.value && slidingWindowSelect.value) {
+      slidingWindowSelect.value = '';
+      toggleDateInputs();
+      updateQueryPreview();
+    }
+  });
+
+  untilDateInput.addEventListener('input', () => {
+    if (untilDateInput.value && slidingWindowSelect.value) {
+      slidingWindowSelect.value = '';
+      toggleDateInputs();
+      updateQueryPreview();
+    }
+  });
+}
+
+function toggleDateInputs() {
+  const slidingWindowValue = document.getElementById('slidingWindow').value;
+  const sinceDateInput = document.getElementById('sinceDate');
+  const untilDateInput = document.getElementById('untilDate');
+  const presetButtons = document.querySelectorAll('.preset-btn');
+  const slidingWindowInfo = document.getElementById('slidingWindowInfo');
+
+  if (slidingWindowValue) {
+    // Make date inputs readonly when sliding window is active (readonly allows clicks, disabled doesn't)
+    sinceDateInput.readOnly = true;
+    untilDateInput.readOnly = true;
+    sinceDateInput.style.opacity = '0.5';
+    untilDateInput.style.opacity = '0.5';
+    sinceDateInput.style.cursor = 'pointer';
+    untilDateInput.style.cursor = 'pointer';
+    // Keep preset buttons enabled but visually dimmed (they clear sliding window when clicked)
+    presetButtons.forEach(btn => {
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'pointer';
+    });
+    slidingWindowInfo.style.display = 'block';
+  } else {
+    // Enable fixed date inputs when sliding window is not active
+    sinceDateInput.readOnly = false;
+    untilDateInput.readOnly = false;
+    sinceDateInput.style.opacity = '1';
+    untilDateInput.style.opacity = '1';
+    sinceDateInput.style.cursor = '';
+    untilDateInput.style.cursor = '';
+    presetButtons.forEach(btn => {
+      btn.style.opacity = '1';
+      btn.style.cursor = '';
+    });
+    slidingWindowInfo.style.display = 'none';
+  }
+}
+
 function initializeFormListeners() {
   const inputs = document.querySelectorAll('input, select');
   inputs.forEach(input => {
@@ -113,13 +206,16 @@ function initializeButtons() {
 }
 
 function getFormValues() {
+  const slidingWindow = document.getElementById('slidingWindow').value || null;
+
   const filters = {
     keywords: document.getElementById('keywords').value,
     minFaves: document.getElementById('minFaves').value || null,
     minRetweets: document.getElementById('minRetweets').value || null,
     minReplies: document.getElementById('minReplies').value || null,
-    sinceDate: document.getElementById('sinceDate').value || null,
-    untilDate: document.getElementById('untilDate').value || null,
+    slidingWindow: slidingWindow,
+    sinceDate: slidingWindow ? null : (document.getElementById('sinceDate').value || null),
+    untilDate: slidingWindow ? null : (document.getElementById('untilDate').value || null),
     fromUser: document.getElementById('fromUser').value || null,
     toUser: document.getElementById('toUser').value || null,
     mentionsUser: document.getElementById('mentionsUser').value || null,
@@ -265,6 +361,7 @@ function resetForm() {
   document.getElementById('search-form').reset();
   currentBuilder.reset();
   cancelEdit();
+  toggleDateInputs();
   updateQueryPreview();
 }
 
@@ -323,6 +420,23 @@ function createSavedSearchItem(search) {
     ? `Used ${search.useCount} times`
     : 'Never used';
 
+  const slidingWindowLabels = {
+    '1d': 'Last 1 Day',
+    '1w': 'Last 1 Week',
+    '1m': 'Last 1 Month'
+  };
+
+  const slidingWindowBadge = search.filters?.slidingWindow
+    ? `<span class="sliding-window-badge" title="Dynamic time range">🕒 ${slidingWindowLabels[search.filters.slidingWindow]}</span>`
+    : '';
+
+  // Rebuild query with current dates if sliding window is active
+  let displayQuery = search.query;
+  if (search.filters?.slidingWindow) {
+    const builder = new QueryBuilder().fromFilters(search.filters);
+    displayQuery = builder.build();
+  }
+
   return `
     <div class="saved-item" data-id="${search.id}" style="border-left-color: ${search.color}">
       <div class="saved-item-header">
@@ -332,9 +446,10 @@ function createSavedSearchItem(search) {
           <button class="icon-btn delete-btn" title="Delete">🗑️</button>
         </div>
       </div>
-      <div class="saved-item-query">${search.query}</div>
+      <div class="saved-item-query">${displayQuery}</div>
       <div class="saved-item-meta">
         <span class="category-badge">${search.category}</span>
+        ${slidingWindowBadge}
         <span>${useText}</span>
       </div>
     </div>
@@ -349,6 +464,13 @@ async function applySavedSearch(id) {
 
   await StorageManager.incrementUseCount(id);
 
+  // Rebuild query with dynamic dates if sliding window is used
+  let query = search.query;
+  if (search.filters && search.filters.slidingWindow) {
+    const builder = new QueryBuilder().fromFilters(search.filters);
+    query = builder.build();
+  }
+
   let tabs = await chrome.tabs.query({ url: ['*://x.com/*', '*://twitter.com/*'] });
 
   console.log('[DEBUG] applySavedSearch - Found tabs:', tabs.length);
@@ -359,7 +481,7 @@ async function applySavedSearch(id) {
     const tab = activeTab || tabs.sort((a, b) => (b.lastAccessed || 0) - (a.lastAccessed || 0))[0];
 
     console.log('[DEBUG] applySavedSearch - Selected tab:', { id: tab.id, url: tab.url, active: tab.active });
-    console.log('[DEBUG] applySavedSearch - Sending message with query:', search.query);
+    console.log('[DEBUG] applySavedSearch - Sending message with query:', query);
 
     try {
       await chrome.tabs.update(tab.id, { active: true });
@@ -369,19 +491,19 @@ async function applySavedSearch(id) {
 
       const response = await chrome.tabs.sendMessage(tab.id, {
         action: 'applySearch',
-        query: search.query
+        query: query
       });
       console.log('[DEBUG] applySavedSearch - Message sent successfully, response:', response);
     } catch (error) {
       console.error('[DEBUG] applySavedSearch - Failed to send message, navigating directly:', error);
-      const searchUrl = `https://x.com/search?q=${encodeURIComponent(search.query)}&src=typed_query`;
+      const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
       await chrome.tabs.update(tab.id, { url: searchUrl });
     }
 
     window.close();
   } else {
     console.log('[DEBUG] applySavedSearch - No X.com tabs found, creating new tab');
-    const searchUrl = `https://x.com/search?q=${encodeURIComponent(search.query)}&src=typed_query`;
+    const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
     await chrome.tabs.create({ url: searchUrl });
     window.close();
   }
@@ -400,6 +522,7 @@ async function editSearch(id) {
   document.getElementById('minFaves').value = filters.minFaves || '';
   document.getElementById('minRetweets').value = filters.minRetweets || '';
   document.getElementById('minReplies').value = filters.minReplies || '';
+  document.getElementById('slidingWindow').value = filters.slidingWindow || '';
   document.getElementById('sinceDate').value = filters.sinceDate || '';
   document.getElementById('untilDate').value = filters.untilDate || '';
   document.getElementById('fromUser').value = filters.fromUser || '';
@@ -436,6 +559,7 @@ async function editSearch(id) {
     document.querySelector('input[name="retweets"][value="any"]').checked = true;
   }
 
+  toggleDateInputs();
   updateQueryPreview();
   enterEditMode(id, search.name);
 }

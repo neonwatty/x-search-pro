@@ -36,8 +36,8 @@ export class SidebarPage {
   }
 
   async close() {
-    const closeBtn = this.page.locator('#closeSidebar');
-    await closeBtn.click();
+    // Use toggle to hide the sidebar (close button removed)
+    await this.toggle();
   }
 
   async getSearchList() {
@@ -62,5 +62,48 @@ export class SidebarPage {
   async getSearchCount(): Promise<number> {
     const items = await this.getSearchList();
     return await items.count();
+  }
+
+  // Sliding Window helper methods
+  async getSlidingWindowBadge(searchName: string) {
+    const searchItem = this.page.locator(`.sidebar-search-item`).filter({ hasText: searchName }).first();
+    const isCollapsed = await this.isSidebarCollapsed();
+
+    // Return the appropriate badge based on sidebar state
+    if (isCollapsed) {
+      return searchItem.locator('.sidebar-sliding-window-badge.sidebar-badge-short');
+    } else {
+      return searchItem.locator('.sidebar-sliding-window-badge.sidebar-badge-full');
+    }
+  }
+
+  async hasSlidingWindowBadge(searchName: string): Promise<boolean> {
+    const badge = await this.getSlidingWindowBadge(searchName);
+    return await badge.count() > 0;
+  }
+
+  async getSlidingWindowBadgeText(searchName: string): Promise<string | null> {
+    const badge = await this.getSlidingWindowBadge(searchName);
+    if (await badge.count() === 0) {
+      return null;
+    }
+    return await badge.textContent();
+  }
+
+  async collapseSidebar() {
+    const collapseBtn = this.page.locator('#collapseSidebar');
+    await collapseBtn.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async expandSidebar() {
+    const collapseBtn = this.page.locator('#collapseSidebar');
+    await collapseBtn.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async isSidebarCollapsed(): Promise<boolean> {
+    const panel = this.page.locator('#sidebarPanel');
+    return await panel.evaluate(el => el.classList.contains('collapsed'));
   }
 }

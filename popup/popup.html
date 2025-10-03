@@ -74,6 +74,27 @@
 
         <section class="form-section collapsible">
           <h3 class="section-header">
+            Time Window
+            <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="section-content">
+            <div class="input-group">
+              <label>Dynamic Time Range</label>
+              <select id="slidingWindow">
+                <option value="">None (use fixed dates below)</option>
+                <option value="1d">Last 1 Day</option>
+                <option value="1w">Last 1 Week</option>
+                <option value="1m">Last 1 Month</option>
+              </select>
+            </div>
+            <div class="setting-info" id="slidingWindowInfo" style="display: none; margin-top: 8px;">
+              <p style="font-size: 11px; color: #6b7280;">🕒 This search will automatically update to show posts from the selected time window whenever you use it.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section collapsible">
+          <h3 class="section-header">
             Date Range
             <span class="toggle-icon">▼</span>
           </h3>

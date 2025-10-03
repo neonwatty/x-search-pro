@@ -131,11 +131,6 @@ test.describe('Content Script Logic Tests', () => {
       expect(id).toBe('sidebarPanel');
     });
 
-    test('should use correct close button ID', () => {
-      const id = 'closeSidebar';
-      expect(id).toBe('closeSidebar');
-    });
-
     test('should use correct collapse button ID', () => {
       const id = 'collapseSidebar';
       expect(id).toBe('collapseSidebar');

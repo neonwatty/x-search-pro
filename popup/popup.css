@@ -188,6 +188,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
 
+input[type="date"]:read-only::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
 /* Category Selection */
 .category-selection {
   display: flex;
@@ -419,6 +423,18 @@ input[type="radio"] {
   border-radius: 4px;
   font-size: 11px;
   color: #71767b;
+}
+
+.sliding-window-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #1d4ed8;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #e7e9ea;
+  font-weight: 500;
+  margin-left: 4px;
 }
 
 .empty-state {
