@@ -165,6 +165,11 @@ export class PopupPage {
 
   async editSavedSearch(name: string) {
     await this.switchTab('saved');
+    await this.page.waitForTimeout(500); // Wait for tab to load
+
+    // Wait for saved searches to be loaded
+    await this.page.waitForSelector('.saved-item', { timeout: 10000 });
+
     const item = this.page.locator(`.saved-item`).filter({ hasText: name }).first();
     // Wait for the item to be visible before trying to click
     await item.waitFor({ state: 'visible', timeout: 10000 });
@@ -222,24 +227,25 @@ export class PopupPage {
       await this.page.waitForTimeout(200);
     }
 
-    // Set up dialog handlers for both the prompt and success alert
-    this.page.once('dialog', async dialog => {
-      if (dialog.type() === 'prompt') {
-        await dialog.accept(name);
-      } else {
-        await dialog.accept();
-      }
-    });
+    // Handle all dialogs (prompt and alert)
+    const dialogHandler = async (dialog: any) => {
+      await dialog.accept(name);
+    };
 
-    this.page.once('dialog', async dialog => {
-      // Handle the success alert
-      await dialog.accept();
-    });
+    this.page.on('dialog', dialogHandler);
 
-    // Click save button
-    await this.page.click('#saveBtn');
+    try {
+      // Click save button
+      await this.clickSave();
 
-    // Wait for both dialogs to complete
+      // Wait for dialogs to complete
+      await this.page.waitForTimeout(1000);
+    } finally {
+      // Clean up the handler
+      this.page.off('dialog', dialogHandler);
+    }
+
+    // Wait for storage sync and UI update
     await this.page.waitForTimeout(1000);
   }
 

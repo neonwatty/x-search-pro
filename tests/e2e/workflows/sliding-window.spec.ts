@@ -2,8 +2,15 @@ import { test, expect } from '../../fixtures/extension';
 import { PopupPage } from '../../page-objects/PopupPage';
 
 test.describe('Sliding Window Feature', () => {
-  test.beforeEach(async () => {
-    await new Promise(resolve => setTimeout(resolve, 2000));
+  test.beforeEach(async ({ context, extensionId }) => {
+    // Clear existing searches to ensure clean state
+    const clearPage = await context.newPage();
+    await clearPage.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+    await clearPage.evaluate(() => {
+      return chrome.storage.sync.clear();
+    });
+    await clearPage.close();
+    await new Promise(resolve => setTimeout(resolve, 500));
   });
 
   test.describe('Builder Tab UI', () => {
