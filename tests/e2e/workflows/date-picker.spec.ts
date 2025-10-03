@@ -143,20 +143,21 @@ test.describe('Workflow: Date Picker Calendar', () => {
 
     // Create a search with specific dates
     await popupPage.fillKeywords('test dates');
+    await popupPage.page.waitForTimeout(300);
     await popupPage.setDateRange('2024-03-01', '2024-03-31');
     await popupPage.page.waitForTimeout(500);
 
-    // Handle dialog for saving
-    popupPage.page.on('dialog', async dialog => {
-      await dialog.accept('Date Test Search');
-    });
+    // Verify query preview is populated before saving
+    const preview = await popupPage.getQueryPreview();
+    expect(preview).toContain('test dates');
 
-    // Save the search
-    await popupPage.clickSave();
-    await popupPage.page.waitForTimeout(1500);
+    // Save the search using the helper method
+    const searchName = `Date Test Search ${Date.now()}`;
+    await popupPage.saveSearch(searchName);
+    await popupPage.page.waitForTimeout(1000); // Extra wait for save to complete
 
     // Switch to saved tab and edit the search
-    await popupPage.editSavedSearch('Date Test Search');
+    await popupPage.editSavedSearch(searchName);
     await popupPage.page.waitForTimeout(500);
 
     // Verify dates are preserved

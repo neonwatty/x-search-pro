@@ -23,6 +23,8 @@ export class PopupPage {
 
   async fillKeywords(keywords: string) {
     await this.page.fill('#keywords', keywords);
+    // Trigger input event to ensure listeners fire
+    await this.page.locator('#keywords').dispatchEvent('input');
   }
 
   async setMinFaves(count: number) {
@@ -164,6 +166,8 @@ export class PopupPage {
   async editSavedSearch(name: string) {
     await this.switchTab('saved');
     const item = this.page.locator(`.saved-item`).filter({ hasText: name }).first();
+    // Wait for the item to be visible before trying to click
+    await item.waitFor({ state: 'visible', timeout: 10000 });
     await item.locator('.edit-btn').click();
   }
 
@@ -218,16 +222,25 @@ export class PopupPage {
       await this.page.waitForTimeout(200);
     }
 
-    // Set up dialog handler for the prompt
+    // Set up dialog handlers for both the prompt and success alert
     this.page.once('dialog', async dialog => {
-      await dialog.accept(name);
+      if (dialog.type() === 'prompt') {
+        await dialog.accept(name);
+      } else {
+        await dialog.accept();
+      }
+    });
+
+    this.page.once('dialog', async dialog => {
+      // Handle the success alert
+      await dialog.accept();
     });
 
     // Click save button
     await this.page.click('#saveBtn');
 
-    // Wait for save to complete
-    await this.page.waitForTimeout(500);
+    // Wait for both dialogs to complete
+    await this.page.waitForTimeout(1000);
   }
 
   async createCategory(name: string, color?: string) {

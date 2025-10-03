@@ -167,9 +167,10 @@ function toggleDateInputs() {
     untilDateInput.style.opacity = '0.5';
     sinceDateInput.style.cursor = 'pointer';
     untilDateInput.style.cursor = 'pointer';
+    // Keep preset buttons enabled but visually dimmed (they clear sliding window when clicked)
     presetButtons.forEach(btn => {
-      btn.disabled = true;
       btn.style.opacity = '0.5';
+      btn.style.cursor = 'pointer';
     });
     slidingWindowInfo.style.display = 'block';
   } else {
@@ -181,8 +182,8 @@ function toggleDateInputs() {
     sinceDateInput.style.cursor = '';
     untilDateInput.style.cursor = '';
     presetButtons.forEach(btn => {
-      btn.disabled = false;
       btn.style.opacity = '1';
+      btn.style.cursor = '';
     });
     slidingWindowInfo.style.display = 'none';
   }
