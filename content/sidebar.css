@@ -339,3 +339,52 @@
   padding: 8px 4px;
   writing-mode: horizontal-tb;
 }
+
+/* Drag and Drop Styles */
+.sidebar-drag-handle,
+.sidebar-drag-handle-collapsed {
+  display: inline-block;
+  margin-right: 6px;
+  color: #71767b;
+  cursor: grab;
+  font-size: 12px;
+  user-select: none;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.sidebar-drag-handle:hover,
+.sidebar-drag-handle-collapsed:hover {
+  opacity: 1;
+  color: #1d9bf0;
+}
+
+.sidebar-drag-handle:active,
+.sidebar-drag-handle-collapsed:active {
+  cursor: grabbing;
+}
+
+.sidebar-drag-handle-collapsed {
+  display: none;
+}
+
+.sidebar-panel.collapsed .sidebar-drag-handle {
+  display: none;
+}
+
+.sidebar-panel.collapsed .sidebar-drag-handle-collapsed {
+  display: inline-block;
+  font-size: 10px;
+}
+
+.sidebar-search-item.sidebar-dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(29, 155, 240, 0.4);
+  cursor: grabbing !important;
+}
+
+.sidebar-search-item.sidebar-drag-over {
+  border-top: 2px solid #1d9bf0;
+  background: rgba(29, 155, 240, 0.15);
+}

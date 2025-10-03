@@ -795,4 +795,150 @@ test.describe('StorageManager Unit Tests', () => {
       expect(counts['EmptyCat']).toBe(0);
     });
   });
+
+  test.describe('reorderSearches', () => {
+    test('should reorder searches based on provided ID array', async () => {
+      const search1 = await StorageManager.saveSearch({
+        name: 'First',
+        query: 'first',
+        filters: {}
+      });
+
+      const search2 = await StorageManager.saveSearch({
+        name: 'Second',
+        query: 'second',
+        filters: {}
+      });
+
+      const search3 = await StorageManager.saveSearch({
+        name: 'Third',
+        query: 'third',
+        filters: {}
+      });
+
+      // Original order: search3, search2, search1 (prepended)
+      // New order: search1, search3, search2
+      const newOrder = [search1.id, search3.id, search2.id];
+      const reordered = await StorageManager.reorderSearches(newOrder);
+
+      expect(reordered.length).toBe(3);
+      expect(reordered[0].id).toBe(search1.id);
+      expect(reordered[1].id).toBe(search3.id);
+      expect(reordered[2].id).toBe(search2.id);
+    });
+
+    test('should persist reordered searches to storage', async () => {
+      const search1 = await StorageManager.saveSearch({
+        name: 'A',
+        query: 'a',
+        filters: {}
+      });
+
+      const search2 = await StorageManager.saveSearch({
+        name: 'B',
+        query: 'b',
+        filters: {}
+      });
+
+      const newOrder = [search1.id, search2.id];
+      await StorageManager.reorderSearches(newOrder);
+
+      const searches = await StorageManager.getSavedSearches();
+      expect(searches[0].id).toBe(search1.id);
+      expect(searches[1].id).toBe(search2.id);
+    });
+
+    test('should handle empty array', async () => {
+      await StorageManager.saveSearch({
+        name: 'Test',
+        query: 'test',
+        filters: {}
+      });
+
+      const reordered = await StorageManager.reorderSearches([]);
+      expect(reordered).toEqual([]);
+
+      const searches = await StorageManager.getSavedSearches();
+      expect(searches).toEqual([]);
+    });
+
+    test('should filter out non-existent IDs', async () => {
+      const search1 = await StorageManager.saveSearch({
+        name: 'Valid',
+        query: 'valid',
+        filters: {}
+      });
+
+      const newOrder = [search1.id, 'nonexistent_id_1', 'nonexistent_id_2'];
+      const reordered = await StorageManager.reorderSearches(newOrder);
+
+      expect(reordered.length).toBe(1);
+      expect(reordered[0].id).toBe(search1.id);
+    });
+
+    test('should preserve all search properties when reordering', async () => {
+      const search1 = await StorageManager.saveSearch({
+        name: 'Search 1',
+        query: 'query1',
+        filters: { keywords: 'test1' },
+        category: 'Tech'
+      });
+
+      const search2 = await StorageManager.saveSearch({
+        name: 'Search 2',
+        query: 'query2',
+        filters: { keywords: 'test2' },
+        category: 'News'
+      });
+
+      // Increment use count to verify it's preserved
+      await StorageManager.incrementUseCount(search1.id);
+
+      const newOrder = [search2.id, search1.id];
+      const reordered = await StorageManager.reorderSearches(newOrder);
+
+      expect(reordered[0].name).toBe('Search 2');
+      expect(reordered[0].query).toBe('query2');
+      expect(reordered[0].category).toBe('News');
+      expect(reordered[0].filters).toEqual({ keywords: 'test2' });
+
+      expect(reordered[1].name).toBe('Search 1');
+      expect(reordered[1].query).toBe('query1');
+      expect(reordered[1].category).toBe('Tech');
+      expect(reordered[1].useCount).toBe(1);
+      expect(reordered[1].filters).toEqual({ keywords: 'test1' });
+    });
+
+    test('should handle single search', async () => {
+      const search = await StorageManager.saveSearch({
+        name: 'Only One',
+        query: 'only',
+        filters: {}
+      });
+
+      const reordered = await StorageManager.reorderSearches([search.id]);
+      expect(reordered.length).toBe(1);
+      expect(reordered[0].id).toBe(search.id);
+    });
+
+    test('should handle reversed order', async () => {
+      const searches = [];
+      for (let i = 0; i < 5; i++) {
+        searches.push(await StorageManager.saveSearch({
+          name: `Search ${i}`,
+          query: `query${i}`,
+          filters: {}
+        }));
+      }
+
+      // Reverse the order
+      const reversedOrder = searches.map(s => s.id).reverse();
+      const reordered = await StorageManager.reorderSearches(reversedOrder);
+
+      expect(reordered.length).toBe(5);
+      for (let i = 0; i < 5; i++) {
+        expect(reordered[i].id).toBe(searches[4 - i].id);
+      }
+    });
+  });
 });

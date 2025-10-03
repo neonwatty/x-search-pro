@@ -995,3 +995,36 @@ input[type="radio"] {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.5);
 }
+
+/* Drag and Drop Styles */
+.drag-handle {
+  display: inline-block;
+  margin-right: 8px;
+  color: #71767b;
+  cursor: grab;
+  font-size: 14px;
+  user-select: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+  color: #1d9bf0;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.saved-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(29, 155, 240, 0.4);
+  cursor: grabbing !important;
+}
+
+.saved-item.drag-over {
+  border-top: 2px solid #1d9bf0;
+  background: rgba(29, 155, 240, 0.1);
+}
