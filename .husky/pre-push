@@ -46,4 +46,4 @@ fi
 echo "✅ E2E tests passed"
 echo ""
 
-echo "🎉 All validation checks passed! Pushing to remote..."
+echo "🎉 All validation checks passed! Git will now proceed with push..."

@@ -264,15 +264,9 @@ async function applySearch() {
 
   let tabs = await chrome.tabs.query({ url: ['*://x.com/*', '*://twitter.com/*'] });
 
-  console.log('[DEBUG] applySearch - Found tabs:', tabs.length);
-  console.log('[DEBUG] applySearch - Tab details:', tabs.map(t => ({ id: t.id, url: t.url, active: t.active, lastAccessed: t.lastAccessed })));
-
   if (tabs.length > 0) {
     const activeTab = tabs.find(t => t.active);
     const tab = activeTab || tabs.sort((a, b) => (b.lastAccessed || 0) - (a.lastAccessed || 0))[0];
-
-    console.log('[DEBUG] applySearch - Selected tab:', { id: tab.id, url: tab.url, active: tab.active });
-    console.log('[DEBUG] applySearch - Sending message with query:', query);
 
     try {
       await chrome.tabs.update(tab.id, { active: true });
@@ -280,20 +274,17 @@ async function applySearch() {
 
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const response = await chrome.tabs.sendMessage(tab.id, {
+      await chrome.tabs.sendMessage(tab.id, {
         action: 'applySearch',
         query: query
       });
-      console.log('[DEBUG] applySearch - Message sent successfully, response:', response);
     } catch (error) {
-      console.error('[DEBUG] applySearch - Failed to send message, navigating directly:', error);
       const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
       await chrome.tabs.update(tab.id, { url: searchUrl });
     }
 
     window.close();
   } else {
-    console.log('[DEBUG] applySearch - No X.com tabs found, creating new tab');
     const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
     await chrome.tabs.create({ url: searchUrl });
     window.close();
@@ -479,15 +470,9 @@ async function applySavedSearch(id) {
 
   let tabs = await chrome.tabs.query({ url: ['*://x.com/*', '*://twitter.com/*'] });
 
-  console.log('[DEBUG] applySavedSearch - Found tabs:', tabs.length);
-  console.log('[DEBUG] applySavedSearch - Tab details:', tabs.map(t => ({ id: t.id, url: t.url, active: t.active, lastAccessed: t.lastAccessed })));
-
   if (tabs.length > 0) {
     const activeTab = tabs.find(t => t.active);
     const tab = activeTab || tabs.sort((a, b) => (b.lastAccessed || 0) - (a.lastAccessed || 0))[0];
-
-    console.log('[DEBUG] applySavedSearch - Selected tab:', { id: tab.id, url: tab.url, active: tab.active });
-    console.log('[DEBUG] applySavedSearch - Sending message with query:', query);
 
     try {
       await chrome.tabs.update(tab.id, { active: true });
@@ -495,20 +480,17 @@ async function applySavedSearch(id) {
 
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const response = await chrome.tabs.sendMessage(tab.id, {
+      await chrome.tabs.sendMessage(tab.id, {
         action: 'applySearch',
         query: query
       });
-      console.log('[DEBUG] applySavedSearch - Message sent successfully, response:', response);
     } catch (error) {
-      console.error('[DEBUG] applySavedSearch - Failed to send message, navigating directly:', error);
       const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
       await chrome.tabs.update(tab.id, { url: searchUrl });
     }
 
     window.close();
   } else {
-    console.log('[DEBUG] applySavedSearch - No X.com tabs found, creating new tab');
     const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
     await chrome.tabs.create({ url: searchUrl });
     window.close();
