@@ -272,7 +272,7 @@ test.describe('Sliding Window Feature', () => {
 
       const badgeText = await popupPage.getSlidingWindowBadgeText(searchName);
       expect(badgeText).toContain('🕒');
-      expect(badgeText).toContain('Last 1 Day');
+      expect(badgeText).toContain('1D');
 
       await popupPage.page.close();
     });
@@ -290,7 +290,7 @@ test.describe('Sliding Window Feature', () => {
 
       const badgeText = await popupPage.getSlidingWindowBadgeText(searchName);
       expect(badgeText).toContain('🕒');
-      expect(badgeText).toContain('Last 1 Week');
+      expect(badgeText).toContain('1W');
 
       await popupPage.page.close();
     });
@@ -308,7 +308,7 @@ test.describe('Sliding Window Feature', () => {
 
       const badgeText = await popupPage.getSlidingWindowBadgeText(searchName);
       expect(badgeText).toContain('🕒');
-      expect(badgeText).toContain('Last 1 Month');
+      expect(badgeText).toContain('1M');
 
       await popupPage.page.close();
     });

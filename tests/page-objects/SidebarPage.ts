@@ -67,14 +67,8 @@ export class SidebarPage {
   // Sliding Window helper methods
   async getSlidingWindowBadge(searchName: string) {
     const searchItem = this.page.locator(`.sidebar-search-item`).filter({ hasText: searchName }).first();
-    const isCollapsed = await this.isSidebarCollapsed();
-
-    // Return the appropriate badge based on sidebar state
-    if (isCollapsed) {
-      return searchItem.locator('.sidebar-sliding-window-badge.sidebar-badge-short');
-    } else {
-      return searchItem.locator('.sidebar-sliding-window-badge.sidebar-badge-full');
-    }
+    // Return the sliding window badge (now uses same format for both expanded and collapsed)
+    return searchItem.locator('.sidebar-sliding-window-badge');
   }
 
   async hasSlidingWindowBadge(searchName: string): Promise<boolean> {

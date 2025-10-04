@@ -424,9 +424,9 @@ function createSavedSearchItem(search) {
     : 'Never used';
 
   const slidingWindowLabels = {
-    '1d': 'Last 1 Day',
-    '1w': 'Last 1 Week',
-    '1m': 'Last 1 Month'
+    '1d': '1D',
+    '1w': '1W',
+    '1m': '1M'
   };
 
   const slidingWindowBadge = search.filters?.slidingWindow
