@@ -2,18 +2,19 @@
 
 **Build your personal X/Twitter search library.**
 
-A Chrome extension that saves, organizes, and color-codes your advanced X searches so you never have to rebuild them again.
+A Chrome extension with smart saved searches that auto-update their time ranges. Save, organize, and color-code your advanced X searches—set it once, use it forever.
 
 ## Why X Search Pro?
 
 **The Problem:** X.com has advanced search (`x.com/search-advanced`), but it has no memory. Every time you need to monitor brand mentions, track competitors, or find viral content, you rebuild the same complex query from scratch.
 
-**The Solution:** X Search Pro lets you **save your searches** and build a personal library you can organize with categories, colors, and quick filters.
+**The Solution:** X Search Pro solves this with **smart saved searches** that automatically update their time ranges—set it once, use it forever. Build and organize your personal search library with categories, colors, and quick filters.
 
 | Feature | X.com Advanced Search | X Search Pro |
 |---------|----------------------|--------------|
 | Build complex queries | ✅ | ✅ |
 | **Save searches** | ❌ | ✅ Unlimited |
+| **Auto-updating time ranges** | ❌ | ✅ Sliding windows |
 | **Categorize** | ❌ | ✅ Custom categories |
 | **Color coding** | ❌ | ✅ Visual organization |
 | **Quick access** | ❌ Navigate to `/search-advanced` | ✅ Sidebar + popup |
@@ -50,7 +51,7 @@ A Chrome extension that saves, organizes, and color-codes your advanced X search
 
 ### 🔍 Advanced Search Builder
 - **Engagement Filters**: Set minimum likes, retweets, and replies
-- **Date Range**: Search by specific dates or use quick presets (today, last week, last month)
+- **Smart Time Ranges**: Use sliding windows (last 24 hours, last week, last month) that auto-update, or set fixed dates
 - **User Filters**: Search from specific users, mentions, verified accounts, or your network
 - **Content Type**: Filter by media (images, videos), links, replies, retweets, or quotes
 - **Language Support**: Search in specific languages

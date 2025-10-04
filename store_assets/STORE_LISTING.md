@@ -9,7 +9,7 @@
 **Language**: English
 
 ## Short Description (132 characters max)
-Build your personal X search library. Save, categorize, color-code & organize searches you use repeatedly. Never rebuild queries.
+Smart X searches with auto-updating time windows. Save, categorize & organize your library. Set once, use forever. Never rebuild.
 
 ## Detailed Description (up to 16,000 characters)
 
@@ -17,7 +17,7 @@ Build your personal X search library. Save, categorize, color-code & organize se
 
 X.com has advanced search (`x.com/search-advanced`), but it has no memory. Every time you need to monitor brand mentions, track competitors, or find viral content, you rebuild the same complex query from scratch.
 
-X Search Pro solves this by letting you **save your searches** and build a personal library you can organize with categories, colors, and quick filters.
+X Search Pro solves this with **smart saved searches** that automatically update their time ranges—set it once, use it forever. Build and organize your personal search library with categories, colors, and quick filters.
 
 **🎯 What X.com's Advanced Search Can't Do**
 
@@ -25,6 +25,7 @@ X Search Pro solves this by letting you **save your searches** and build a perso
 |---------|----------------------|--------------|
 | Build complex queries | ✅ | ✅ |
 | **Save searches** | ❌ | ✅ Unlimited |
+| **Auto-updating time ranges** | ❌ | ✅ Sliding windows |
 | **Categorize** | ❌ | ✅ Custom categories |
 | **Color coding** | ❌ | ✅ Visual organization |
 | **Quick access** | ❌ Navigate to `/search-advanced` | ✅ Sidebar + popup |
@@ -61,7 +62,7 @@ X Search Pro solves this by letting you **save your searches** and build a perso
 
 🔍 **Advanced Search Builder**
 • Engagement metrics (minimum likes, retweets, replies)
-• Date ranges with quick presets (today, last week, last month)
+• Smart time ranges with auto-updating sliding windows (last 24 hours, last week, last month) or fixed dates
 • User-specific searches (from user, to user, mentions)
 • Content types (images, videos, links, quotes)
 • Language filtering
