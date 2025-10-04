@@ -6,16 +6,11 @@ test.describe('Category Colors Management', () => {
     await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
     await page.evaluate(() => {
       return chrome.storage.sync.set({
-        categories: ['Tech', 'News', 'Personal', 'Research', 'Uncategorized', 'Popular', 'Media', 'Content', 'Verified'],
+        categories: ['Coding', 'Technology', 'Fitness', 'Uncategorized'],
         categoryColors: {
-          'Popular': '#ef4444',
-          'Media': '#8b5cf6',
-          'Content': '#06b6d4',
-          'News': '#10b981',
-          'Personal': '#3b82f6',
-          'Verified': '#6366f1',
-          'Tech': '#14b8a6',
-          'Research': '#f59e0b',
+          'Coding': '#3b82f6',
+          'Technology': '#10b981',
+          'Fitness': '#ef4444',
           'Uncategorized': '#6b7280'
         }
       });
@@ -63,11 +58,11 @@ test.describe('Category Colors Management', () => {
 
       // Check for specific categories
       const categoryContents = await page.locator('.category-item').allTextContents();
-      const hasPopular = categoryContents.some(text => text.includes('Popular'));
-      const hasMedia = categoryContents.some(text => text.includes('Media'));
+      const hasCoding = categoryContents.some(text => text.includes('Coding'));
+      const hasTechnology = categoryContents.some(text => text.includes('Technology'));
       const hasUncategorized = categoryContents.some(text => text.includes('Uncategorized'));
-      expect(hasPopular).toBe(true);
-      expect(hasMedia).toBe(true);
+      expect(hasCoding).toBe(true);
+      expect(hasTechnology).toBe(true);
       expect(hasUncategorized).toBe(true);
     });
 
@@ -102,13 +97,13 @@ test.describe('Category Colors Management', () => {
       const categoriesTab = page.locator('[data-tab="categories"]');
       await categoriesTab.click();
 
-      // Find Popular category
-      const popularItem = page.locator('.category-item').filter({
-        hasText: 'Popular'
+      // Find Coding category
+      const codingItem = page.locator('.category-item').filter({
+        hasText: 'Coding'
       });
 
-      const colorPicker = popularItem.locator('input[type="color"]');
-      const colorDisplay = popularItem.locator('.category-item-color');
+      const colorPicker = codingItem.locator('input[type="color"]');
+      const colorDisplay = codingItem.locator('.category-item-color');
 
       // Get initial color
       const initialColor = await colorDisplay.evaluate(el =>
@@ -138,12 +133,12 @@ test.describe('Category Colors Management', () => {
       const categoriesTab = page.locator('[data-tab="categories"]');
       await categoriesTab.click();
 
-      // Change Media category color
-      const mediaItem = page.locator('.category-item').filter({
-        hasText: 'Media'
+      // Change Technology category color
+      const technologyItem = page.locator('.category-item').filter({
+        hasText: 'Technology'
       });
 
-      const colorPicker = mediaItem.locator('input[type="color"]');
+      const colorPicker = technologyItem.locator('input[type="color"]');
       await colorPicker.evaluate((input: HTMLInputElement) => {
         input.value = '#00ff00';
         input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -159,10 +154,10 @@ test.describe('Category Colors Management', () => {
       await newCategoriesTab.click();
 
       // Verify color persisted
-      const newMediaItem = newPage.locator('.category-item').filter({
-        hasText: 'Media'
+      const newTechnologyItem = newPage.locator('.category-item').filter({
+        hasText: 'Technology'
       });
-      const persistedColor = await newMediaItem.locator('input[type="color"]').inputValue();
+      const persistedColor = await newTechnologyItem.locator('input[type="color"]').inputValue();
       expect(persistedColor).toBe('#00ff00');
 
       await newPage.close();
@@ -175,7 +170,7 @@ test.describe('Category Colors Management', () => {
       await categoriesTab.click();
 
       // Update multiple categories
-      const categories = ['Popular', 'Media', 'News'];
+      const categories = ['Coding', 'Technology', 'Fitness'];
       const colors = ['#ff0000', '#00ff00', '#0000ff'];
 
       for (let i = 0; i < categories.length; i++) {
@@ -220,17 +215,17 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Visual Validation', () => {
     test('should display correct border color for saved searches', async ({ page, extensionId, context: _context }) => {
-      // First set a custom color for Popular category
+      // First set a custom color for Coding category
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
       const categoriesTab = page.locator('[data-tab="categories"]');
       await categoriesTab.click();
 
-      const popularItem = page.locator('.category-item').filter({
-        hasText: 'Popular'
+      const codingItem = page.locator('.category-item').filter({
+        hasText: 'Coding'
       });
 
-      await popularItem.locator('input[type="color"]').evaluate((input: HTMLInputElement) => {
+      await codingItem.locator('input[type="color"]').evaluate((input: HTMLInputElement) => {
         input.value = '#ff0000';
         input.dispatchEvent(new Event('change', { bubbles: true }));
       });
@@ -241,12 +236,12 @@ test.describe('Category Colors Management', () => {
       const savedTab = page.locator('[data-tab="saved"]');
       await savedTab.click();
 
-      // Find a Popular category search
+      // Find a Coding category search
       const savedItems = page.locator('.saved-item');
-      const popularSearch = savedItems.filter({ hasText: 'Popular' }).first();
+      const codingSearch = savedItems.filter({ hasText: 'Coding' }).first();
 
       // Verify border color
-      const borderColor = await popularSearch.evaluate(el =>
+      const borderColor = await codingSearch.evaluate(el =>
         window.getComputedStyle(el).borderLeftColor
       );
       expect(borderColor).toContain('255'); // Red component
@@ -267,7 +262,7 @@ test.describe('Category Colors Management', () => {
         if (dialog.message().includes('Enter a name')) {
           await dialog.accept('Custom Color Test');
         } else if (dialog.message().includes('category')) {
-          await dialog.accept('Popular');
+          await dialog.accept('Coding');
         }
       });
 
@@ -282,21 +277,21 @@ test.describe('Category Colors Management', () => {
       // This functionality is covered by unit tests in storage.spec.ts
       await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
 
-      // Set a specific color for Tech category
+      // Set a specific color for Technology category
       const settingsTab = page.locator('[data-tab="settings"]');
       await settingsTab.click();
 
       // Wait for settings to load
       await page.waitForSelector('.category-color-item');
 
-      const techItem = page.locator('.category-color-item').filter({
-        hasText: 'Tech'
+      const technologyItem = page.locator('.category-color-item').filter({
+        hasText: 'Technology'
       });
 
-      // Wait for the Tech item to be visible
-      await techItem.waitFor({ state: 'visible' });
+      // Wait for the Technology item to be visible
+      await technologyItem.waitFor({ state: 'visible' });
 
-      await techItem.locator('.color-picker').evaluate((input: HTMLInputElement) => {
+      await technologyItem.locator('.color-picker').evaluate((input: HTMLInputElement) => {
         input.value = '#abcdef';
         input.dispatchEvent(new Event('change', { bubbles: true }));
       });
@@ -309,15 +304,15 @@ test.describe('Category Colors Management', () => {
 
       await page.locator('#keywords').fill('tech test');
 
-      // Save with Tech category - handle all dialogs
+      // Save with Technology category - handle all dialogs
       const saveBtn = page.locator('#saveBtn');
 
       page.on('dialog', async dialog => {
         const message = dialog.message();
         if (message.includes('Enter a name')) {
-          await dialog.accept('Tech Color Test');
+          await dialog.accept('Technology Color Test');
         } else if (message.includes('category') || message.includes('Available categories')) {
-          await dialog.accept('Tech');
+          await dialog.accept('Technology');
         } else {
           await dialog.accept();
         }
@@ -330,11 +325,11 @@ test.describe('Category Colors Management', () => {
       const savedSearch = await page.evaluate(async () => {
         const result = await chrome.storage.sync.get(['savedSearches']);
         const searches = result.savedSearches || [];
-        return searches.find((s: any) => s.name === 'Tech Color Test');
+        return searches.find((s: any) => s.name === 'Technology Color Test');
       });
 
       expect(savedSearch).toBeDefined();
-      expect(savedSearch.category).toBe('Tech');
+      expect(savedSearch.category).toBe('Technology');
       expect(savedSearch.color).toBe('#abcdef');
     });
   });
@@ -350,31 +345,31 @@ test.describe('Integration Flow', () => {
     const settingsTab = page.locator('[data-tab="settings"]');
     await settingsTab.click();
 
-    const mediaItem = page.locator('.category-color-item').filter({
-      hasText: 'Media'
+    const technologyItem = page.locator('.category-color-item').filter({
+      hasText: 'Technology'
     });
 
-    await mediaItem.locator('.color-picker').evaluate((input: HTMLInputElement) => {
+    await technologyItem.locator('.color-picker').evaluate((input: HTMLInputElement) => {
       input.value = '#ff00ff';
       input.dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     await page.waitForTimeout(200);
 
-    // Step 2: Create a search in Media category
+    // Step 2: Create a search in Technology category
     const builderTab = page.locator('[data-tab="builder"]');
     await builderTab.click();
 
-    await page.locator('#keywords').fill('media test');
+    await page.locator('#keywords').fill('tech test');
     await page.locator('#hasVideos').check();
 
     // Handle dialogs for save
     page.on('dialog', async dialog => {
       const message = dialog.message();
       if (message.includes('Enter a name')) {
-        await dialog.accept('Media Search Test');
+        await dialog.accept('Technology Search Test');
       } else if (message.includes('category')) {
-        await dialog.accept('Media');
+        await dialog.accept('Technology');
       } else if (message.includes('saved successfully')) {
         // Verify color is mentioned
         expect(message).toContain('#ff00ff');
@@ -390,7 +385,7 @@ test.describe('Integration Flow', () => {
     await savedTab.click();
 
     const savedItem = page.locator('.saved-item').filter({
-      hasText: 'Media Search Test'
+      hasText: 'Technology Search Test'
     });
 
     await expect(savedItem).toBeVisible();

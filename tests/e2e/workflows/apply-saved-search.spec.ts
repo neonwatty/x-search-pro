@@ -227,8 +227,8 @@ test.describe('Sidebar: Sliding Window Display', () => {
       const firstSearch = searches.first();
 
       // Check if sliding window badge exists in expanded view
-      const badge = firstSearch.locator('.sidebar-sliding-window-badge');
-      const badgeCount = await badge.count();
+      const badge = firstSearch.locator('.sidebar-sliding-window-badge').first();
+      const badgeCount = await firstSearch.locator('.sidebar-sliding-window-badge').count();
 
       if (badgeCount > 0) {
         // Verify badge is visible and positioned correctly

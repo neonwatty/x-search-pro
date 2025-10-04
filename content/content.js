@@ -2,17 +2,9 @@ let sidebarVisible = true;
 let sidebarCollapsed = false;
 let sidebarElement = null;
 
-console.log('[CONTENT SCRIPT] Loaded on:', window.location.href);
-console.log('[CONTENT SCRIPT] Document ready state:', document.readyState);
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('[CONTENT SCRIPT] Received message:', request);
-  console.log('[CONTENT SCRIPT] Message action:', request.action);
-
   if (request.action === 'applySearch') {
-    console.log('[CONTENT SCRIPT] Applying search with query:', request.query);
     applySearchToPage(request.query);
-    console.log('[CONTENT SCRIPT] Search applied, sending success response');
     sendResponse({ success: true });
   } else if (request.action === 'updateSidebarVisibility') {
     if (request.visible) {
@@ -30,19 +22,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function applySearchToPage(query) {
-  console.log('[CONTENT SCRIPT] applySearchToPage called with query:', query);
-
   const searchInput = document.querySelector('input[data-testid="SearchBox_Search_Input"]') ||
                       document.querySelector('input[aria-label="Search query"]') ||
                       document.querySelector('input[placeholder*="Search"]');
 
-  console.log('[CONTENT SCRIPT] Search input found:', !!searchInput);
   if (searchInput) {
-    console.log('[CONTENT SCRIPT] Search input element:', searchInput);
-  }
-
-  if (searchInput) {
-    console.log('[CONTENT SCRIPT] Setting search input value to:', query);
     searchInput.value = query;
     searchInput.dispatchEvent(new Event('input', { bubbles: true }));
     searchInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -50,19 +34,15 @@ function applySearchToPage(query) {
     const currentUrl = window.location.href;
     setTimeout(() => {
       const form = searchInput.closest('form');
-      console.log('[CONTENT SCRIPT] Form found:', !!form);
       if (form) {
-        console.log('[CONTENT SCRIPT] Submitting form');
         form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
 
         setTimeout(() => {
           if (window.location.href === currentUrl) {
-            console.log('[CONTENT SCRIPT] Form submit did not navigate, using direct URL navigation');
             window.location.href = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
           }
         }, 500);
       } else {
-        console.log('[CONTENT SCRIPT] No form found, dispatching Enter key');
         searchInput.dispatchEvent(new KeyboardEvent('keydown', {
           key: 'Enter',
           code: 'Enter',
@@ -73,14 +53,12 @@ function applySearchToPage(query) {
 
         setTimeout(() => {
           if (window.location.href === currentUrl) {
-            console.log('[CONTENT SCRIPT] Enter key did not navigate, using direct URL navigation');
             window.location.href = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
           }
         }, 500);
       }
     }, 100);
   } else {
-    console.log('[CONTENT SCRIPT] No search input found, redirecting to search URL');
     window.location.href = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
   }
 }
@@ -170,7 +148,6 @@ async function initializeSidebar() {
 
 function removeSidebar() {
   if (sidebarElement && sidebarElement.parentNode) {
-    console.log('[SIDEBAR] Removing sidebar from DOM');
     sidebarElement.parentNode.removeChild(sidebarElement);
     sidebarElement = null;
   }

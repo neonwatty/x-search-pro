@@ -5,8 +5,8 @@ const QueryBuilder = require('../../lib/query-builder');
 
 test.describe('Templates Unit Tests', () => {
   test.describe('DefaultTemplates', () => {
-    test('should have 10 default templates', () => {
-      expect(DefaultTemplates).toHaveLength(10);
+    test('should have 3 default templates', () => {
+      expect(DefaultTemplates).toHaveLength(3);
     });
 
     test('should have required fields in all templates', () => {
@@ -31,19 +31,20 @@ test.describe('Templates Unit Tests', () => {
       });
     });
 
-    test('should have "Viral Content" template', () => {
-      const viralTemplate = DefaultTemplates.find((t: any) => t.name === 'Viral Content');
-      expect(viralTemplate).toBeDefined();
-      expect(viralTemplate?.filters.minFaves).toBe(100);
-      expect(viralTemplate?.filters.minRetweets).toBe(50);
-      expect(viralTemplate?.filters.includeReplies).toBe(false);
+    test('should have "claude code" template', () => {
+      const claudeTemplate = DefaultTemplates.find((t: any) => t.name === 'claude code');
+      expect(claudeTemplate).toBeDefined();
+      expect(claudeTemplate?.filters.keywords).toBe('claude code');
+      expect(claudeTemplate?.filters.slidingWindow).toBe('1w');
+      expect(claudeTemplate?.category).toBe('Coding');
     });
 
-    test('should have "Video Content" template', () => {
-      const videoTemplate = DefaultTemplates.find((t: any) => t.name === 'Video Content');
-      expect(videoTemplate).toBeDefined();
-      expect(videoTemplate?.filters.hasVideos).toBe(true);
-      expect(videoTemplate?.filters.minFaves).toBe(20);
+    test('should have "chrome extension" template', () => {
+      const chromeTemplate = DefaultTemplates.find((t: any) => t.name === 'chrome extension');
+      expect(chromeTemplate).toBeDefined();
+      expect(chromeTemplate?.filters.keywords).toBe('chrome extension');
+      expect(chromeTemplate?.filters.slidingWindow).toBe('1m');
+      expect(chromeTemplate?.category).toBe('Technology');
     });
 
     test('should have unique template names', () => {
