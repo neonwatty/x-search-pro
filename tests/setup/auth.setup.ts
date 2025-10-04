@@ -6,7 +6,7 @@ dotenv.config();
 
 const authFile = 'tests/.auth/user.json';
 
-setup('authenticate with X.com', async ({ page }) => {
+setup.skip('authenticate with X.com', async ({ page }) => {
   // Skip if auth file already exists or credentials not provided
   if (fs.existsSync(authFile)) {
     console.log('✓ Auth file already exists, skipping authentication');

@@ -1,7 +1,7 @@
 {
   "name": "x-search-pro",
-  "version": "0.1.0",
-  "description": "Chrome extension for building advanced X/Twitter search queries",
+  "version": "1.0.1",
+  "description": "Chrome extension with smart X/Twitter searches that auto-update their time ranges",
   "scripts": {
     "prepare": "husky",
     "lint": "eslint . --ext .js,.ts",
