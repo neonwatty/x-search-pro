@@ -238,25 +238,15 @@ async function loadSidebarSearches() {
 
   emptyState.style.display = 'none';
 
-  const slidingWindowLabelsFull = {
-    '1d': 'Last 1 Day',
-    '1w': 'Last 1 Week',
-    '1m': 'Last 1 Month'
-  };
-
-  const slidingWindowLabelsShort = {
+  const slidingWindowLabels = {
     '1d': '1D',
     '1w': '1W',
     '1m': '1M'
   };
 
   listContainer.innerHTML = searches.map(search => {
-    const slidingWindowBadgeFull = search.filters?.slidingWindow
-      ? `<span class="sidebar-sliding-window-badge sidebar-badge-full" title="Dynamic time range">🕒 ${slidingWindowLabelsFull[search.filters.slidingWindow]}</span>`
-      : '';
-
-    const slidingWindowBadgeShort = search.filters?.slidingWindow
-      ? `<span class="sidebar-sliding-window-badge sidebar-badge-short" title="Dynamic time range">🕒 ${slidingWindowLabelsShort[search.filters.slidingWindow]}</span>`
+    const slidingWindowBadge = search.filters?.slidingWindow
+      ? `<span class="sidebar-sliding-window-badge" title="Dynamic time range">🕒 ${slidingWindowLabels[search.filters.slidingWindow]}</span>`
       : '';
 
     // Rebuild query with current dates if sliding window is active
@@ -274,13 +264,13 @@ async function loadSidebarSearches() {
             ${search.name}
           </span>
           <div class="sidebar-item-badges">
-            ${slidingWindowBadgeFull}
+            ${slidingWindowBadge}
             <span class="sidebar-item-category">${search.category}</span>
           </div>
         </div>
         <div class="sidebar-item-query">${displayQuery}</div>
         <div class="sidebar-item-name-only">
-          ${slidingWindowBadgeShort}
+          ${slidingWindowBadge}
           <span class="sidebar-drag-handle-collapsed" title="Drag to reorder">⋮⋮</span>
           <span class="sidebar-item-collapsed-name">${search.name}</span>
         </div>

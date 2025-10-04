@@ -96,7 +96,7 @@ test.describe('Sidebar: Sliding Window Display', () => {
     await new Promise(resolve => setTimeout(resolve, 5000));
   });
 
-  test('should show full sliding window badge in expanded sidebar', async ({ context, extensionId: _extensionId }) => {
+  test('should show sliding window badge in expanded sidebar', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const xHelper = new XPageHelpers(page);
 
@@ -117,12 +117,12 @@ test.describe('Sidebar: Sliding Window Display', () => {
     if (await searches.count() > 0) {
       const firstSearchName = await searches.first().locator('.sidebar-item-name').textContent();
 
-      // Check if badge exists and has full text
+      // Check if badge exists and has short format
       const badgeText = await sidebar.getSlidingWindowBadgeText(firstSearchName || '');
       if (badgeText) {
         expect(badgeText).toContain('🕒');
-        // Should be full text like "🕒 Last 1 Week"
-        expect(badgeText.length).toBeGreaterThan(3);
+        // Should be short text like "🕒 1D", "🕒 1W", or "🕒 1M"
+        expect(badgeText).toMatch(/🕒\s*(1D|1W|1M)/);
       }
     }
 
@@ -130,7 +130,7 @@ test.describe('Sidebar: Sliding Window Display', () => {
     await page.close();
   });
 
-  test('should show compact sliding window badge in collapsed sidebar', async ({ context, extensionId: _extensionId }) => {
+  test('should show sliding window badge in collapsed sidebar', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const xHelper = new XPageHelpers(page);
 
@@ -153,8 +153,8 @@ test.describe('Sidebar: Sliding Window Display', () => {
       const badgeText = await sidebar.getSlidingWindowBadgeText(firstSearchName || '');
       if (badgeText) {
         expect(badgeText).toContain('🕒');
-        // Should be short text like "🕒 1W"
-        // The collapsed version should be shorter
+        // Should be short text like "🕒 1D", "🕒 1W", or "🕒 1M"
+        expect(badgeText).toMatch(/🕒\s*(1D|1W|1M)/);
       }
     }
 
@@ -162,7 +162,7 @@ test.describe('Sidebar: Sliding Window Display', () => {
     await page.close();
   });
 
-  test('should toggle between expanded and collapsed badge formats', async ({ context, extensionId: _extensionId }) => {
+  test('should show same badge format in expanded and collapsed views', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const xHelper = new XPageHelpers(page);
 
@@ -192,12 +192,13 @@ test.describe('Sidebar: Sliding Window Display', () => {
       const firstSearchCollapsed = await searches.first().locator('.sidebar-item-collapsed-name').textContent();
       const collapsedBadgeText = await sidebar.getSlidingWindowBadgeText(firstSearchCollapsed || '');
 
-      // If there's a sliding window search, verify badge changes format
+      // If there's a sliding window search, verify badge format is the same
       if (expandedBadgeText && collapsedBadgeText) {
         expect(expandedBadgeText).toContain('🕒');
         expect(collapsedBadgeText).toContain('🕒');
-        // Collapsed should be shorter
-        expect(collapsedBadgeText.length).toBeLessThan(expandedBadgeText.length);
+        // Badge format should be the same in both views (short format)
+        expect(expandedBadgeText).toMatch(/🕒\s*(1D|1W|1M)/);
+        expect(collapsedBadgeText).toMatch(/🕒\s*(1D|1W|1M)/);
       }
     }
 
@@ -225,8 +226,8 @@ test.describe('Sidebar: Sliding Window Display', () => {
     if (await searches.count() > 0) {
       const firstSearch = searches.first();
 
-      // Check if sliding window badge exists (full version in expanded view)
-      const badge = firstSearch.locator('.sidebar-sliding-window-badge.sidebar-badge-full');
+      // Check if sliding window badge exists in expanded view
+      const badge = firstSearch.locator('.sidebar-sliding-window-badge');
       const badgeCount = await badge.count();
 
       if (badgeCount > 0) {
