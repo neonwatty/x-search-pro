@@ -4,6 +4,9 @@
 
 A Chrome extension with smart saved searches that auto-update their time ranges. Save, organize, and color-code your advanced X searches—set it once, use it forever.
 
+https://github.com/user-attachments/assets/f39d5ed9-b679-4ac4-bb32-52e11b721819
+
+
 ## Why X Search Pro?
 
 **The Problem:** X.com has advanced search (`x.com/search-advanced`), but it has no memory. Every time you need to monitor brand mentions, track competitors, or find viral content, you rebuild the same complex query from scratch.
