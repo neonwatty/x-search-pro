@@ -1,4 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
+import { SidebarPage } from '../../page-objects/SidebarPage';
+import { XPageHelpers } from '../../helpers/x-page-helpers';
 
 test.describe('Category Colors Management', () => {
   // Reset category colors before each test to ensure clean state
@@ -19,11 +21,13 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Categories Tab - Category Management Section', () => {
     test('should display Manage Categories section in Categories tab', async ({ page, extensionId }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      // Navigate to Categories tab
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       // Verify Manage Categories section exists
       const categorySection = page.locator('.categories-section');
@@ -34,16 +38,19 @@ test.describe('Category Colors Management', () => {
       await expect(settingInfo).toHaveText('Create and organize custom categories for your saved searches');
 
       // Verify add category button exists
-      const addButton = page.locator('#addCategoryBtn');
+      const addButton = page.locator('#sidebarAddCategoryBtn');
       await expect(addButton).toBeVisible();
       await expect(addButton).toHaveText('Add');
     });
 
     test('should show all existing categories with color pickers', async ({ page, extensionId }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       // Check for category items
       const categoryItems = page.locator('.category-item');
@@ -67,10 +74,13 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should display color indicators', async ({ page, extensionId }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       // Check all color displays are visible and have colors
       const colorDisplays = page.locator('.category-item-color');
@@ -92,10 +102,13 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Color Picker Interactions', () => {
     test('should update color display when color changes', async ({ page, extensionId }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       // Find Coding category
       const codingItem = page.locator('.category-item').filter({
@@ -128,10 +141,13 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should persist color changes without page reload', async ({ page, extensionId, context }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       // Change Technology category color
       const technologyItem = page.locator('.category-item').filter({
@@ -146,12 +162,15 @@ test.describe('Category Colors Management', () => {
 
       await page.waitForTimeout(200);
 
-      // Open new popup instance
+      // Open new X.com page with sidebar
       const newPage = await context.newPage();
-      await newPage.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const newXHelper = new XPageHelpers(newPage);
+      await newXHelper.navigateToExplore();
 
-      const newCategoriesTab = newPage.locator('[data-tab="categories"]');
-      await newCategoriesTab.click();
+      const newSidebar = new SidebarPage(newPage);
+      await newSidebar.waitForInjection(5000);
+      await newSidebar.ensureVisible();
+      await newSidebar.switchTab('categories');
 
       // Verify color persisted
       const newTechnologyItem = newPage.locator('.category-item').filter({
@@ -164,10 +183,13 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should update multiple categories independently', async ({ page, extensionId }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       // Update multiple categories
       const categories = ['Coding', 'Technology', 'Fitness'];
@@ -215,11 +237,13 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Visual Validation', () => {
     test('should display correct border color for saved searches', async ({ page, extensionId, context: _context }) => {
-      // First set a custom color for Coding category
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
 
-      const categoriesTab = page.locator('[data-tab="categories"]');
-      await categoriesTab.click();
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('categories');
 
       const codingItem = page.locator('.category-item').filter({
         hasText: 'Coding'
@@ -233,11 +257,10 @@ test.describe('Category Colors Management', () => {
       await page.waitForTimeout(200);
 
       // Switch to Saved tab
-      const savedTab = page.locator('[data-tab="saved"]');
-      await savedTab.click();
+      await sidebar.switchTab('saved');
 
       // Find a Coding category search
-      const savedItems = page.locator('.saved-item');
+      const savedItems = page.locator('.sidebar-search-item');
       const codingSearch = savedItems.filter({ hasText: 'Coding' }).first();
 
       // Verify border color
@@ -248,23 +271,33 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should maintain custom colors when category colors change', async ({ page, extensionId }) => {
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
 
       // Create a search with custom color
-      const keywords = page.locator('#keywords');
-      await keywords.fill('test custom color');
+      await sidebar.fillKeywords('test custom color');
 
-      const saveBtn = page.locator('#saveBtn');
-      await saveBtn.click();
+      // Save with category
+      await page.selectOption('#sidebarSearchCategory', 'Coding');
+      await page.waitForTimeout(200);
 
-      // Handle save dialog with custom color (would need to mock or handle alerts)
-      page.on('dialog', async dialog => {
-        if (dialog.message().includes('Enter a name')) {
-          await dialog.accept('Custom Color Test');
-        } else if (dialog.message().includes('category')) {
-          await dialog.accept('Coding');
-        }
-      });
+      const dialogHandler = async (dialog: any) => {
+        await dialog.accept('Custom Color Test');
+      };
+
+      page.on('dialog', dialogHandler);
+
+      try {
+        await sidebar.clickSave();
+        await page.waitForTimeout(1000);
+      } finally {
+        page.off('dialog', dialogHandler);
+      }
 
       // This test would need more complex setup to handle custom colors
       // Marking as a placeholder for now

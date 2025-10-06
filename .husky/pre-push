@@ -38,6 +38,20 @@ echo "⚠️  This ensures extension works on real X.com pages"
 echo "📍 Tests require Chrome browser and internet connection"
 echo ""
 
+# Check if authentication is needed
+if [ ! -f "tests/.auth/user.json" ]; then
+  echo "🔐 No authentication found, running X.com login setup..."
+  echo "   (This uses credentials from .env file)"
+  npx playwright test tests/setup/auth.setup.ts
+  if [ $? -ne 0 ]; then
+    echo "❌ Authentication failed! Please check your .env credentials or run manually:"
+    echo "   npx playwright test tests/setup/auth.setup.ts"
+    exit 1
+  fi
+  echo "✅ Authentication successful"
+  echo ""
+fi
+
 npm run test:e2e
 if [ $? -ne 0 ]; then
   echo "❌ E2E tests failed! Please fix failing tests before pushing."

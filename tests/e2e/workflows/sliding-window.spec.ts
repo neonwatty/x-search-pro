@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
-import { PopupPage } from '../../page-objects/PopupPage';
+import { SidebarPage } from '../../page-objects/SidebarPage';
+import { XPageHelpers } from '../../helpers/x-page-helpers';
 
 test.describe('Sliding Window Feature', () => {
   test.beforeEach(async ({ context, extensionId }) => {
@@ -14,109 +15,144 @@ test.describe('Sliding Window Feature', () => {
   });
 
   test.describe('Builder Tab UI', () => {
-    test('should disable date inputs when sliding window is selected', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should disable date inputs when sliding window is selected', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
       // Initially date inputs should be enabled
-      expect(await popupPage.areDateInputsEnabled()).toBe(true);
+      expect(await sidebar.areDateInputsEnabled()).toBe(true);
 
       // Select sliding window
-      await popupPage.selectSlidingWindow('1w');
+      await sidebar.selectSlidingWindow('1w');
 
       // Date inputs should now be disabled
-      expect(await popupPage.areDateInputsDisabled()).toBe(true);
+      expect(await sidebar.areDateInputsDisabled()).toBe(true);
 
       // Verify visual feedback (opacity)
-      const sinceDateOpacity = await popupPage.page.locator('#sinceDate').evaluate(el =>
+      const sinceDateOpacity = await page.locator('#sidebarSinceDate').evaluate(el =>
         window.getComputedStyle(el).opacity
       );
       expect(sinceDateOpacity).toBe('0.5');
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should show info message when sliding window is selected', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should show info message when sliding window is selected', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
       // Initially info should be hidden
-      expect(await popupPage.isSlidingWindowInfoVisible()).toBe(false);
+      expect(await sidebar.isSlidingWindowInfoVisible()).toBe(false);
 
       // Select sliding window
-      await popupPage.selectSlidingWindow('1d');
+      await sidebar.selectSlidingWindow('1d');
 
       // Info should now be visible
-      expect(await popupPage.isSlidingWindowInfoVisible()).toBe(true);
+      expect(await sidebar.isSlidingWindowInfoVisible()).toBe(true);
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should clear sliding window when fixed date is entered', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should clear sliding window when fixed date is entered', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
       // Select sliding window first
-      await popupPage.selectSlidingWindow('1w');
-      expect(await popupPage.getSlidingWindowValue()).toBe('1w');
+      await sidebar.selectSlidingWindow('1w');
+      expect(await sidebar.getSlidingWindowValue()).toBe('1w');
 
       // Click on the disabled date input (this should clear sliding window)
-      await popupPage.clickSinceDateInput();
-      await popupPage.page.waitForTimeout(300);
+      await sidebar.clickSinceDateInput();
+      await page.waitForTimeout(300);
 
       // Sliding window should be cleared by the click
-      expect(await popupPage.getSlidingWindowValue()).toBe('');
-      expect(await popupPage.areDateInputsEnabled()).toBe(true);
+      expect(await sidebar.getSlidingWindowValue()).toBe('');
+      expect(await sidebar.areDateInputsEnabled()).toBe(true);
 
       // Now enter a fixed date
-      await popupPage.setDateRange('2024-06-01', undefined);
-      await popupPage.page.waitForTimeout(300);
+      await sidebar.setDateRange('2024-06-01', undefined);
+      await page.waitForTimeout(300);
 
       // Verify date is set
-      const sinceValue = await popupPage.getSinceDateValue();
+      const sinceValue = await sidebar.getSinceDateValue();
       expect(sinceValue).toBe('2024-06-01');
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should clear sliding window when date preset is clicked', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should clear sliding window when date preset is clicked', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
       // Select sliding window
-      await popupPage.selectSlidingWindow('1m');
-      expect(await popupPage.getSlidingWindowValue()).toBe('1m');
+      await sidebar.selectSlidingWindow('1m');
+      expect(await sidebar.getSlidingWindowValue()).toBe('1m');
 
       // Click a date preset (the click handler will clear sliding window first, then set the date)
-      await popupPage.clickDatePreset('today');
-      await popupPage.page.waitForTimeout(500);
+      await sidebar.clickDatePreset('today');
+      await page.waitForTimeout(500);
 
       // Sliding window should be cleared
-      expect(await popupPage.getSlidingWindowValue()).toBe('');
-      expect(await popupPage.areDateInputsEnabled()).toBe(true);
+      expect(await sidebar.getSlidingWindowValue()).toBe('');
+      expect(await sidebar.areDateInputsEnabled()).toBe(true);
 
       // Verify the preset date was applied
-      const sinceValue = await popupPage.getSinceDateValue();
+      const sinceValue = await sidebar.getSinceDateValue();
       const today = new Date().toISOString().split('T')[0];
       expect(sinceValue).toBe(today);
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should show calculated dates in query preview for sliding window', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should show calculated dates in query preview for sliding window', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('test');
-      await popupPage.selectSlidingWindow('1w');
-      await popupPage.page.waitForTimeout(300);
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
-      const preview = await popupPage.getQueryPreview();
+      await sidebar.fillKeywords('test');
+      await sidebar.selectSlidingWindow('1w');
+      await page.waitForTimeout(300);
+
+      const preview = await sidebar.getQueryPreview();
 
       // Should contain today's date
       const today = new Date().toISOString().split('T')[0];
@@ -128,228 +164,298 @@ test.describe('Sliding Window Feature', () => {
       const expectedSince = weekAgo.toISOString().split('T')[0];
       expect(preview).toContain(`since:${expectedSince}`);
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should reset sliding window when reset button is clicked', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should reset sliding window when reset button is clicked', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('test');
-      await popupPage.selectSlidingWindow('1d');
-      expect(await popupPage.getSlidingWindowValue()).toBe('1d');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
-      await popupPage.clickReset();
-      await popupPage.page.waitForTimeout(300);
+      await sidebar.fillKeywords('test');
+      await sidebar.selectSlidingWindow('1d');
+      expect(await sidebar.getSlidingWindowValue()).toBe('1d');
 
-      expect(await popupPage.getSlidingWindowValue()).toBe('');
-      expect(await popupPage.areDateInputsEnabled()).toBe(true);
+      await sidebar.clickReset();
+      await page.waitForTimeout(300);
 
-      await popupPage.page.close();
+      expect(await sidebar.getSlidingWindowValue()).toBe('');
+      expect(await sidebar.areDateInputsEnabled()).toBe(true);
+
+      await page.close();
     });
 
-    test('should handle all sliding window options correctly', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should handle all sliding window options correctly', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('trending');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('trending');
 
       // Test 1 day
-      await popupPage.selectSlidingWindow('1d');
-      let preview = await popupPage.getQueryPreview();
+      await sidebar.selectSlidingWindow('1d');
+      let preview = await sidebar.getQueryPreview();
       expect(preview).toContain('since:');
       expect(preview).toContain('until:');
 
       // Test 1 week
-      await popupPage.selectSlidingWindow('1w');
-      preview = await popupPage.getQueryPreview();
+      await sidebar.selectSlidingWindow('1w');
+      preview = await sidebar.getQueryPreview();
       expect(preview).toContain('since:');
       expect(preview).toContain('until:');
 
       // Test 1 month
-      await popupPage.selectSlidingWindow('1m');
-      preview = await popupPage.getQueryPreview();
+      await sidebar.selectSlidingWindow('1m');
+      preview = await sidebar.getQueryPreview();
       expect(preview).toContain('since:');
       expect(preview).toContain('until:');
 
-      await popupPage.page.close();
+      await page.close();
     });
   });
 
   test.describe('Save and Apply Flow', () => {
-    test('should save search with sliding window correctly', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should save search with sliding window correctly', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('AI news');
-      await popupPage.selectSlidingWindow('1w');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('AI news');
+      await sidebar.selectSlidingWindow('1w');
 
       const searchName = `Sliding Window Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
       // Switch to saved tab and verify
-      await popupPage.switchTab('saved');
-      await popupPage.page.waitForTimeout(500);
+      await sidebar.switchTab('saved');
+      await page.waitForTimeout(500);
 
-      const searches = await popupPage.getSavedSearches();
+      const searches = await sidebar.getSearchList();
       const searchText = await searches.first().textContent();
       expect(searchText).toContain(searchName);
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should restore sliding window when editing saved search', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should restore sliding window when editing saved search', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
       // Create and save a search with sliding window
-      await popupPage.fillKeywords('tech');
-      await popupPage.selectSlidingWindow('1m');
+      await sidebar.fillKeywords('tech');
+      await sidebar.selectSlidingWindow('1m');
 
       const searchName = `Edit Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
       // Edit the search
-      await popupPage.editSavedSearch(searchName);
-      await popupPage.page.waitForTimeout(500);
+      await sidebar.editSavedSearch(searchName);
+      await page.waitForTimeout(500);
 
       // Verify sliding window is restored
-      expect(await popupPage.getSlidingWindowValue()).toBe('1m');
-      expect(await popupPage.areDateInputsDisabled()).toBe(true);
+      expect(await sidebar.getSlidingWindowValue()).toBe('1m');
+      expect(await sidebar.areDateInputsDisabled()).toBe(true);
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should update sliding window value when editing', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should update sliding window value when editing', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
+
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
 
       // Create search with 1 week
-      await popupPage.fillKeywords('updates');
-      await popupPage.selectSlidingWindow('1w');
+      await sidebar.fillKeywords('updates');
+      await sidebar.selectSlidingWindow('1w');
 
       const searchName = `Update Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
       // Edit and change to 1 day
-      await popupPage.editSavedSearch(searchName);
-      await popupPage.page.waitForTimeout(500);
+      await sidebar.editSavedSearch(searchName);
+      await page.waitForTimeout(500);
 
-      await popupPage.selectSlidingWindow('1d');
+      await sidebar.selectSlidingWindow('1d');
 
       // Update with dialog handler
-      popupPage.page.once('dialog', async dialog => {
+      page.once('dialog', async dialog => {
         await dialog.accept(searchName);
       });
-      await popupPage.clickSave();
-      await popupPage.page.waitForTimeout(500);
+      await sidebar.clickSave();
+      await page.waitForTimeout(500);
 
       // Verify change persisted
-      await popupPage.editSavedSearch(searchName);
-      await popupPage.page.waitForTimeout(500);
-      expect(await popupPage.getSlidingWindowValue()).toBe('1d');
+      await sidebar.editSavedSearch(searchName);
+      await page.waitForTimeout(500);
+      expect(await sidebar.getSlidingWindowValue()).toBe('1d');
 
-      await popupPage.page.close();
+      await page.close();
     });
   });
 
   test.describe('Saved Tab Badge Display', () => {
-    test('should show badge for 1 day sliding window', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should show badge for 1 day sliding window', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('daily');
-      await popupPage.selectSlidingWindow('1d');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('daily');
+      await sidebar.selectSlidingWindow('1d');
 
       const searchName = `Daily Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
-      const badgeText = await popupPage.getSlidingWindowBadgeText(searchName);
+      const badgeText = await sidebar.getSlidingWindowBadgeText(searchName);
       expect(badgeText).toContain('🕒');
       expect(badgeText).toContain('1D');
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should show badge for 1 week sliding window', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should show badge for 1 week sliding window', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('weekly');
-      await popupPage.selectSlidingWindow('1w');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('weekly');
+      await sidebar.selectSlidingWindow('1w');
 
       const searchName = `Weekly Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
-      const badgeText = await popupPage.getSlidingWindowBadgeText(searchName);
+      const badgeText = await sidebar.getSlidingWindowBadgeText(searchName);
       expect(badgeText).toContain('🕒');
       expect(badgeText).toContain('1W');
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should show badge for 1 month sliding window', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should show badge for 1 month sliding window', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('monthly');
-      await popupPage.selectSlidingWindow('1m');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('monthly');
+      await sidebar.selectSlidingWindow('1m');
 
       const searchName = `Monthly Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
-      const badgeText = await popupPage.getSlidingWindowBadgeText(searchName);
+      const badgeText = await sidebar.getSlidingWindowBadgeText(searchName);
       expect(badgeText).toContain('🕒');
       expect(badgeText).toContain('1M');
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should not show badge for searches without sliding window', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should not show badge for searches without sliding window', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('fixed date');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('fixed date');
       // Use fixed dates, no sliding window
 
       const searchName = `Fixed Date Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
-      const hasBadge = await popupPage.hasSlidingWindowBadge(searchName);
+      const hasBadge = await sidebar.hasSlidingWindowBadge(searchName);
       expect(hasBadge).toBe(false);
 
-      await popupPage.page.close();
+      await page.close();
     });
 
-    test('should show current calculated dates in saved search query', async ({ context, extensionId }) => {
-      const popupPage = new PopupPage(await context.newPage(), extensionId);
-      await popupPage.open();
-      await popupPage.page.waitForTimeout(1000);
+    test('should show current calculated dates in saved search query', async ({ context, extensionId: _extensionId }) => {
+      const page = await context.newPage();
+      const xHelper = new XPageHelpers(page);
+      await xHelper.navigateToExplore();
+      await page.waitForTimeout(2000);
 
-      await popupPage.fillKeywords('current');
-      await popupPage.selectSlidingWindow('1w');
+      const sidebar = new SidebarPage(page);
+      await sidebar.waitForInjection(5000);
+      await sidebar.ensureVisible();
+      await sidebar.switchTab('builder');
+      await page.waitForTimeout(1000);
+
+      await sidebar.fillKeywords('current');
+      await sidebar.selectSlidingWindow('1w');
 
       const searchName = `Current Dates Test ${Date.now()}`;
-      await popupPage.saveSearch(searchName);
+      await sidebar.saveSearch(searchName);
 
-      await popupPage.switchTab('saved');
-      const item = popupPage.page.locator(`.saved-item`).filter({ hasText: searchName }).first();
-      const queryText = await item.locator('.saved-item-query').textContent();
+      await sidebar.switchTab('saved');
+      const item = page.locator(`.sidebar-search-item`).filter({ hasText: searchName }).first();
+      const queryText = await item.locator('.sidebar-search-query').textContent();
 
       // Should contain today's date
       const today = new Date().toISOString().split('T')[0];
       expect(queryText).toContain(today);
 
-      await popupPage.page.close();
+      await page.close();
     });
   });
 });

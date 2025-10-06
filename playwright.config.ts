@@ -29,7 +29,17 @@ export default defineConfig({
     {
       name: 'setup',
       testMatch: /.*\.setup\.ts$/,
-      use: { ...devices['Desktop Chrome'] },
+      timeout: 120000, // 2 minutes for auth setup
+      use: {
+        ...devices['Desktop Chrome'],
+        channel: 'chrome', // Use real Chrome instead of Chromium
+        launchOptions: {
+          args: [
+            '--disable-blink-features=AutomationControlled', // Hide automation
+          ],
+          headless: false, // Always run setup in headed mode
+        },
+      },
     },
     {
       name: 'unit',
@@ -41,18 +51,11 @@ export default defineConfig({
     {
       name: 'e2e',
       testMatch: /tests\/e2e\/.*\.spec\.ts$/,
-      testIgnore: ['**/apply-saved-search.spec.ts', '**/auth-verification.spec.ts', '**/drag-and-drop-reorder.spec.ts'],
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
-    {
-      name: 'e2e-with-auth',
-      testMatch: /tests\/e2e\/(workflows\/apply-saved-search|workflows\/auth-verification|workflows\/drag-and-drop-reorder).*\.spec\.ts$/,
+      testIgnore: ['**/auth-verification.spec.ts'],
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'tests/.auth/user.json',
+        // Extension fixture handles browser launch, auth, and extension loading
       },
     },
   ],

@@ -1,5 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
-import { PopupPage } from '../../page-objects/PopupPage';
+import { SidebarPage } from '../../page-objects/SidebarPage';
+import { XPageHelpers } from '../../helpers/x-page-helpers';
 
 test.describe('Workflow: Date Picker Calendar', () => {
   test.beforeEach(async ({ context, extensionId }) => {
@@ -13,14 +14,21 @@ test.describe('Workflow: Date Picker Calendar', () => {
     await new Promise(resolve => setTimeout(resolve, 500));
   });
 
-  test('should show calendar icon on date inputs', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should show calendar icon on date inputs', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Check that date inputs are visible
-    const sinceDate = popupPage.page.locator('#sinceDate');
-    const untilDate = popupPage.page.locator('#untilDate');
+    const sinceDate = page.locator('#sidebarSinceDate');
+    const untilDate = page.locator('#sidebarUntilDate');
 
     await expect(sinceDate).toBeVisible();
     await expect(untilDate).toBeVisible();
@@ -29,63 +37,84 @@ test.describe('Workflow: Date Picker Calendar', () => {
     await expect(sinceDate).toHaveAttribute('type', 'date');
     await expect(untilDate).toHaveAttribute('type', 'date');
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should allow manual date entry via keyboard', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should allow manual date entry via keyboard', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Set a date manually using setDateRange helper
-    await popupPage.setDateRange('2024-01-01', '2024-01-31');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.setDateRange('2024-01-01', '2024-01-31');
+    await page.waitForTimeout(500);
 
     // Verify the dates are set
-    const sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    const untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    const untilValue = await page.locator('#sidebarUntilDate').inputValue();
 
     expect(sinceValue).toBe('2024-01-01');
     expect(untilValue).toBe('2024-01-31');
 
     // Verify dates appear in query preview
-    const preview = await popupPage.getQueryPreview();
+    const preview = await sidebar.getQueryPreview();
     expect(preview).toContain('since:2024-01-01');
     expect(preview).toContain('until:2024-01-31');
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should update query preview when dates change', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should update query preview when dates change', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Initially should have default dates
-    let preview = await popupPage.getQueryPreview();
+    let preview = await sidebar.getQueryPreview();
     expect(preview).toContain('since:');
     expect(preview).toContain('until:');
 
     // Change the dates
-    await popupPage.setDateRange('2024-06-01', '2024-06-30');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.setDateRange('2024-06-01', '2024-06-30');
+    await page.waitForTimeout(500);
 
     // Verify query updates
-    preview = await popupPage.getQueryPreview();
+    preview = await sidebar.getQueryPreview();
     expect(preview).toContain('since:2024-06-01');
     expect(preview).toContain('until:2024-06-30');
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should have default dates set on page load', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should have default dates set on page load', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Check that default dates are set (week ago to today)
-    const sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    const untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    const untilValue = await page.locator('#sidebarUntilDate').inputValue();
 
     // Verify dates are not empty
     expect(sinceValue).toBeTruthy();
@@ -111,95 +140,115 @@ test.describe('Workflow: Date Picker Calendar', () => {
 
     expect(daysDiff).toBeLessThan(1); // Within 1 day tolerance
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should clear dates when reset button is clicked', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should clear dates when reset button is clicked', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Change dates
-    await popupPage.setDateRange('2020-01-01', '2020-12-31');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.setDateRange('2020-01-01', '2020-12-31');
+    await page.waitForTimeout(500);
 
     // Verify dates changed
-    let sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    let untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    let sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    let untilValue = await page.locator('#sidebarUntilDate').inputValue();
     expect(sinceValue).toBe('2020-01-01');
     expect(untilValue).toBe('2020-12-31');
 
     // Reset form
-    await popupPage.clickReset();
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.clickReset();
+    await page.waitForTimeout(500);
 
     // Verify dates are cleared (reset clears all form values)
-    sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    untilValue = await page.locator('#sidebarUntilDate').inputValue();
 
     expect(sinceValue).toBe('');
     expect(untilValue).toBe('');
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should preserve dates when editing a saved search', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should preserve dates when editing a saved search', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
 
     // Create a search with specific dates
-    await popupPage.fillKeywords('test dates');
-    await popupPage.page.waitForTimeout(300);
-    await popupPage.setDateRange('2024-03-01', '2024-03-31');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.fillKeywords('test dates');
+    await page.waitForTimeout(300);
+    await sidebar.setDateRange('2024-03-01', '2024-03-31');
+    await page.waitForTimeout(500);
 
     // Verify query preview is populated before saving
-    const preview = await popupPage.getQueryPreview();
+    const preview = await sidebar.getQueryPreview();
     expect(preview).toContain('test dates');
 
     // Save the search using the helper method
     const searchName = `Date Test Search ${Date.now()}`;
-    await popupPage.saveSearch(searchName);
-    await popupPage.page.waitForTimeout(1000); // Extra wait for save to complete
+    await sidebar.saveSearch(searchName);
+    await page.waitForTimeout(1000); // Extra wait for save to complete
 
     // Switch to saved tab and edit the search
-    await popupPage.editSavedSearch(searchName);
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.editSavedSearch(searchName);
+    await page.waitForTimeout(500);
 
     // Verify dates are preserved
-    const sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    const untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    const untilValue = await page.locator('#sidebarUntilDate').inputValue();
 
     expect(sinceValue).toBe('2024-03-01');
     expect(untilValue).toBe('2024-03-31');
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should allow clearing date values', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should allow clearing date values', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Dates should be set by default
-    let preview = await popupPage.getQueryPreview();
+    let preview = await sidebar.getQueryPreview();
     expect(preview).toContain('since:');
     expect(preview).toContain('until:');
 
     // Clear the dates
-    await popupPage.setDateRange('', '');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.setDateRange('', '');
+    await page.waitForTimeout(500);
 
     // Verify dates are cleared
-    const sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    const untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    const untilValue = await page.locator('#sidebarUntilDate').inputValue();
 
     expect(sinceValue).toBe('');
     expect(untilValue).toBe('');
 
     // Verify query preview doesn't contain date filters
-    preview = await popupPage.getQueryPreview();
+    preview = await sidebar.getQueryPreview();
 
     // If there's no keywords, it might say "Enter search criteria"
     // Otherwise it should not contain since/until
@@ -208,76 +257,97 @@ test.describe('Workflow: Date Picker Calendar', () => {
       expect(preview).not.toContain('until:');
     }
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should work with date presets after manual date entry', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should work with date presets after manual date entry', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Manually set dates
-    await popupPage.setDateRange('2020-01-01', '2020-12-31');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.setDateRange('2020-01-01', '2020-12-31');
+    await page.waitForTimeout(500);
 
     // Click a date preset
-    await popupPage.clickDatePreset('today');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.clickDatePreset('today');
+    await page.waitForTimeout(500);
 
     // Verify since date updated to today
-    const sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
+    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
     const today = new Date().toISOString().split('T')[0];
     expect(sinceValue).toBe(today);
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should maintain date values when switching tabs', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should maintain date values when switching tabs', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Set specific dates
-    await popupPage.setDateRange('2024-05-01', '2024-05-31');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.setDateRange('2024-05-01', '2024-05-31');
+    await page.waitForTimeout(500);
 
     // Switch to another tab
-    await popupPage.switchTab('saved');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.switchTab('saved');
+    await page.waitForTimeout(500);
 
     // Switch back to builder
-    await popupPage.switchTab('builder');
-    await popupPage.page.waitForTimeout(500);
+    await sidebar.switchTab('builder');
+    await page.waitForTimeout(500);
 
     // Verify dates are still set
-    const sinceValue = await popupPage.page.locator('#sinceDate').inputValue();
-    const untilValue = await popupPage.page.locator('#untilDate').inputValue();
+    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
+    const untilValue = await page.locator('#sidebarUntilDate').inputValue();
 
     expect(sinceValue).toBe('2024-05-01');
     expect(untilValue).toBe('2024-05-31');
 
-    await popupPage.page.close();
+    await page.close();
   });
 
-  test('should show styled calendar picker indicator', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should show styled calendar picker indicator', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const xHelper = new XPageHelpers(page);
+
+    await xHelper.navigateToExplore();
+    await page.waitForTimeout(2000);
+
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+    await sidebar.switchTab('builder');
 
     // Check that the calendar picker indicator is present and visible
     // Note: The indicator is part of the browser's native UI, so we check the input is interactable
-    const sinceDate = popupPage.page.locator('#sinceDate');
+    const sinceDate = page.locator('#sidebarSinceDate');
 
     await expect(sinceDate).toBeVisible();
     await expect(sinceDate).toBeEnabled();
 
     // Verify we can click on the input (which should trigger calendar in a real browser)
     await sinceDate.click();
-    await popupPage.page.waitForTimeout(300);
+    await page.waitForTimeout(300);
 
     // The input should now be focused
     await expect(sinceDate).toBeFocused();
 
-    await popupPage.page.close();
+    await page.close();
   });
 });
