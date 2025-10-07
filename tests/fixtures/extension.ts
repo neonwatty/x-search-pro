@@ -15,7 +15,8 @@ type ExtensionFixtures = {
  * @param workerIndex - Unique index for the worker (enables parallel execution)
  */
 function prepareTestExtension(workerIndex: number): string {
-  const sourceDir = path.join(__dirname, '../..');
+  // Use absolute path resolution to work correctly in CI
+  const sourceDir = path.resolve(__dirname, '../..');
   const testExtensionDir = path.join(os.tmpdir(), `x-search-pro-test-extension-worker-${workerIndex}`);
 
   // Remove old test extension directory if it exists
@@ -31,12 +32,20 @@ function prepareTestExtension(workerIndex: number): string {
   for (const item of filesToCopy) {
     const sourcePath = path.join(sourceDir, item);
     const destPath = path.join(testExtensionDir, item);
+    if (!fs.existsSync(sourcePath)) {
+      throw new Error(`Source directory not found: ${sourcePath}`);
+    }
     fs.cpSync(sourcePath, destPath, { recursive: true });
   }
 
   // Copy manifest.test.json as manifest.json
   const manifestTestPath = path.join(sourceDir, 'manifest.test.json');
   const manifestDestPath = path.join(testExtensionDir, 'manifest.json');
+
+  if (!fs.existsSync(manifestTestPath)) {
+    throw new Error(`manifest.test.json not found at: ${manifestTestPath}\nSource dir: ${sourceDir}\nContents: ${fs.readdirSync(sourceDir).join(', ')}`);
+  }
+
   fs.copyFileSync(manifestTestPath, manifestDestPath);
 
   console.log(`Test extension prepared at: ${testExtensionDir}`);
