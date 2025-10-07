@@ -5,10 +5,10 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: 1,
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 3 : 4, // 4 workers locally, 3 in CI (faster E2E tests)
   reporter: [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
