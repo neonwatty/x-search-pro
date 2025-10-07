@@ -98,8 +98,8 @@ The sidebar (`content/content.js:66-147`) is injected into x.com pages:
 - `tests/page-objects/` - Page object models (PopupPage, SidebarPage)
 - `tests/helpers/` - Test helpers
   - `test-page-helpers.ts` - TestPageHelpers for test page navigation
-  - `x-page-helpers.ts` - XPageHelpers for X.com integration tests (2 tests only)
-- `tests/setup/` - Auth setup for X.com integration tests (rarely needed)
+  - `x-page-helpers.ts` - XPageHelpers for X.com integration tests (optional, for manual testing)
+- `tests/setup/` - Auth setup for X.com integration tests (optional, skips automatically if no credentials)
 
 ### Test Page Architecture
 
@@ -117,10 +117,7 @@ The sidebar (`content/content.js:66-147`) is injected into x.com pages:
 - JavaScript helpers: `window.getTestPageState()`, `window.resetTestPageState()`
 - Search history tracking: `window.__SEARCH_HISTORY__`
 
-**X.com integration tests** (2 tests in `apply-saved-search.spec.ts`):
-- "should apply saved search from sidebar on X.com" - Tests actual search application
-- "should apply sliding window search with fresh dates from sidebar" - Tests sliding window dates on X.com
-- These require `.env` with X.com credentials and may hit rate limits
+**X.com integration tests**: Currently all E2E tests use the test page. The `auth-verification.spec.ts` test is ignored by default since it requires X.com credentials and may hit rate limits.
 
 ### Parallel Test Execution
 
@@ -150,16 +147,12 @@ npx playwright test -g "sliding window"
 
 # Debug specific test
 npx playwright test tests/e2e/workflows/sliding-window.spec.ts --debug
-
-# X.com integration tests only (requires .env)
-npx playwright test tests/e2e/workflows/apply-saved-search.spec.ts -g "on X.com"
 ```
 
 ### E2E Test Requirements
-- **Most E2E tests**: No requirements! Run instantly with test page
-- **X.com integration tests** (2 tests): Require `.env` file with X.com credentials
-- Create placeholder auth file to skip setup: `echo '{}' > tests/.auth/user.json`
-- Never commit `.env` or auth state files
+- **All E2E tests**: No requirements! All tests use the test page and run instantly
+- **X.com auth setup**: Automatically skips if no `.env` credentials provided
+- Never commit `.env` or auth state files if testing against X.com
 
 ## Common Patterns
 
@@ -256,4 +249,3 @@ Total time: ~30-45 seconds with parallel execution (was 2-3 minutes before!). By
 4. Test on x.com or twitter.com
 5. Run `npm test` to verify unit tests
 6. Run `npm run test:e2e:headed` to see E2E tests in action (uses test page, fast!)
-7. X.com integration tests only needed for major releases (run monthly)

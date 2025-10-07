@@ -1,6 +1,5 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
 import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Workflow 2: Quick Apply Saved Search', () => {

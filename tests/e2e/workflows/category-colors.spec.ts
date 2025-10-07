@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/extension';
+import { Dialog } from '@playwright/test';
 import { SidebarPage } from '../../page-objects/SidebarPage';
 import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
@@ -20,7 +21,7 @@ test.describe('Category Colors Management', () => {
   });
 
   test.describe('Categories Tab - Category Management Section', () => {
-    test('should display Manage Categories section in Categories tab', async ({ page, extensionId }) => {
+    test('should display Manage Categories section in Categories tab', async ({ page, extensionId: _extensionId }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -43,7 +44,7 @@ test.describe('Category Colors Management', () => {
       await expect(addButton).toHaveText('Add');
     });
 
-    test('should show all existing categories with color pickers', async ({ page, extensionId }) => {
+    test('should show all existing categories with color pickers', async ({ page, extensionId: _extensionId }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -73,7 +74,7 @@ test.describe('Category Colors Management', () => {
       expect(hasUncategorized).toBe(true);
     });
 
-    test('should display color indicators', async ({ page, extensionId }) => {
+    test('should display color indicators', async ({ page, extensionId: _extensionId }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -101,7 +102,7 @@ test.describe('Category Colors Management', () => {
   });
 
   test.describe('Color Picker Interactions', () => {
-    test('should update color display when color changes', async ({ page, extensionId }) => {
+    test('should update color display when color changes', async ({ page, extensionId: _extensionId }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -140,7 +141,7 @@ test.describe('Category Colors Management', () => {
       expect(newColor).toContain('255'); // Red component
     });
 
-    test('should persist color changes without page reload', async ({ page, extensionId, context }) => {
+    test('should persist color changes without page reload', async ({ page, extensionId: _extensionId, context }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -182,7 +183,7 @@ test.describe('Category Colors Management', () => {
       await newPage.close();
     });
 
-    test('should update multiple categories independently', async ({ page, extensionId }) => {
+    test('should update multiple categories independently', async ({ page, extensionId: _extensionId }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -222,21 +223,21 @@ test.describe('Category Colors Management', () => {
   });
 
   test.describe('Reset Functionality', () => {
-    test.skip('should reset all colors to defaults on button click', async ({ page, extensionId }) => {
+    test.skip('should reset all colors to defaults on button click', async ({ page, extensionId: _extensionId }) => {
       // SKIP REASON: Reset functionality was part of old Settings tab design
       // New Categories tab uses individual color pickers without bulk reset
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      await page.goto(`chrome-extension://${_extensionId}/popup/popup.html`);
     });
 
-    test.skip('should update UI immediately after reset', async ({ page, extensionId }) => {
+    test.skip('should update UI immediately after reset', async ({ page, extensionId: _extensionId }) => {
       // SKIP REASON: Reset functionality was part of old Settings tab design
       // New Categories tab uses individual color pickers without bulk reset
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      await page.goto(`chrome-extension://${_extensionId}/popup/popup.html`);
     });
   });
 
   test.describe('Visual Validation', () => {
-    test('should display correct border color for saved searches', async ({ page, extensionId, context: _context }) => {
+    test('should display correct border color for saved searches', async ({ page, extensionId: _extensionId, context: _context }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -270,7 +271,7 @@ test.describe('Category Colors Management', () => {
       expect(borderColor).toContain('255'); // Red component
     });
 
-    test('should maintain custom colors when category colors change', async ({ page, extensionId }) => {
+    test('should maintain custom colors when category colors change', async ({ page, extensionId: _extensionId }) => {
       const testPageHelper = new TestPageHelpers(page);
       await testPageHelper.navigateToTestPage();
 
@@ -286,7 +287,7 @@ test.describe('Category Colors Management', () => {
       await page.selectOption('#sidebarSearchCategory', 'Coding');
       await page.waitForTimeout(200);
 
-      const dialogHandler = async (dialog: any) => {
+      const dialogHandler = async (dialog: Dialog) => {
         await dialog.accept('Custom Color Test');
       };
 
@@ -305,10 +306,10 @@ test.describe('Category Colors Management', () => {
   });
 
   test.describe('Category Color Inheritance', () => {
-    test.skip('new searches should inherit current category color', async ({ page, extensionId }) => {
+    test.skip('new searches should inherit current category color', async ({ page, extensionId: _extensionId }) => {
       // SKIP REASON: Complex dialog flow with multiple prompts/alerts is difficult to test reliably in e2e
       // This functionality is covered by unit tests in storage.spec.ts
-      await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+      await page.goto(`chrome-extension://${_extensionId}/popup/popup.html`);
 
       // Set a specific color for Technology category
       const settingsTab = page.locator('[data-tab="settings"]');
@@ -358,7 +359,7 @@ test.describe('Category Colors Management', () => {
       const savedSearch = await page.evaluate(async () => {
         const result = await chrome.storage.sync.get(['savedSearches']);
         const searches = result.savedSearches || [];
-        return searches.find((s: any) => s.name === 'Technology Color Test');
+        return searches.find((s: { name: string }) => s.name === 'Technology Color Test');
       });
 
       expect(savedSearch).toBeDefined();
@@ -369,10 +370,10 @@ test.describe('Category Colors Management', () => {
 });
 
 test.describe('Integration Flow', () => {
-  test.skip('complete user flow with category colors', async ({ page, extensionId }) => {
+  test.skip('complete user flow with category colors', async ({ page, extensionId: _extensionId }) => {
     // SKIP REASON: Complex dialog flow with multiple prompts/alerts is difficult to test reliably in e2e
     // This functionality is covered by unit tests in storage.spec.ts
-    await page.goto(`chrome-extension://${extensionId}/popup/popup.html`);
+    await page.goto(`chrome-extension://${_extensionId}/popup/popup.html`);
 
     // Step 1: Change color in settings
     const settingsTab = page.locator('[data-tab="settings"]');

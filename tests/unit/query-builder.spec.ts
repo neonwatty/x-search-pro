@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 
 test.describe('QueryBuilder Unit Tests', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let QueryBuilder: any;
 
   test.beforeAll(async () => {
