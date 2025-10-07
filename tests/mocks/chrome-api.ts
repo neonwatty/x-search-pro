@@ -1,5 +1,5 @@
 interface MockStorageData {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface MockTab {
@@ -40,7 +40,7 @@ export class MockChromeTabs {
   private tabs: MockTab[] = [];
   private nextTabId = 1;
 
-  async query(options: any): Promise<MockTab[]> {
+  async query(options: { url?: string | string[]; active?: boolean }): Promise<MockTab[]> {
     let filtered = [...this.tabs];
 
     if (options.url) {
@@ -60,7 +60,7 @@ export class MockChromeTabs {
     return filtered;
   }
 
-  async update(tabId: number, updateInfo: any): Promise<MockTab | undefined> {
+  async update(tabId: number, updateInfo: Partial<MockTab>): Promise<MockTab | undefined> {
     const tab = this.tabs.find(t => t.id === tabId);
     if (tab) {
       Object.assign(tab, updateInfo);
@@ -80,7 +80,7 @@ export class MockChromeTabs {
     return newTab;
   }
 
-  async sendMessage(_tabId: number, _message: any): Promise<any> {
+  async sendMessage(_tabId: number, _message: unknown): Promise<{ success: boolean }> {
     return { success: true };
   }
 
@@ -107,25 +107,25 @@ export class MockChromeTabs {
 }
 
 export class MockChromeWindows {
-  async update(windowId: number, updateInfo: any): Promise<any> {
+  async update(windowId: number, updateInfo: Record<string, unknown>): Promise<Record<string, unknown>> {
     return { id: windowId, ...updateInfo };
   }
 }
 
 export class MockChromeRuntime {
-  private messageListeners: Array<(message: any, sender: any, sendResponse: any) => void> = [];
+  private messageListeners: Array<(message: unknown, sender: unknown, sendResponse: (response: unknown) => void) => void> = [];
 
   onMessage = {
-    addListener: (callback: (message: any, sender: any, sendResponse: any) => void) => {
+    addListener: (callback: (message: unknown, sender: unknown, sendResponse: (response: unknown) => void) => void) => {
       this.messageListeners.push(callback);
     }
   };
 
-  async sendMessage(_message: any): Promise<any> {
+  async sendMessage(_message: unknown): Promise<{ success: boolean }> {
     return { success: true };
   }
 
-  triggerMessage(message: any, sender: any = {}) {
+  triggerMessage(message: unknown, sender: Record<string, unknown> = {}) {
     this.messageListeners.forEach(listener => {
       listener(message, sender, () => {});
     });

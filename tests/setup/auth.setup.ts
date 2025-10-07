@@ -17,12 +17,16 @@ setup('authenticate with X.com', async ({ }) => {
     return;
   }
 
+  // Skip if credentials not provided
+  if (!process.env.TEST_X_USERNAME || !process.env.TEST_X_PASSWORD) {
+    console.log('⚠ Skipping X.com authentication - no credentials in .env file');
+    console.log('  (Add TEST_X_USERNAME and TEST_X_PASSWORD to .env to enable X.com tests)');
+    setup.skip();
+    return;
+  }
+
   // Ensure user data directory exists
   fs.mkdirSync(userDataDir, { recursive: true });
-
-  if (!process.env.TEST_X_USERNAME || !process.env.TEST_X_PASSWORD) {
-    throw new Error('TEST_X_USERNAME and TEST_X_PASSWORD must be set in .env file');
-  }
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('  X.com Automated Authentication');

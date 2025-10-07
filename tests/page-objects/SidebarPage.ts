@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Page, expect, Dialog } from '@playwright/test';
 
 export class SidebarPage {
   constructor(private page: Page) {}
@@ -9,7 +9,7 @@ export class SidebarPage {
     try {
       // First attempt: wait for sidebar to appear
       await expect(sidebarToggle).toBeVisible({ timeout });
-    } catch (error) {
+    } catch {
       // Retry: reload page and wait again
       console.log('Sidebar not found, reloading page and retrying...');
       await this.page.reload({ waitUntil: 'networkidle' });
@@ -315,7 +315,7 @@ export class SidebarPage {
       await this.page.waitForTimeout(200);
     }
 
-    const dialogHandler = async (dialog: any) => {
+    const dialogHandler = async (dialog: Dialog) => {
       await dialog.accept(name);
     };
 

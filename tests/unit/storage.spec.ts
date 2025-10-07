@@ -3,12 +3,15 @@ import { createMockChrome } from '../mocks/chrome-api';
 import { mockSearches, mockSettings, mockCategoryColors, mockSearchesWithCustomColors } from '../fixtures/test-data';
 
 test.describe('StorageManager Unit Tests', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let StorageManager: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockChrome: any;
 
   test.beforeEach(async () => {
     mockChrome = createMockChrome();
     mockChrome.storage.sync.clear();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     global.chrome = mockChrome as any;
 
     delete require.cache[require.resolve('../../lib/storage.js')];
@@ -16,6 +19,7 @@ test.describe('StorageManager Unit Tests', () => {
   });
 
   test.afterEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (global as any).chrome;
   });
 
@@ -146,7 +150,7 @@ test.describe('StorageManager Unit Tests', () => {
 
       const searches = await StorageManager.getSavedSearches();
       expect(searches.length).toBe(2);
-      expect(searches.find((s: any) => s.id === mockSearches[1].id)).toBeUndefined();
+      expect(searches.find((s: { id: string }) => s.id === mockSearches[1].id)).toBeUndefined();
     });
 
     test('should return true even if ID doesn\'t exist', async () => {
@@ -569,10 +573,10 @@ test.describe('StorageManager Unit Tests', () => {
       expect(result.searchesMoved).toBe(2);
 
       const searches = await StorageManager.getSavedSearches();
-      const movedSearches = searches.filter((s: any) => s.id === search1.id || s.id === search2.id);
+      const movedSearches = searches.filter((s: { id: string }) => s.id === search1.id || s.id === search2.id);
       const uncategorizedColor = await StorageManager.getCategoryColor('Uncategorized');
 
-      movedSearches.forEach((s: any) => {
+      movedSearches.forEach((s: { id: string; category: string; color: string }) => {
         expect(s.category).toBe('Uncategorized');
         expect(s.color).toBe(uncategorizedColor);
       });
@@ -604,8 +608,8 @@ test.describe('StorageManager Unit Tests', () => {
       expect(result.searchesMoved).toBe(2);
 
       const searches = await StorageManager.getSavedSearches();
-      const customColorSearch = searches.find((s: any) => s.id === searchWithCustomColor.id);
-      const categoryColorSearch = searches.find((s: any) => s.id === searchWithCategoryColor.id);
+      const customColorSearch = searches.find((s: { id: string }) => s.id === searchWithCustomColor.id);
+      const categoryColorSearch = searches.find((s: { id: string }) => s.id === searchWithCategoryColor.id);
       const uncategorizedColor = await StorageManager.getCategoryColor('Uncategorized');
 
       expect(customColorSearch.category).toBe('Uncategorized');
@@ -673,8 +677,8 @@ test.describe('StorageManager Unit Tests', () => {
       expect(result.searchesUpdated).toBe(2);
 
       const searches = await StorageManager.getSavedSearches();
-      const renamedSearches = searches.filter((s: any) => s.id === search1.id || s.id === search2.id);
-      renamedSearches.forEach((s: any) => {
+      const renamedSearches = searches.filter((s: { id: string }) => s.id === search1.id || s.id === search2.id);
+      renamedSearches.forEach((s: { id: string; category: string }) => {
         expect(s.category).toBe('Renamed');
       });
     });
