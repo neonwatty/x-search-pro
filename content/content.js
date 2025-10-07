@@ -212,11 +212,6 @@ async function initializeSidebar() {
                   <label>Until</label>
                   <input type="date" id="sidebarUntilDate" />
                 </div>
-                <div class="date-presets">
-                  <button type="button" class="preset-btn" data-preset="today">Today</button>
-                  <button type="button" class="preset-btn" data-preset="week">Last Week</button>
-                  <button type="button" class="preset-btn" data-preset="month">Last Month</button>
-                </div>
               </div>
             </section>
 
@@ -780,7 +775,6 @@ let editingSidebarSearchId = null;
 function initializeSidebarBuilder() {
   initializeSidebarCollapsibleSections();
   initializeSidebarDefaultDates();
-  initializeSidebarDatePresets();
   initializeSidebarSlidingWindow();
   initializeSidebarFormListeners();
   initializeSidebarBuilderButtons();
@@ -813,42 +807,6 @@ function initializeSidebarDefaultDates() {
     untilDate.value = today.toISOString().split('T')[0];
     updateSidebarQueryPreview();
   }
-}
-
-function initializeSidebarDatePresets() {
-  const presetButtons = document.querySelectorAll('#builderTab .preset-btn');
-  presetButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const slidingWindowSelect = document.getElementById('sidebarSlidingWindow');
-
-      if (slidingWindowSelect && slidingWindowSelect.value) {
-        slidingWindowSelect.value = '';
-        toggleSidebarDateInputs();
-      }
-
-      const preset = btn.dataset.preset;
-      const today = new Date();
-      const sinceDate = document.getElementById('sidebarSinceDate');
-
-      switch(preset) {
-        case 'today':
-          sinceDate.value = today.toISOString().split('T')[0];
-          break;
-        case 'week':
-          const weekAgo = new Date(today);
-          weekAgo.setDate(weekAgo.getDate() - 7);
-          sinceDate.value = weekAgo.toISOString().split('T')[0];
-          break;
-        case 'month':
-          const monthAgo = new Date(today);
-          monthAgo.setMonth(monthAgo.getMonth() - 1);
-          sinceDate.value = monthAgo.toISOString().split('T')[0];
-          break;
-      }
-
-      updateSidebarQueryPreview();
-    });
-  });
 }
 
 function initializeSidebarSlidingWindow() {
@@ -901,7 +859,6 @@ function toggleSidebarDateInputs() {
   const slidingWindowValue = document.getElementById('sidebarSlidingWindow')?.value;
   const sinceDateInput = document.getElementById('sidebarSinceDate');
   const untilDateInput = document.getElementById('sidebarUntilDate');
-  const presetButtons = document.querySelectorAll('#builderTab .preset-btn');
   const slidingWindowInfo = document.getElementById('sidebarSlidingWindowInfo');
 
   if (!sinceDateInput || !untilDateInput) return;
@@ -913,10 +870,6 @@ function toggleSidebarDateInputs() {
     untilDateInput.style.opacity = '0.5';
     sinceDateInput.style.cursor = 'pointer';
     untilDateInput.style.cursor = 'pointer';
-    presetButtons.forEach(btn => {
-      btn.style.opacity = '0.5';
-      btn.style.cursor = 'pointer';
-    });
     if (slidingWindowInfo) slidingWindowInfo.style.display = 'block';
   } else {
     sinceDateInput.readOnly = false;
@@ -925,10 +878,6 @@ function toggleSidebarDateInputs() {
     untilDateInput.style.opacity = '1';
     sinceDateInput.style.cursor = '';
     untilDateInput.style.cursor = '';
-    presetButtons.forEach(btn => {
-      btn.style.opacity = '1';
-      btn.style.cursor = '';
-    });
     if (slidingWindowInfo) slidingWindowInfo.style.display = 'none';
   }
 }
