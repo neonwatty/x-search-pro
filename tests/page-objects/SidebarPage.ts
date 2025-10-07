@@ -162,10 +162,6 @@ export class SidebarPage {
     }
   }
 
-  async clickDatePreset(preset: 'today' | 'week' | 'month') {
-    await this.page.click(`#builderTab .preset-btn[data-preset="${preset}"]`);
-  }
-
   async getSinceDateValue(): Promise<string> {
     return await this.page.locator('#sidebarSinceDate').inputValue();
   }

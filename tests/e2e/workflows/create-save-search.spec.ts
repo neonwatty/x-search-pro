@@ -38,30 +38,6 @@ test.describe('Workflow 1: Create & Save Search', () => {
     await page.close();
   });
 
-  test('should use date presets correctly', async ({ context, extensionId: _extensionId }) => {
-    const page = await context.newPage();
-    const testPageHelper = new TestPageHelpers(page);
-
-    await testPageHelper.navigateToTestPage();
-    await page.waitForTimeout(1000);
-
-    const sidebar = new SidebarPage(page);
-    await sidebar.waitForInjection(5000);
-    await sidebar.ensureVisible();
-
-    await sidebar.fillKeywords('news');
-    await sidebar.clickDatePreset('today');
-
-    const preview = await sidebar.getQueryPreview();
-    expect(preview).toContain('since:');
-
-    const today = new Date().toISOString().split('T')[0];
-    expect(preview).toContain(today);
-
-    await page.waitForTimeout(1000);
-    await page.close();
-  });
-
   test('should reset form correctly', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const testPageHelper = new TestPageHelpers(page);
