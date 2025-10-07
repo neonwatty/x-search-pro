@@ -1,19 +1,19 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Workflow 1: Create & Save Search', () => {
   test.beforeEach(async () => {
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   });
 
 
   test('should build complex query with multiple filters', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -40,10 +40,10 @@ test.describe('Workflow 1: Create & Save Search', () => {
 
   test('should use date presets correctly', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -64,10 +64,10 @@ test.describe('Workflow 1: Create & Save Search', () => {
 
   test('should reset form correctly', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);

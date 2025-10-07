@@ -40,6 +40,12 @@ export class SidebarPage {
     if (!isCurrentlyVisible) {
       await this.toggle();
     }
+
+    // Also ensure sidebar is expanded (not collapsed) so tabs are visible
+    const isCollapsed = await this.isSidebarCollapsed();
+    if (isCollapsed) {
+      await this.expandSidebar();
+    }
   }
 
   async isVisible(): Promise<boolean> {
@@ -116,6 +122,8 @@ export class SidebarPage {
   // Tab switching for sidebar
   async switchTab(tabName: 'builder' | 'saved' | 'categories' | 'about') {
     const tab = this.page.locator(`.sidebar-tab[data-tab="${tabName}"]`);
+    // Wait for tab to be visible and clickable (prevents race conditions in parallel tests)
+    await tab.waitFor({ state: 'visible', timeout: 10000 });
     await tab.click();
     // Wait for the tab content to become visible
     await this.page.waitForTimeout(500);

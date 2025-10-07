@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Workflow: Drag and Drop Reorder Searches', () => {
   test.beforeEach(async () => {
@@ -10,11 +10,11 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
 
   test('should reorder saved searches in sidebar using drag and drop', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
-    await expect(await xHelper.isLoggedIn()).toBe(true);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
+    await expect(await testPageHelper.isLoggedIn()).toBe(true);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -54,10 +54,10 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
 
   test('should persist reordered searches across sidebar reopens', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -79,8 +79,8 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
     // Close and reopen sidebar by navigating to a new page
     await page.close();
     const page2 = await context.newPage();
-    const xHelper2 = new XPageHelpers(page2);
-    await xHelper2.navigateToExplore();
+    const testPageHelper2 = new TestPageHelpers(page2);
+    await testPageHelper2.navigateToTestPage();
     await page2.waitForTimeout(2000);
 
     const sidebar2 = new SidebarPage(page2);
@@ -102,8 +102,8 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
   test('should sync reordered searches between different sidebar instances', async ({ context, extensionId: _extensionId }) => {
     // Reorder in first sidebar
     const page1 = await context.newPage();
-    const xHelper1 = new XPageHelpers(page1);
-    await xHelper1.navigateToExplore();
+    const testPageHelper1 = new TestPageHelpers(page1);
+    await testPageHelper1.navigateToTestPage();
     await page1.waitForTimeout(2000);
 
     const sidebar1 = new SidebarPage(page1);
@@ -122,8 +122,8 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
 
     // Open second sidebar instance and verify order synced
     const page2 = await context.newPage();
-    const xHelper2 = new XPageHelpers(page2);
-    await xHelper2.navigateToExplore();
+    const testPageHelper2 = new TestPageHelpers(page2);
+    await testPageHelper2.navigateToTestPage();
     await page2.waitForTimeout(2000);
 
     const sidebar2 = new SidebarPage(page2);
@@ -143,10 +143,10 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
 
   test('should show correct cursor behavior in sidebar', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -197,10 +197,10 @@ test.describe('Workflow: Drag and Drop Reorder Searches', () => {
     // This test verifies that drag and drop is implemented
     // Future enhancement: Add keyboard navigation for accessibility
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
+    const testPageHelper = new TestPageHelpers(page);
 
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);

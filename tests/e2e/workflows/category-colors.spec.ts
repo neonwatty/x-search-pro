@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Category Colors Management', () => {
   // Reset category colors before each test to ensure clean state
@@ -21,8 +21,8 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Categories Tab - Category Management Section', () => {
     test('should display Manage Categories section in Categories tab', async ({ page, extensionId }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -44,8 +44,8 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should show all existing categories with color pickers', async ({ page, extensionId }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -74,8 +74,8 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should display color indicators', async ({ page, extensionId }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -102,8 +102,8 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Color Picker Interactions', () => {
     test('should update color display when color changes', async ({ page, extensionId }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -141,8 +141,8 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should persist color changes without page reload', async ({ page, extensionId, context }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -162,10 +162,10 @@ test.describe('Category Colors Management', () => {
 
       await page.waitForTimeout(200);
 
-      // Open new X.com page with sidebar
+      // Open new test page with sidebar
       const newPage = await context.newPage();
-      const newXHelper = new XPageHelpers(newPage);
-      await newXHelper.navigateToExplore();
+      const newTestPageHelper = new TestPageHelpers(newPage);
+      await newTestPageHelper.navigateToTestPage();
 
       const newSidebar = new SidebarPage(newPage);
       await newSidebar.waitForInjection(5000);
@@ -183,8 +183,8 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should update multiple categories independently', async ({ page, extensionId }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -237,8 +237,8 @@ test.describe('Category Colors Management', () => {
 
   test.describe('Visual Validation', () => {
     test('should display correct border color for saved searches', async ({ page, extensionId, context: _context }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -271,8 +271,8 @@ test.describe('Category Colors Management', () => {
     });
 
     test('should maintain custom colors when category colors change', async ({ page, extensionId }) => {
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);

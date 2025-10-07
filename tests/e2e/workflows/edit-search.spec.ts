@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Workflow: Edit Saved Search', () => {
   test.beforeEach(async ({ context, extensionId }) => {
@@ -15,9 +15,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
     // Create a test search to edit
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -49,9 +49,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should show editing banner when edit button is clicked', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -79,9 +79,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should populate form with existing search data', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -113,9 +113,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should update search when Update Search button is clicked', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -177,9 +177,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should update search name and reflect in saved list', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -230,9 +230,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should cancel edit mode when Cancel button is clicked', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -264,9 +264,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should cancel edit mode when Reset button is clicked', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -308,9 +308,9 @@ test.describe('Workflow: Edit Saved Search', () => {
   // TODO: Feature not yet implemented - tab switching doesn't cancel edit mode
   test.skip('should cancel edit mode when switching tabs', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -349,9 +349,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should preserve search category when editing', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -372,9 +372,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should not create new search when in edit mode', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -418,9 +418,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should allow creating new search after updating', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -478,9 +478,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
   test('should handle updating search that no longer exists', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
-    const xHelper = new XPageHelpers(page);
-    await xHelper.navigateToExplore();
-    await page.waitForTimeout(2000);
+    const testPageHelper = new TestPageHelpers(page);
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
     const sidebar = new SidebarPage(page);
     await sidebar.waitForInjection(5000);
@@ -493,9 +493,9 @@ test.describe('Workflow: Edit Saved Search', () => {
 
     // Simulate external deletion by opening another sidebar and deleting
     const page2 = await context.newPage();
-    const xHelper2 = new XPageHelpers(page2);
-    await xHelper2.navigateToExplore();
-    await page2.waitForTimeout(2000);
+    const testPageHelper2 = new TestPageHelpers(page2);
+    await testPageHelper2.navigateToTestPage();
+    await page2.waitForTimeout(1000);
 
     const sidebar2 = new SidebarPage(page2);
     await sidebar2.waitForInjection(5000);

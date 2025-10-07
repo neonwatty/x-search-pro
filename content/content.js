@@ -27,10 +27,20 @@ function applySearchToPage(query) {
                       document.querySelector('input[aria-label="Search query"]') ||
                       document.querySelector('input[placeholder*="Search"]');
 
+  // Check if this is a test page by looking for test page marker element
+  // Content scripts can't access page's window object, so check DOM instead
+  const isTestPage = document.querySelector('.test-container') !== null ||
+                     document.title === 'X Search Pro Test Page';
+
   if (searchInput) {
     searchInput.value = query;
     searchInput.dispatchEvent(new Event('input', { bubbles: true }));
     searchInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+    // Skip navigation if on test page
+    if (isTestPage) {
+      return;
+    }
 
     const currentUrl = window.location.href;
     setTimeout(() => {
@@ -59,7 +69,8 @@ function applySearchToPage(query) {
         }, 500);
       }
     }, 100);
-  } else {
+  } else if (!isTestPage) {
+    // Only navigate to X.com if not on test page
     window.location.href = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
   }
 }

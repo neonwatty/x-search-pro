@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/extension';
 import { SidebarPage } from '../../page-objects/SidebarPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Sliding Window Feature', () => {
   test.beforeEach(async ({ context, extensionId }) => {
@@ -17,9 +17,9 @@ test.describe('Sliding Window Feature', () => {
   test.describe('Builder Tab UI', () => {
     test('should disable date inputs when sliding window is selected', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -47,9 +47,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should show info message when sliding window is selected', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -71,9 +71,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should clear sliding window when fixed date is entered', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -106,9 +106,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should clear sliding window when date preset is clicked', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -138,9 +138,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should show calculated dates in query preview for sliding window', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -169,9 +169,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should reset sliding window when reset button is clicked', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -194,9 +194,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should handle all sliding window options correctly', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -231,9 +231,9 @@ test.describe('Sliding Window Feature', () => {
   test.describe('Save and Apply Flow', () => {
     test('should save search with sliding window correctly', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -260,9 +260,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should restore sliding window when editing saved search', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -290,9 +290,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should update sliding window value when editing', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -332,9 +332,9 @@ test.describe('Sliding Window Feature', () => {
   test.describe('Saved Tab Badge Display', () => {
     test('should show badge for 1 day sliding window', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -357,9 +357,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should show badge for 1 week sliding window', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -382,9 +382,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should show badge for 1 month sliding window', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -407,9 +407,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should not show badge for searches without sliding window', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -431,9 +431,9 @@ test.describe('Sliding Window Feature', () => {
 
     test('should show current calculated dates in saved search query', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
-      const xHelper = new XPageHelpers(page);
-      await xHelper.navigateToExplore();
-      await page.waitForTimeout(2000);
+      const testPageHelper = new TestPageHelpers(page);
+      await testPageHelper.navigateToTestPage();
+      await page.waitForTimeout(1000);
 
       const sidebar = new SidebarPage(page);
       await sidebar.waitForInjection(5000);
@@ -446,10 +446,16 @@ test.describe('Sliding Window Feature', () => {
 
       const searchName = `Current Dates Test ${Date.now()}`;
       await sidebar.saveSearch(searchName);
+      await page.waitForTimeout(1000); // Wait for save to complete
 
       await sidebar.switchTab('saved');
-      const item = page.locator(`.sidebar-search-item`).filter({ hasText: searchName }).first();
-      const queryText = await item.locator('.sidebar-search-query').textContent();
+      await page.waitForTimeout(1000); // Wait for tab switch and list to load
+
+      // Use getSearchList to get items
+      const searches = await sidebar.getSearchList();
+      const item = searches.filter({ hasText: 'Current Dates Test' }).first();
+      await item.waitFor({ state: 'visible', timeout: 10000 });
+      const queryText = await item.locator('.sidebar-item-query').textContent();
 
       // Should contain today's date
       const today = new Date().toISOString().split('T')[0];

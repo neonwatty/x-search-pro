@@ -91,27 +91,74 @@ The sidebar (`content/content.js:66-147`) is injected into x.com pages:
 
 ### Test Structure
 - `tests/unit/` - Fast unit tests for QueryBuilder, storage, templates (97 tests)
-- `tests/e2e/workflows/` - End-to-end tests with real X.com integration
+- `tests/e2e/workflows/` - End-to-end tests using test page (fast, no auth required)
 - `tests/fixtures/` - Custom Playwright fixtures for extension context
+  - `test-page.html` - Lightweight HTML page that mimics X.com structure for testing
+  - `extension.ts` - Extension fixture that uses `manifest.test.json` for file:// access
 - `tests/page-objects/` - Page object models (PopupPage, SidebarPage)
-- `tests/helpers/` - X.com page interaction helpers
-- `tests/setup/` - Global auth setup that logs into X.com once
+- `tests/helpers/` - Test helpers
+  - `test-page-helpers.ts` - TestPageHelpers for test page navigation
+  - `x-page-helpers.ts` - XPageHelpers for X.com integration tests (2 tests only)
+- `tests/setup/` - Auth setup for X.com integration tests (rarely needed)
+
+### Test Page Architecture
+
+**Why**: X.com authentication rate limits make automated testing unreliable. 97% of E2E tests only test sidebar/popup UI, not actual X.com functionality.
+
+**How it works**:
+1. `manifest.test.json` - Test manifest that includes `file:///*` in content_scripts matches
+2. `test-page.html` - Mock page with X.com-compatible data attributes and test helpers
+3. `TestPageHelpers` - Helper class for navigating to test page and verifying sidebar behavior
+4. Extension fixture creates temp extension directory with test manifest for each test run
+
+**Test page features**:
+- Mock search input with `data-testid="SearchBox_Search_Input"`
+- Mock account switcher button for login checks
+- JavaScript helpers: `window.getTestPageState()`, `window.resetTestPageState()`
+- Search history tracking: `window.__SEARCH_HISTORY__`
+
+**X.com integration tests** (2 tests in `apply-saved-search.spec.ts`):
+- "should apply saved search from sidebar on X.com" - Tests actual search application
+- "should apply sliding window search with fresh dates from sidebar" - Tests sliding window dates on X.com
+- These require `.env` with X.com credentials and may hit rate limits
+
+### Parallel Test Execution
+
+**Performance**: Tests run with **4 workers in parallel** (3-4x faster than sequential)
+
+**How it works**:
+- Each worker gets isolated Chrome profile: `tests/.auth/user-data-worker-${workerIndex}`
+- Each worker gets isolated extension directory: `/tmp/x-search-pro-test-extension-worker-${workerIndex}`
+- No storage conflicts between parallel tests
+- Config: `fullyParallel: true`, `workers: 4` locally, `workers: 2` in CI
+
+**Speed improvements**:
+- 13 tests: 17.6s (was ~65s sequential)
+- 15 tests: 30.2s (was ~90s sequential)
+- Full E2E suite: ~25-35s (was 2-3 minutes)
 
 ### Running Individual Tests
 ```bash
-# Single test file
+# Single test file (uses test page, no auth needed)
 npx playwright test tests/unit/query-builder.spec.ts
+
+# E2E test with test page (fast)
+npx playwright test tests/e2e/workflows/create-save-search.spec.ts
 
 # Single test by name
 npx playwright test -g "sliding window"
 
 # Debug specific test
-npx playwright test tests/e2e/workflows/apply-saved-search.spec.ts --debug
+npx playwright test tests/e2e/workflows/sliding-window.spec.ts --debug
+
+# X.com integration tests only (requires .env)
+npx playwright test tests/e2e/workflows/apply-saved-search.spec.ts -g "on X.com"
 ```
 
 ### E2E Test Requirements
-- Create `.env` file with X.com test credentials (see `.env.example`)
-- Setup project runs once to save auth state to `tests/.auth/user.json`
+- **Most E2E tests**: No requirements! Run instantly with test page
+- **X.com integration tests** (2 tests): Require `.env` file with X.com credentials
+- Create placeholder auth file to skip setup: `echo '{}' > tests/.auth/user.json`
 - Never commit `.env` or auth state files
 
 ## Common Patterns
@@ -139,20 +186,47 @@ await StorageManager.updateSearch(id, { name: 'New Name' });
 await StorageManager.deleteSearch(id);
 ```
 
-### Testing X.com Integration
+### Writing E2E Tests
+
+**Most tests (test page - fast, no auth)**:
 ```javascript
 import { test } from '../../fixtures/extension';
-import { PopupPage } from '../../page-objects/PopupPage';
-import { XPageHelpers } from '../../helpers/x-page-helpers';
+import { SidebarPage } from '../../page-objects/SidebarPage';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test('your test', async ({ context, extensionId }) => {
+  const page = await context.newPage();
+  const testPageHelper = new TestPageHelpers(page);
+  await testPageHelper.navigateToTestPage();
+
+  const sidebar = new SidebarPage(page);
+  await sidebar.waitForInjection();
+  await sidebar.ensureVisible();
+
+  // Test sidebar interactions
+  await sidebar.fillKeywords('AI');
+  const preview = await sidebar.getQueryPreview();
+  // ... assertions
+});
+```
+
+**X.com integration tests (only when absolutely necessary)**:
+```javascript
+import { test } from '../../fixtures/extension';
+import { SidebarPage } from '../../page-objects/SidebarPage';
+import { XPageHelpers } from '../../helpers/x-page-helpers';
+
+test('your X.com test', async ({ context, extensionId }) => {
   const page = await context.newPage();
   const xHelper = new XPageHelpers(page);
   await xHelper.navigateToExplore();
 
-  const popup = new PopupPage(await context.newPage(), extensionId);
-  await popup.open();
-  // ... popup interactions
+  const sidebar = new SidebarPage(page);
+  await sidebar.waitForInjection();
+
+  // Test actual X.com search application
+  await sidebar.applySavedSearch('My Search');
+  await xHelper.verifyOnSearchPage();
 });
 ```
 
@@ -170,9 +244,9 @@ Husky runs full validation suite before every `git push`:
 1. ESLint
 2. TypeScript type checking
 3. Unit tests (97 tests)
-4. E2E tests (requires `.env` with X.com credentials)
+4. E2E tests (parallel execution with 4 workers, no X.com auth required!)
 
-Total time: ~2-3 minutes. Bypass with `git push --no-verify` (emergencies only).
+Total time: ~30-45 seconds with parallel execution (was 2-3 minutes before!). Bypass with `git push --no-verify` (emergencies only).
 
 ## Local Testing Workflow
 
@@ -181,4 +255,5 @@ Total time: ~2-3 minutes. Bypass with `git push --no-verify` (emergencies only).
 3. Click reload icon on "X Search Pro" extension card
 4. Test on x.com or twitter.com
 5. Run `npm test` to verify unit tests
-6. Run `npm run test:e2e:headed` to see E2E tests in action
+6. Run `npm run test:e2e:headed` to see E2E tests in action (uses test page, fast!)
+7. X.com integration tests only needed for major releases (run monthly)
