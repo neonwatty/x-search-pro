@@ -1112,3 +1112,16 @@
 .about-creator a:hover {
   text-decoration: underline;
 }
+
+/* Info icon tooltip */
+.info-icon {
+  font-size: 14px;
+  color: #71767b;
+  cursor: help;
+  margin-left: 6px;
+  transition: color 0.2s;
+}
+
+.info-icon:hover {
+  color: #1d9bf0;
+}

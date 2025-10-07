@@ -201,6 +201,7 @@ async function initializeSidebar() {
             <section class="form-section collapsible">
               <h3 class="section-header">
                 Date Range
+                <span class="info-icon" title="Sets a fixed time period. For dynamic dates that auto-update, use the Time Window feature above.">ℹ️</span>
                 <span class="toggle-icon">▼</span>
               </h3>
               <div class="section-content">
