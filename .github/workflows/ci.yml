@@ -43,6 +43,9 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit
 
+      - name: Clean up old test data
+        run: rm -rf tests/.auth/user-data*
+
       - name: Run E2E tests
         run: npm run test:e2e
 
