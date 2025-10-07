@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X Search Pro Test Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #000;
+      color: #e7e9ea;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 31px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .test-info {
+      background-color: #16181c;
+      border: 1px solid #2f3336;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .test-info p {
+      margin-bottom: 10px;
+      color: #71767b;
+    }
+
+    .test-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .test-info strong {
+      color: #e7e9ea;
+    }
+
+    /* Mock X.com search input */
+    .search-container {
+      margin: 30px 0;
+    }
+
+    .search-label {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    #mock-search-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      background-color: #16181c;
+      border: 1px solid #2f3336;
+      border-radius: 20px;
+      color: #e7e9ea;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    #mock-search-input:focus {
+      border-color: #1d9bf0;
+      background-color: #000;
+    }
+
+    #mock-search-input::placeholder {
+      color: #71767b;
+    }
+
+    .test-content {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #16181c;
+      border: 1px solid #2f3336;
+      border-radius: 16px;
+      min-height: 200px;
+    }
+
+    .test-content h2 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .test-content ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .test-content li {
+      padding: 8px 0;
+      color: #71767b;
+    }
+
+    .test-content li::before {
+      content: "✓ ";
+      color: #00ba7c;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #16181c;
+      border: 1px solid #2f3336;
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 13px;
+      color: #71767b;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #00ba7c;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Mock account switcher for isLoggedIn check */
+    [data-testid="SideNav_AccountSwitcher_Button"] {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #1d9bf0;
+      border: none;
+      display: none; /* Hidden by default, shown when page loads */
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>X Search Pro Test Page</h1>
+
+    <div class="test-info">
+      <p><strong>Purpose:</strong> This page is used for E2E testing of the X Search Pro extension without requiring X.com authentication.</p>
+      <p><strong>Features:</strong> Sidebar injection, form interactions, query building, storage operations</p>
+      <p><strong>Note:</strong> This is a mock environment that simulates the minimal X.com structure needed for testing.</p>
+    </div>
+
+    <div class="search-container">
+      <label for="mock-search-input" class="search-label">Mock Search Input</label>
+      <input
+        id="mock-search-input"
+        data-testid="SearchBox_Search_Input"
+        placeholder="Search"
+        aria-label="Search query"
+        type="text"
+      />
+    </div>
+
+    <div class="test-content">
+      <h2>Test Page Features</h2>
+      <ul>
+        <li>Mock search input with X.com-compatible data attributes</li>
+        <li>Dark theme matching X.com aesthetic</li>
+        <li>Sidebar injection point on right side</li>
+        <li>Login state simulation</li>
+        <li>Search event logging for test verification</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Mock account switcher button for isLoggedIn check -->
+  <button data-testid="SideNav_AccountSwitcher_Button" aria-label="Account Switcher"></button>
+
+  <div class="status">
+    <span class="status-indicator"></span>
+    Test page active
+  </div>
+
+  <script>
+    // Mark this as a test page for detection by extension
+    window.__XSEARCH_TEST_PAGE__ = true;
+
+    // Track last search applied (for test verification)
+    window.__LAST_SEARCH__ = null;
+
+    // Store search event history
+    window.__SEARCH_HISTORY__ = [];
+
+    // Make account switcher visible (simulate logged in state)
+    document.addEventListener('DOMContentLoaded', () => {
+      const accountSwitcher = document.querySelector('[data-testid="SideNav_AccountSwitcher_Button"]');
+      if (accountSwitcher) {
+        accountSwitcher.style.display = 'block';
+      }
+    });
+
+    // Listen to search input changes
+    const searchInput = document.getElementById('mock-search-input');
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+      console.log('[TEST PAGE] Search input changed:', query);
+      window.__LAST_SEARCH__ = query;
+      window.__SEARCH_HISTORY__.push({
+        query,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    searchInput.addEventListener('change', (e) => {
+      console.log('[TEST PAGE] Search changed:', e.target.value);
+    });
+
+    // Listen for form submissions
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        console.log('[TEST PAGE] Search submitted:', e.target.value);
+
+        // Simulate navigation (for test verification)
+        const query = e.target.value;
+        if (query) {
+          const searchUrl = `https://x.com/search?q=${encodeURIComponent(query)}&src=typed_query`;
+          console.log('[TEST PAGE] Would navigate to:', searchUrl);
+          window.__LAST_SEARCH_URL__ = searchUrl;
+        }
+      }
+    });
+
+    // Helper function for tests to access search state
+    window.getTestPageState = function() {
+      return {
+        lastSearch: window.__LAST_SEARCH__,
+        searchHistory: window.__SEARCH_HISTORY__,
+        lastSearchUrl: window.__LAST_SEARCH_URL__
+      };
+    };
+
+    // Helper function to reset test state
+    window.resetTestPageState = function() {
+      window.__LAST_SEARCH__ = null;
+      window.__SEARCH_HISTORY__ = [];
+      window.__LAST_SEARCH_URL__ = null;
+      searchInput.value = '';
+      console.log('[TEST PAGE] State reset');
+    };
+
+    // Log when page is ready
+    console.log('[TEST PAGE] Test page loaded and ready');
+    console.log('[TEST PAGE] Sidebar should inject automatically if extension is loaded');
+  </script>
+</body>
+</html>

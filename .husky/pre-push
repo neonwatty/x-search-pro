@@ -34,8 +34,8 @@ echo "✅ Unit tests passed"
 echo ""
 
 echo "🎭 Running E2E tests (headless mode)..."
-echo "⚠️  This ensures extension works on real X.com pages"
-echo "📍 Tests require Chrome browser and internet connection"
+echo "⚠️  This tests extension UI using test page"
+echo "📍 Tests require Chrome browser"
 echo ""
 
 npm run test:e2e

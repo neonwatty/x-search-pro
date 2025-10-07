@@ -26,295 +26,27 @@
         Search Pro
       </h1>
       <div class="tabs">
-        <button class="tab active" data-tab="builder">Builder</button>
-        <button class="tab" data-tab="saved">Saved</button>
-        <button class="tab" data-tab="categories">Categories</button>
+        <button class="tab active" data-tab="about">About</button>
         <button class="tab" data-tab="settings">Settings</button>
-        <button class="tab" data-tab="about">About</button>
       </div>
     </header>
 
-    <div class="tab-content" id="builder-tab">
-      <form id="search-form">
-        <section class="form-section">
-          <h3>Keywords</h3>
-          <input type="text" id="keywords" placeholder='e.g., "claude code"' />
-        </section>
-
-        <section class="form-section">
-          <h3>Category</h3>
-          <div class="category-selection">
-            <select id="searchCategory" class="category-select">
-              <option value="Uncategorized">Uncategorized</option>
-            </select>
-            <div class="category-color-indicator" id="categoryColorIndicator"></div>
-          </div>
-        </section>
-
-        <section class="form-section collapsible">
-          <h3 class="section-header">
-            Engagement
-            <span class="toggle-icon">▼</span>
-          </h3>
-          <div class="section-content">
-            <div class="input-group">
-              <label>Min Likes</label>
-              <input type="number" id="minFaves" min="0" placeholder="0" />
-            </div>
-            <div class="input-group">
-              <label>Min Retweets</label>
-              <input type="number" id="minRetweets" min="0" placeholder="0" />
-            </div>
-            <div class="input-group">
-              <label>Min Replies</label>
-              <input type="number" id="minReplies" min="0" placeholder="0" />
-            </div>
-          </div>
-        </section>
-
-        <section class="form-section collapsible">
-          <h3 class="section-header">
-            Time Window
-            <span class="toggle-icon">▼</span>
-          </h3>
-          <div class="section-content">
-            <div class="input-group">
-              <label>Dynamic Time Range</label>
-              <select id="slidingWindow">
-                <option value="">None (use fixed dates below)</option>
-                <option value="1d">Last 1 Day</option>
-                <option value="1w">Last 1 Week</option>
-                <option value="1m">Last 1 Month</option>
-              </select>
-            </div>
-            <div class="setting-info" id="slidingWindowInfo" style="display: none; margin-top: 8px;">
-              <p style="font-size: 11px; color: #6b7280;">🕒 This search will automatically update to show posts from the selected time window whenever you use it.</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-section collapsible">
-          <h3 class="section-header">
-            Date Range
-            <span class="toggle-icon">▼</span>
-          </h3>
-          <div class="section-content">
-            <div class="input-group">
-              <label>Since</label>
-              <input type="date" id="sinceDate" />
-            </div>
-            <div class="input-group">
-              <label>Until</label>
-              <input type="date" id="untilDate" />
-            </div>
-            <div class="date-presets">
-              <button type="button" class="preset-btn" data-preset="today">Today</button>
-              <button type="button" class="preset-btn" data-preset="week">Last Week</button>
-              <button type="button" class="preset-btn" data-preset="month">Last Month</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-section collapsible">
-          <h3 class="section-header">
-            Users
-            <span class="toggle-icon">▼</span>
-          </h3>
-          <div class="section-content">
-            <div class="input-group">
-              <label>From User</label>
-              <input type="text" id="fromUser" placeholder="username" />
-            </div>
-            <div class="input-group">
-              <label>To User</label>
-              <input type="text" id="toUser" placeholder="username" />
-            </div>
-            <div class="input-group">
-              <label>Mentions User</label>
-              <input type="text" id="mentionsUser" placeholder="username" />
-            </div>
-            <div class="checkbox-group">
-              <label>
-                <input type="checkbox" id="blueVerified" />
-                Blue Verified Only
-              </label>
-              <label>
-                <input type="checkbox" id="follows" />
-                From Follows Only
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-section collapsible">
-          <h3 class="section-header">
-            Content Type
-            <span class="toggle-icon">▼</span>
-          </h3>
-          <div class="section-content">
-            <div class="checkbox-group">
-              <label>
-                <input type="checkbox" id="hasMedia" />
-                Has Media
-              </label>
-              <label>
-                <input type="checkbox" id="hasImages" />
-                Has Images
-              </label>
-              <label>
-                <input type="checkbox" id="hasVideos" />
-                Has Videos
-              </label>
-              <label>
-                <input type="checkbox" id="hasLinks" />
-                Has Links
-              </label>
-              <label>
-                <input type="checkbox" id="quoteOnly" />
-                Quote Tweets Only
-              </label>
-            </div>
-            <div class="radio-group">
-              <label>Replies:</label>
-              <label>
-                <input type="radio" name="replies" value="any" checked />
-                Any
-              </label>
-              <label>
-                <input type="radio" name="replies" value="exclude" />
-                Exclude
-              </label>
-              <label>
-                <input type="radio" name="replies" value="only" />
-                Only
-              </label>
-            </div>
-            <div class="radio-group">
-              <label>Retweets:</label>
-              <label>
-                <input type="radio" name="retweets" value="any" checked />
-                Any
-              </label>
-              <label>
-                <input type="radio" name="retweets" value="exclude" />
-                Exclude
-              </label>
-              <label>
-                <input type="radio" name="retweets" value="only" />
-                Only
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-section collapsible collapsed">
-          <h3 class="section-header">
-            Language
-            <span class="toggle-icon">▼</span>
-          </h3>
-          <div class="section-content">
-            <div class="input-group">
-              <label>Language Code</label>
-              <select id="lang">
-                <option value="">Any</option>
-                <option value="en">English (en)</option>
-                <option value="es">Spanish (es)</option>
-                <option value="fr">French (fr)</option>
-                <option value="de">German (de)</option>
-                <option value="it">Italian (it)</option>
-                <option value="pt">Portuguese (pt)</option>
-                <option value="ja">Japanese (ja)</option>
-                <option value="ko">Korean (ko)</option>
-                <option value="zh">Chinese (zh)</option>
-                <option value="ar">Arabic (ar)</option>
-                <option value="hi">Hindi (hi)</option>
-                <option value="ru">Russian (ru)</option>
-              </select>
-            </div>
-          </div>
-        </section>
-
-        <div class="query-preview">
-          <h4>Query Preview</h4>
-          <div id="queryPreview" class="preview-text">Enter search criteria above...</div>
-        </div>
-
-        <div id="editingBanner" class="editing-banner hidden">
-          <span id="editingMessage">Editing: <strong id="editingSearchName"></strong></span>
-          <button type="button" id="cancelEditBtn" class="btn-cancel-edit">Cancel</button>
-        </div>
-
-        <div class="form-actions">
-          <button type="button" id="saveBtn" class="btn btn-secondary">Save Search</button>
-          <button type="button" id="applyBtn" class="btn btn-primary">Apply Search</button>
-          <button type="button" id="resetBtn" class="btn btn-text">Reset</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="tab-content hidden" id="saved-tab">
-      <div class="saved-header">
-        <input type="text" id="searchFilter" placeholder="Filter saved searches..." />
-      </div>
-      <div id="savedSearches" class="saved-list"></div>
-      <div id="emptyState" class="empty-state hidden">
-        <p>No saved searches yet.</p>
-        <p>Create your first search in the Search Builder tab!</p>
-      </div>
-    </div>
-
-    <div class="tab-content hidden" id="categories-tab">
-      <div class="categories-section">
-        <h3>Manage Categories</h3>
-        <div class="setting-info">
-          <p>Create and organize custom categories for your saved searches</p>
-        </div>
-
-        <!-- Add New Category -->
-        <div class="add-category-section">
-          <h4>Add New Category</h4>
-          <div class="add-category-form">
-            <input type="text" id="newCategoryName" placeholder="Category name" class="category-input" />
-            <input type="color" id="newCategoryColor" value="#6b7280" class="color-picker-small" title="Category color" />
-            <button type="button" id="addCategoryBtn" class="btn btn-primary btn-small">Add</button>
-          </div>
-        </div>
-
-        <!-- Existing Categories List -->
-        <div class="categories-list-section">
-          <h4>Your Categories</h4>
-          <div id="categoriesList" class="categories-list">
-            <!-- Category items will be populated by JavaScript -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-content hidden" id="settings-tab">
-      <div class="settings-section">
-        <h3>Sidebar Settings</h3>
-        <div class="setting-item">
-          <label class="toggle-label">
-            <input type="checkbox" id="sidebarPinned" />
-            <span class="toggle-switch"></span>
-            <span class="toggle-text">
-              <strong>Show Sidebar</strong>
-              <small>Display saved searches sidebar on X.com</small>
-            </span>
-          </label>
-        </div>
-        <div class="setting-info">
-          <p>💡 You can also toggle the sidebar using the arrow button on the right side of X.com</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="tab-content hidden" id="about-tab">
+    <div class="tab-content" id="about-tab">
       <div class="about-section">
         <div class="about-header">
           <h2>X Search Pro</h2>
           <p class="about-tagline">Build your personal X/Twitter search library</p>
+        </div>
+
+        <div class="about-notice">
+          <h3>💡 How to Use X Search Pro</h3>
+          <p>All search building and management features are now in the <strong>sidebar on X.com</strong>:</p>
+          <ul>
+            <li><strong>Builder</strong> - Create custom searches with advanced filters</li>
+            <li><strong>Saved Searches</strong> - Access and apply your saved searches</li>
+            <li><strong>Categories</strong> - Organize searches by category</li>
+          </ul>
+          <p class="sidebar-hint">👉 Look for the toggle button on the right edge of X.com to open the sidebar.</p>
         </div>
 
         <div class="about-content">
@@ -341,6 +73,27 @@
         </div>
       </div>
     </div>
+
+    <div class="tab-content hidden" id="settings-tab">
+      <div class="settings-section">
+        <h3>Sidebar Settings</h3>
+        <div class="setting-item">
+          <label class="toggle-label">
+            <input type="checkbox" id="sidebarPinned" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">
+              <strong>Show Sidebar</strong>
+              <small>Display saved searches sidebar on X.com</small>
+            </span>
+          </label>
+        </div>
+        <div class="setting-info">
+          <p>💡 You can also toggle the sidebar using the arrow button on the right side of X.com</p>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
   <script src="../lib/query-builder.js"></script>

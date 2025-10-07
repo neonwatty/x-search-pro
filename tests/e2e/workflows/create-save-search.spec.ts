@@ -1,25 +1,32 @@
 import { test, expect } from '../../fixtures/extension';
-import { PopupPage } from '../../page-objects/PopupPage';
+import { SidebarPage } from '../../page-objects/SidebarPage';
+import { TestPageHelpers } from '../../helpers/test-page-helpers';
 
 test.describe('Workflow 1: Create & Save Search', () => {
   test.beforeEach(async () => {
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
   });
 
 
-  test('should build complex query with multiple filters', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should build complex query with multiple filters', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const testPageHelper = new TestPageHelpers(page);
 
-    await popupPage.fillKeywords('AI technology');
-    await popupPage.setMinFaves(100);
-    await popupPage.setMinRetweets(50);
-    await popupPage.checkHasVideos();
-    await popupPage.setRepliesFilter('exclude');
-    await popupPage.selectLanguage('en');
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
-    const preview = await popupPage.getQueryPreview();
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+
+    await sidebar.fillKeywords('AI technology');
+    await sidebar.setMinFaves(100);
+    await sidebar.setMinRetweets(50);
+    await sidebar.checkHasVideos();
+    await sidebar.setRepliesFilter('exclude');
+    await sidebar.selectLanguage('en');
+
+    const preview = await sidebar.getQueryPreview();
     expect(preview).toContain('"AI technology"');
     expect(preview).toContain('min_faves:100');
     expect(preview).toContain('min_retweets:50');
@@ -27,46 +34,61 @@ test.describe('Workflow 1: Create & Save Search', () => {
     expect(preview).toContain('-filter:replies');
     expect(preview).toContain('lang:en');
 
-    await popupPage.page.waitForTimeout(1000);
-    await popupPage.page.close();
+    await page.waitForTimeout(1000);
+    await page.close();
   });
 
-  test('should use date presets correctly', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should use date presets correctly', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const testPageHelper = new TestPageHelpers(page);
 
-    await popupPage.fillKeywords('news');
-    await popupPage.clickDatePreset('today');
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
-    const preview = await popupPage.getQueryPreview();
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+
+    await sidebar.fillKeywords('news');
+    await sidebar.clickDatePreset('today');
+
+    const preview = await sidebar.getQueryPreview();
     expect(preview).toContain('since:');
 
     const today = new Date().toISOString().split('T')[0];
     expect(preview).toContain(today);
 
-    await popupPage.page.waitForTimeout(1000);
-    await popupPage.page.close();
+    await page.waitForTimeout(1000);
+    await page.close();
   });
 
-  test('should reset form correctly', async ({ context, extensionId }) => {
-    const popupPage = new PopupPage(await context.newPage(), extensionId);
-    await popupPage.open();
-    await popupPage.page.waitForTimeout(1000);
+  test('should reset form correctly', async ({ context, extensionId: _extensionId }) => {
+    const page = await context.newPage();
+    const testPageHelper = new TestPageHelpers(page);
 
-    await popupPage.fillKeywords('test');
-    await popupPage.setMinFaves(50);
-    await popupPage.checkHasVideos();
+    await testPageHelper.navigateToTestPage();
+    await page.waitForTimeout(1000);
 
-    let preview = await popupPage.getQueryPreview();
+    const sidebar = new SidebarPage(page);
+    await sidebar.waitForInjection(5000);
+    await sidebar.ensureVisible();
+
+    await sidebar.fillKeywords('test');
+    await sidebar.setMinFaves(50);
+    await sidebar.checkHasVideos();
+
+    let preview = await sidebar.getQueryPreview();
     expect(preview).not.toBe('Enter search criteria above...');
 
-    await popupPage.clickReset();
+    await sidebar.clickReset();
 
-    preview = await popupPage.getQueryPreview();
-    expect(preview).toContain('Enter search criteria above');
+    preview = await sidebar.getQueryPreview();
+    // After reset, sidebar builder sets default dates, so we check it's different from filled state
+    expect(preview).not.toContain('test');
+    expect(preview).not.toContain('min_faves:50');
+    expect(preview).not.toContain('filter:videos');
 
-    await popupPage.page.waitForTimeout(1000);
-    await popupPage.page.close();
+    await page.waitForTimeout(1000);
+    await page.close();
   });
 });
