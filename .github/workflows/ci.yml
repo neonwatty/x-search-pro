@@ -28,8 +28,29 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+      - name: Run typecheck
+        run: npm run typecheck
+
       - name: Install Playwright browsers
         run: npm run test:install
 
       - name: Run unit tests
         run: npm run test:unit
+
+      - name: Create placeholder auth file
+        run: |
+          mkdir -p tests/.auth
+          echo '{}' > tests/.auth/user.json
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

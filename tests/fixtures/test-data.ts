@@ -45,16 +45,6 @@ export const mockSearches = [
   }
 ];
 
-export const mockCategories = [
-  'Tech',
-  'News',
-  'Personal',
-  'Research',
-  'Popular',
-  'Media',
-  'Uncategorized'
-];
-
 export const mockSettings = {
   showSidebar: true,
   defaultView: 'grid' as const,
@@ -99,12 +89,3 @@ export const mockSearchesWithCustomColors = [
     lastUsed: '2025-01-10T00:00:00.000Z'
   }
 ];
-
-export const mockExportData = {
-  version: '1.0',
-  exportDate: '2025-01-20T12:00:00.000Z',
-  searches: mockSearches,
-  categories: mockCategories,
-  settings: mockSettings,
-  categoryColors: mockCategoryColors
-};
