@@ -52,10 +52,10 @@ export default defineConfig({
       name: 'e2e',
       testMatch: /tests\/e2e\/.*\.spec\.ts$/,
       testIgnore: ['**/auth-verification.spec.ts'],
-      dependencies: ['setup'],
+      // No setup dependency needed - all E2E tests use test page, not X.com
       use: {
         ...devices['Desktop Chrome'],
-        // Extension fixture handles browser launch, auth, and extension loading
+        // Extension fixture handles browser launch and extension loading
       },
     },
   ],

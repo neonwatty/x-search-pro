@@ -16,7 +16,7 @@
     "test:workflows": "HEADLESS=true playwright test tests/e2e/workflows/",
     "test:setup": "playwright test --project=setup",
     "test:report": "playwright show-report",
-    "validate:pre-push": "npm run lint && npm run typecheck && npm run test:unit && ./scripts/ensure-auth.sh && npm run test:e2e",
+    "validate:pre-push": "npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e",
     "build:zip": "zip -r x-search-pro.zip manifest.json popup/ content/ background/ lib/ assets/ LICENSE PRIVACY_POLICY.md -x '*.DS_Store' -x '*/.DS_Store' -x '*.git/*' -x 'node_modules/*' -x 'tests/*' -x '*.log' -x 'plans/*' -x 'logos/*' -x '.husky/*' -x 'STORE_LISTING.md' -x 'CHANGELOG.md'"
   },
   "keywords": [

@@ -43,11 +43,6 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit
 
-      - name: Create placeholder auth file
-        run: |
-          mkdir -p tests/.auth
-          echo '{}' > tests/.auth/user.json
-
       - name: Run E2E tests
         run: npm run test:e2e
 
