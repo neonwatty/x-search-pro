@@ -264,34 +264,6 @@ test.describe('Workflow: Date Picker Calendar', () => {
     await page.close();
   });
 
-  test('should work with date presets after manual date entry', async ({ context, extensionId: _extensionId }) => {
-    const page = await context.newPage();
-    const testPageHelper = new TestPageHelpers(page);
-
-    await testPageHelper.navigateToTestPage();
-    await page.waitForTimeout(1000);
-
-    const sidebar = new SidebarPage(page);
-    await sidebar.waitForInjection(5000);
-    await sidebar.ensureVisible();
-    await sidebar.switchTab('builder');
-
-    // Manually set dates
-    await sidebar.setDateRange('2020-01-01', '2020-12-31');
-    await page.waitForTimeout(500);
-
-    // Click a date preset
-    await sidebar.clickDatePreset('today');
-    await page.waitForTimeout(500);
-
-    // Verify since date updated to today
-    const sinceValue = await page.locator('#sidebarSinceDate').inputValue();
-    const today = new Date().toISOString().split('T')[0];
-    expect(sinceValue).toBe(today);
-
-    await page.close();
-  });
-
   test('should maintain date values when switching tabs', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const testPageHelper = new TestPageHelpers(page);

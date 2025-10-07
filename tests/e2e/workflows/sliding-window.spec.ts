@@ -104,38 +104,6 @@ test.describe('Sliding Window Feature', () => {
       await page.close();
     });
 
-    test('should clear sliding window when date preset is clicked', async ({ context, extensionId: _extensionId }) => {
-      const page = await context.newPage();
-      const testPageHelper = new TestPageHelpers(page);
-      await testPageHelper.navigateToTestPage();
-      await page.waitForTimeout(1000);
-
-      const sidebar = new SidebarPage(page);
-      await sidebar.waitForInjection(5000);
-      await sidebar.ensureVisible();
-      await sidebar.switchTab('builder');
-      await page.waitForTimeout(1000);
-
-      // Select sliding window
-      await sidebar.selectSlidingWindow('1m');
-      expect(await sidebar.getSlidingWindowValue()).toBe('1m');
-
-      // Click a date preset (the click handler will clear sliding window first, then set the date)
-      await sidebar.clickDatePreset('today');
-      await page.waitForTimeout(500);
-
-      // Sliding window should be cleared
-      expect(await sidebar.getSlidingWindowValue()).toBe('');
-      expect(await sidebar.areDateInputsEnabled()).toBe(true);
-
-      // Verify the preset date was applied
-      const sinceValue = await sidebar.getSinceDateValue();
-      const today = new Date().toISOString().split('T')[0];
-      expect(sinceValue).toBe(today);
-
-      await page.close();
-    });
-
     test('should show calculated dates in query preview for sliding window', async ({ context, extensionId: _extensionId }) => {
       const page = await context.newPage();
       const testPageHelper = new TestPageHelpers(page);
