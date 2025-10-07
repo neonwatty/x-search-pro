@@ -12,6 +12,7 @@
     "test:e2e:headed": "HEADLESS=false playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
+    "test:e2e:sharded": "HEADLESS=true npx playwright test --project=e2e --shard=1/3 & HEADLESS=true npx playwright test --project=e2e --shard=2/3 & HEADLESS=true npx playwright test --project=e2e --shard=3/3 & wait",
     "test:unit": "playwright test --project=unit",
     "test:workflows": "HEADLESS=true playwright test tests/e2e/workflows/",
     "test:setup": "playwright test --project=setup",
