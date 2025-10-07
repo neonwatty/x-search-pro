@@ -8,7 +8,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 3 : 4, // 4 workers locally, 3 in CI (faster E2E tests)
+  workers: process.env.CI ? 2 : 4, // 2 workers per shard in CI (sharding handles parallelization), 4 locally
   reporter: [
     ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
