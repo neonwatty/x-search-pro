@@ -193,7 +193,7 @@ async function initializeSidebar() {
                   </select>
                 </div>
                 <div class="setting-info" id="sidebarSlidingWindowInfo" style="display: none; margin-top: 8px;">
-                  <p style="font-size: 11px; color: #6b7280;">🕒 This search will automatically update to show posts from the selected time window whenever you use it.</p>
+                  <p style="font-size: 11px; color: #6b7280; line-height: 1.4;">🕒 <strong>Dynamic time range:</strong> This search automatically updates each time you use it. For example, "Last 1 Week" always shows posts from the past 7 days starting from today. Unlike X's fixed date ranges, this always returns fresh, recent content.</p>
                 </div>
               </div>
             </section>
