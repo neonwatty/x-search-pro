@@ -142,7 +142,10 @@ async function initializeSidebar() {
         <div class="sidebar-tab-content" id="builderTab">
           <form id="sidebarSearchForm">
             <section class="form-section">
-              <h3>Keywords</h3>
+              <h3>
+                Keywords
+                <span class="info-icon" title="Keywords use X's search - case-sensitive, respects punctuation">ℹ️</span>
+              </h3>
               <input type="text" id="sidebarKeywords" placeholder='e.g., "claude code"' />
             </section>
 

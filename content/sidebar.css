@@ -480,6 +480,22 @@
   font-weight: 600;
   color: #e7e9ea;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-icon {
+  font-size: 14px;
+  cursor: help;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-icon:hover {
+  opacity: 1;
 }
 
 .section-header {
