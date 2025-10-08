@@ -144,7 +144,7 @@ async function initializeSidebar() {
             <section class="form-section">
               <h3>
                 Keywords
-                <span class="info-icon" data-tooltip="Keywords use X's search - case-sensitive, respects punctuation">
+                <span class="info-icon" data-tooltip="Exact search only - matches as entered into X's search (no wildcards or fuzzy matching)">
                   <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                     <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                     <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
@@ -188,8 +188,8 @@ async function initializeSidebar() {
             <section class="form-section collapsible">
               <h3 class="section-header">
                 <span>
-                  Time Window
-                  <span class="info-icon" data-tooltip="Dynamic time ranges that auto-update. 'Last 1 Week' always shows posts from the past 7 days.">
+                  Sliding Time Window
+                  <span class="info-icon" data-tooltip="Auto-updating time windows. 'Last 1 Week' always searches the past 7 days from today when applied.">
                     <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                       <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                       <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
@@ -200,7 +200,7 @@ async function initializeSidebar() {
               </h3>
               <div class="section-content">
                 <div class="input-group">
-                  <label>Dynamic Time Range</label>
+                  <label>Sliding Window Period</label>
                   <select id="sidebarSlidingWindow">
                     <option value="">None (use fixed dates below)</option>
                     <option value="1d">Last 1 Day</option>
@@ -209,7 +209,7 @@ async function initializeSidebar() {
                   </select>
                 </div>
                 <div class="setting-info" id="sidebarSlidingWindowInfo" style="display: none; margin-top: 8px;">
-                  <p style="font-size: 11px; color: #6b7280; line-height: 1.4;">🕒 <strong>Dynamic time range:</strong> This search automatically updates each time you use it. For example, "Last 1 Week" always shows posts from the past 7 days starting from today. Unlike X's fixed date ranges, this always returns fresh, recent content.</p>
+                  <p style="font-size: 11px; color: #6b7280; line-height: 1.4;">🕒 <strong>Sliding time window:</strong> This search automatically updates each time you apply it. For example, "Last 1 Week" always searches the past 7 days from today, ensuring fresh, recent results every time.</p>
                 </div>
               </div>
             </section>
@@ -218,7 +218,7 @@ async function initializeSidebar() {
               <h3 class="section-header">
                 <span>
                   Date Range
-                  <span class="info-icon" data-tooltip="Fixed time period. For auto-updating dates, use Time Window above.">
+                  <span class="info-icon" data-tooltip="Fixed dates that don't change. For auto-updating searches, use Sliding Time Window above.">
                     <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
                       <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                       <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
@@ -436,9 +436,6 @@ async function initializeSidebar() {
                   <span>Blog</span>
                 </a>
               </div>
-              <p class="about-creator">
-                Created by <a href="https://x.com/neonwatty" target="_blank" rel="noopener noreferrer">neonwatty</a>
-              </p>
             </div>
           </div>
         </div>
@@ -654,9 +651,6 @@ async function loadSidebarSearches() {
         }
 
         applySearchToPage(query);
-        sidebarVisible = false;
-        await chrome.storage.sync.set({ sidebarVisible: false });
-        updateSidebarVisibility();
       }
     });
   });
@@ -1013,7 +1007,7 @@ function updateSidebarQueryPreview() {
 
   if (query) {
     preview.textContent = query;
-    preview.style.color = '#1e3a8a';
+    preview.style.color = '#60a5fa';
     previewContainer.classList.remove('disabled');
   } else {
     preview.textContent = 'Enter search criteria above...';

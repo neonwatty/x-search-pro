@@ -157,7 +157,8 @@
   color: #71767b;
   cursor: pointer;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: -0.3px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
   min-width: 0;
@@ -738,7 +739,7 @@
 .query-hint {
   font-size: 11px;
   color: #1d9bf0;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.2s;
 }
 

@@ -32,7 +32,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
 
     await page.waitForTimeout(2000);
 
-    await expect(await sidebar.isVisible()).toBe(false);
+    await expect(await sidebar.isVisible()).toBe(true);
 
     // Verify search was applied to the input
     const searchInputValue = await testPageHelper.getSearchInputValue();
@@ -68,7 +68,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     await page.close();
   });
 
-  test('should close sidebar after applying search', async ({ context, extensionId: _extensionId }) => {
+  test('should keep sidebar open after applying search', async ({ context, extensionId: _extensionId }) => {
     const page = await context.newPage();
     const testPageHelper = new TestPageHelpers(page);
 
@@ -85,7 +85,7 @@ test.describe('Workflow 2: Quick Apply Saved Search', () => {
     if (await searches.count() > 0) {
       await searches.first().click();
       await page.waitForTimeout(2000);
-      await expect(await sidebar.isVisible()).toBe(false);
+      await expect(await sidebar.isVisible()).toBe(true);
     }
 
     await page.waitForTimeout(1000);
@@ -281,8 +281,8 @@ test.describe('Sidebar: Sliding Window Display', () => {
         await search.click();
         await page.waitForTimeout(2000);
 
-        // Sidebar should close
-        await expect(await sidebar.isVisible()).toBe(false);
+        // Sidebar should remain open
+        await expect(await sidebar.isVisible()).toBe(true);
 
         // Verify search was applied with date filters
         const searchInputValue = await testPageHelper.getSearchInputValue();
