@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Search Pro",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Build your personal X/Twitter search library. Save, categorize, color-code, and organize searches you use repeatedly.",
   "permissions": [
     "storage",
