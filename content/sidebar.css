@@ -902,7 +902,7 @@
 
 .add-category-section {
   margin: 16px 0;
-  padding: 12px;
+  padding: 8px;
   background: #16181c;
   border: 1px solid #2f3336;
   border-radius: 8px;
@@ -910,7 +910,7 @@
 
 .add-category-form {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
