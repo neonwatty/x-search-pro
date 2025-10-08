@@ -495,7 +495,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: help;
+  cursor: pointer;
   color: #71767b;
   margin-left: 6px;
   transition: color 0.2s;
