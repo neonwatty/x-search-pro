@@ -185,10 +185,12 @@
 /* Tab Content */
 .sidebar-tab-content {
   display: none;
+  overflow: visible;
 }
 
 .sidebar-tab-content.active {
   display: block;
+  overflow: visible;
 }
 
 .sidebar-search {
@@ -473,6 +475,7 @@
   border-radius: 8px;
   border: 1px solid #2f3336;
   position: relative;
+  overflow: visible;
 }
 
 .form-section h3 {
@@ -483,19 +486,54 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  overflow: visible;
+  position: relative;
+  z-index: 200;
 }
 
 .info-icon {
-  font-size: 14px;
-  cursor: help;
-  opacity: 0.6;
-  transition: opacity 0.2s;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  cursor: help;
+  color: #71767b;
+  margin-left: 6px;
+  transition: color 0.2s;
+  vertical-align: middle;
+  position: relative;
+  z-index: 300;
 }
 
 .info-icon:hover {
-  opacity: 1;
+  color: #1d9bf0;
+}
+
+.info-icon svg {
+  display: block;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* Custom tooltip - JavaScript-created, appended to body */
+.custom-tooltip {
+  position: fixed;
+  background: #1d1f23;
+  color: #e7e9ea;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  z-index: 2147483647;
+  border: 1px solid #2f3336;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  width: 240px;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .section-header {
@@ -1134,15 +1172,4 @@
   text-decoration: underline;
 }
 
-/* Info icon tooltip */
-.info-icon {
-  font-size: 14px;
-  color: #71767b;
-  cursor: help;
-  margin-left: 6px;
-  transition: color 0.2s;
-}
-
-.info-icon:hover {
-  color: #1d9bf0;
-}
+/* Removed duplicate info-icon styles - consolidated above */
