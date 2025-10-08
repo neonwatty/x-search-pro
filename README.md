@@ -230,22 +230,6 @@ npm run typecheck        # TypeScript validation
 
 For detailed testing documentation, see [`tests/README.md`](tests/README.md).
 
-### Pre-Push Hook
-
-This project uses **Husky** to enforce code quality before pushing to remote:
-
-**What runs automatically on `git push`:**
-1. 🔍 **ESLint** - Code linting
-2. 📝 **TypeScript** - Type checking
-3. 🧪 **Unit Tests** - 97 unit tests
-4. 🎭 **E2E Tests** - Full workflow tests on real X.com
-
-**Total time:** ~2-3 minutes
-
-**To bypass** (emergency only): `git push --no-verify`
-
-The hook ensures all code pushed to remote is tested and working. Configure your test credentials in `.env` before your first push.
-
 ### Debugging
 
 - **Popup**: Right-click extension icon → Inspect popup
