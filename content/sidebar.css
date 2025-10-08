@@ -929,15 +929,20 @@
 }
 
 .color-picker-small {
-  width: 34px;
-  height: 34px;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px;
+  min-height: 28px;
+  max-width: 28px;
+  max-height: 28px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   background: none;
   padding: 0;
   outline: 2px solid #2f3336;
   transition: outline-color 0.2s;
+  flex-shrink: 0;
 }
 
 .color-picker-small:hover {
@@ -947,12 +952,16 @@
 .color-picker-small::-webkit-color-swatch-wrapper {
   padding: 0;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
 }
 
 .color-picker-small::-webkit-color-swatch {
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
 }
 
 .categories-list-section {
