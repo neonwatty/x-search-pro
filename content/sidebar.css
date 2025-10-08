@@ -814,6 +814,12 @@
   transform: translateY(-1px);
 }
 
+.btn-small {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
 .setting-info {
   padding: 12px;
   background: #16181c;
@@ -896,7 +902,7 @@
 
 .add-category-section {
   margin: 16px 0;
-  padding: 16px;
+  padding: 8px;
   background: #16181c;
   border: 1px solid #2f3336;
   border-radius: 8px;
@@ -904,7 +910,7 @@
 
 .add-category-form {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
