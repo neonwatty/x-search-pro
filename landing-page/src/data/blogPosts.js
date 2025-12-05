@@ -1,445 +1,174 @@
 export const blogPosts = [
   {
-    slug: 'advanced-twitter-search-operators',
-    title: 'Advanced X/Twitter Search Operators: The Complete Guide',
-    excerpt: 'Master every search operator available on X. From basic keywords to complex engagement filters, learn how to find exactly what you\'re looking for.',
+    slug: 'find-viral-content-x-search',
+    title: 'How to Find Viral Content on X with Saved Searches',
+    excerpt: 'Stop manually searching X every day. Learn how to build a personal library of searches that automatically find viral posts in your niche.',
     date: '2024-12-01',
-    category: 'Tutorial',
-    readTime: '8 min read',
+    category: 'Guide',
+    readTime: '5 min read',
     content: `
-# Advanced X/Twitter Search Operators: The Complete Guide
+# How to Find Viral Content on X with Saved Searches
 
-X (formerly Twitter) has one of the most powerful search systems of any social platform, but most users only scratch the surface. This guide covers every search operator you need to know.
+Finding viral content on X (Twitter) shouldn't require manually typing the same search queries every day. With X Search Pro, you can build a library of saved searches and access them instantly from a sidebar on x.com.
 
-## Basic Keyword Searches
+## The Problem with Manual Searching
 
-The simplest search is just typing keywords. X will find posts containing those words in any order.
+Every time you want to find viral posts, you have to:
+1. Remember the exact search syntax
+2. Type out complex queries like \`AI min_faves:1000 since:2024-11-24\`
+3. Manually update dates to see recent content
+4. Repeat this process across multiple topics
 
-**Exact phrases**: Use quotes for exact matches
+It's tedious and easy to forget the right operators.
+
+## Build Your Search Library
+
+X Search Pro lets you save unlimited searches organized by category. Here's how to set up a viral content finder:
+
+### Step 1: Create a Search
+
+Open the extension and use the Search Builder to set:
+- **Keywords**: Your topic (e.g., "AI", "startup", "marketing")
+- **Minimum likes**: 1000+ for viral content
+- **Date range**: Use a sliding window (more on this below)
+
+### Step 2: Save and Categorize
+
+Give your search a name like "Viral AI Posts" and assign it to a category. Color-code categories so you can quickly identify them.
+
+### Step 3: Access from the Sidebar
+
+On x.com, click the X Search Pro toggle to open the sidebar. All your saved searches appear here - one click applies them instantly.
+
+## Example Searches to Save
+
+**Tech News (viral)**
 \`\`\`
-"machine learning"
-\`\`\`
-
-**Exclude words**: Use minus sign
-\`\`\`
-AI -chatgpt
-\`\`\`
-
-## User-Based Operators
-
-### from: - Posts by a specific user
-\`\`\`
-from:elonmusk
-\`\`\`
-
-### to: - Replies to a specific user
-\`\`\`
-to:OpenAI
-\`\`\`
-
-### @mention - Posts mentioning a user
-\`\`\`
-@anthropic
-\`\`\`
-
-## Engagement Filters
-
-Find viral content by filtering on engagement:
-
-### Minimum likes
-\`\`\`
-min_faves:1000
+(startup OR "series A" OR launch) min_faves:1000
 \`\`\`
 
-### Minimum retweets
+**AI Content**
 \`\`\`
-min_retweets:500
-\`\`\`
-
-### Minimum replies
-\`\`\`
-min_replies:100
+(AI OR "machine learning" OR LLM OR GPT) min_faves:2000
 \`\`\`
 
-## Date Filters
-
-### Since a specific date
+**Marketing Insights**
 \`\`\`
-since:2024-01-01
+(marketing OR growth OR conversion) min_faves:500 filter:blue_verified
 \`\`\`
 
-### Until a specific date
-\`\`\`
-until:2024-12-01
-\`\`\`
+## The Sidebar Advantage
 
-### Combining dates for a range
-\`\`\`
-since:2024-01-01 until:2024-06-30
-\`\`\`
+Instead of opening the extension popup, use the sidebar that lives right on x.com:
 
-## Content Type Filters
-
-### Images only
-\`\`\`
-filter:images
-\`\`\`
-
-### Videos only
-\`\`\`
-filter:videos
-\`\`\`
-
-### Links only
-\`\`\`
-filter:links
-\`\`\`
-
-### Media (images or videos)
-\`\`\`
-filter:media
-\`\`\`
-
-## Advanced Combinations
-
-The real power comes from combining operators. Here's how to find viral AI posts from the last week with images:
-
-\`\`\`
-AI min_faves:1000 filter:images since:2024-11-24
-\`\`\`
+- **Always accessible**: No popup switching needed
+- **Quick apply**: One click runs any saved search
+- **Collapsible**: Minimize to an icon when not in use
+- **Synced**: Your searches sync across all your Chrome browsers
 
 ## Pro Tips
 
-1. **Use sliding windows**: Instead of manually updating dates, use X Search Pro's sliding window feature to always search recent content.
+1. **Create engagement tiers**: Save the same search with different like thresholds (100+, 1000+, 10000+) to catch content at different viral stages
 
-2. **Save your searches**: Complex queries are hard to remember. Save them for one-click access.
+2. **Use categories strategically**: Group by workflow ("Daily Check", "Weekly Review") rather than just topic
 
-3. **Organize by category**: Group related searches together for faster workflow.
+3. **Combine with filters**: Add \`filter:images\` or \`filter:videos\` to find viral visual content
 
-X Search Pro makes all of this easy with a visual query builder and automatic date updates.
+Stop wasting time typing the same searches. Build your library once, use it forever.
     `
   },
   {
-    slug: 'find-viral-tweets',
-    title: 'How to Find Viral Tweets in Any Niche',
-    excerpt: 'Learn proven strategies to discover trending content before everyone else. Perfect for marketers, researchers, and content creators.',
+    slug: 'sliding-window-searches',
+    title: 'Sliding Window Searches: Auto-Updating Date Ranges',
+    excerpt: 'The killer feature that keeps your saved searches fresh. Learn how sliding windows automatically update date ranges so you always see recent content.',
     date: '2024-11-28',
-    category: 'Strategy',
-    readTime: '6 min read',
-    content: `
-# How to Find Viral Tweets in Any Niche
-
-Finding viral content early gives you a massive advantage - whether you're a marketer looking for inspiration, a researcher tracking trends, or a content creator building your audience.
-
-## Define "Viral" for Your Niche
-
-What counts as viral varies dramatically by topic:
-
-- **Tech/Startup**: 1,000+ likes is noteworthy, 10,000+ is viral
-- **Local News**: 100+ likes might be significant
-- **Politics**: 50,000+ for truly viral content
-
-## The Basic Formula
-
-\`\`\`
-[your keywords] min_faves:1000 since:2024-11-24
-\`\`\`
-
-Adjust the min_faves threshold based on your niche.
-
-## Time-Based Strategies
-
-### The Fresh Viral Method
-Search the last 24 hours with lower engagement thresholds:
-\`\`\`
-AI min_faves:500 since:2024-11-27
-\`\`\`
-
-### The Proven Viral Method
-Search the last week with higher thresholds:
-\`\`\`
-AI min_faves:5000 since:2024-11-21
-\`\`\`
-
-## Niche-Specific Searches
-
-### Tech Industry
-\`\`\`
-(startup OR "series A" OR "product launch") min_faves:500 -filter:replies
-\`\`\`
-
-### Marketing
-\`\`\`
-(marketing OR growth OR conversion) min_faves:1000 filter:blue_verified
-\`\`\`
-
-### AI/ML
-\`\`\`
-(AI OR "machine learning" OR LLM) min_faves:2000 since:2024-11-24
-\`\`\`
-
-## Automate Your Discovery
-
-The key to consistent viral content discovery is automation. With X Search Pro:
-
-1. Create searches for each topic you track
-2. Enable sliding windows (1 day, 1 week, or 1 month)
-3. Check your sidebar daily - dates update automatically
-
-Never manually adjust dates again.
-
-## Build Your Content Radar
-
-Create a set of searches for:
-- Your main niche (multiple engagement levels)
-- Adjacent topics
-- Competitor mentions
-- Industry news
-
-This becomes your personal content intelligence system.
-    `
-  },
-  {
-    slug: 'twitter-search-for-research',
-    title: 'Using X/Twitter Search for Academic and Market Research',
-    excerpt: 'How researchers and analysts use advanced X search techniques to gather insights, track sentiment, and monitor trends.',
-    date: '2024-11-25',
-    category: 'Research',
-    readTime: '7 min read',
-    content: `
-# Using X/Twitter Search for Academic and Market Research
-
-X is a goldmine for researchers - real-time public sentiment, breaking news, and authentic conversations. Here's how to mine it effectively.
-
-## Setting Up Research Searches
-
-### Track a Topic Over Time
-Create multiple searches with different date ranges:
-
-**Last 24 hours** (breaking developments):
-\`\`\`
-"climate change" since:2024-11-27
-\`\`\`
-
-**Last week** (trending discussions):
-\`\`\`
-"climate change" min_faves:100 since:2024-11-21
-\`\`\`
-
-**Last month** (major conversations):
-\`\`\`
-"climate change" min_faves:1000 since:2024-10-28
-\`\`\`
-
-## Sentiment Analysis Searches
-
-### Finding Positive Sentiment
-\`\`\`
-"product name" (love OR amazing OR "game changer" OR best)
-\`\`\`
-
-### Finding Negative Sentiment
-\`\`\`
-"product name" (hate OR terrible OR worst OR disappointed)
-\`\`\`
-
-### Finding Questions (Great for Understanding Pain Points)
-\`\`\`
-"product name" (how OR why OR "does anyone" OR help)
-\`\`\`
-
-## Expert Source Identification
-
-Find verified experts talking about your topic:
-\`\`\`
-"machine learning" filter:blue_verified min_faves:500
-\`\`\`
-
-## Competitive Intelligence
-
-### Monitor Competitor Mentions
-\`\`\`
-@competitor OR "competitor name"
-\`\`\`
-
-### Track Competitor Product Launches
-\`\`\`
-from:competitor (launch OR announce OR "now available")
-\`\`\`
-
-## Research Best Practices
-
-1. **Document your searches**: Keep a spreadsheet of search queries and what they're tracking
-2. **Use consistent time windows**: Makes longitudinal analysis easier
-3. **Save engagement thresholds**: Know what's "viral" in your research area
-4. **Export important findings**: Screenshot or save notable posts
-
-## Automating Research with X Search Pro
-
-Set up a research dashboard:
-1. Create category "Research - [Topic]"
-2. Add searches at multiple engagement levels
-3. Enable sliding windows for consistent time ranges
-4. Check daily from the sidebar
-
-Your searches stay fresh without manual date updates.
-    `
-  },
-  {
-    slug: 'sliding-window-searches-explained',
-    title: 'Sliding Window Searches: Never Update Dates Again',
-    excerpt: 'Learn how sliding window searches automatically keep your date ranges current, saving you time and ensuring you always see recent content.',
-    date: '2024-11-22',
-    category: 'Feature Guide',
+    category: 'Feature',
     readTime: '4 min read',
     content: `
-# Sliding Window Searches: Never Update Dates Again
+# Sliding Window Searches: Auto-Updating Date Ranges
 
-One of X Search Pro's most powerful features is sliding window searches. Here's what they are and why they matter.
+The biggest pain point with X search date filters? They're static. Save a search for "AI posts from the last week" and tomorrow it's already outdated.
+
+X Search Pro's sliding window feature solves this completely.
 
 ## The Problem with Static Dates
 
-Standard X search date filters are static:
+A typical X search with dates looks like:
 \`\`\`
-AI since:2024-11-20 until:2024-11-27
+AI min_faves:1000 since:2024-11-20 until:2024-11-27
 \`\`\`
 
-Tomorrow, this search is outdated. Next week, it's useless. You'd need to manually update the dates every time.
+This works great... today. Tomorrow? The dates are wrong. Next week? Useless. You'd have to manually edit the dates every single time.
 
-## The Sliding Window Solution
+## How Sliding Windows Work
 
-A sliding window automatically calculates dates relative to today:
+Instead of fixed dates, sliding windows calculate dates relative to *today*:
 
-- **1 Day Window**: Always searches the last 24 hours
-- **1 Week Window**: Always searches the last 7 days
-- **1 Month Window**: Always searches the last 30 days
+- **1 Day**: Always searches the last 24 hours
+- **1 Week**: Always searches the last 7 days
+- **1 Month**: Always searches the last 30 days
 
-## How It Works
-
-When you apply a search with a sliding window, X Search Pro:
-
-1. Checks today's date
-2. Calculates the appropriate since/until dates
+When you click a saved search with a sliding window, X Search Pro:
+1. Gets today's date
+2. Calculates the correct since/until dates
 3. Builds the query with fresh dates
 4. Applies it to X's search
 
-You save the search once. It stays current forever.
+You save it once. It stays current forever.
 
-## Perfect Use Cases
+## Setting Up a Sliding Window Search
 
-### Daily Monitoring
-Set up 1-day sliding windows for:
+In X Search Pro's Search Builder:
+
+1. Enter your keywords and filters
+2. In the Date section, select "Sliding Window"
+3. Choose your window: 1 Day, 1 Week, or 1 Month
+4. Save your search
+
+That's it. Every time you apply this search, dates update automatically.
+
+## Best Use Cases
+
+### Daily Monitoring (1 Day Window)
+Perfect for:
 - Breaking news in your industry
-- Mentions of your brand
+- Brand mentions
 - Competitor activity
+- Trending topics
 
-### Weekly Review
-Set up 1-week sliding windows for:
-- Viral content in your niche
-- Trending conversations
+### Weekly Review (1 Week Window)
+Perfect for:
 - Content inspiration
+- Viral post roundups
+- Industry trends
+- Research gathering
 
-### Monthly Analysis
-Set up 1-month sliding windows for:
-- Broader trend analysis
-- Research projects
+### Monthly Analysis (1 Month Window)
+Perfect for:
 - Comprehensive topic coverage
+- Trend analysis
+- Research projects
+- Market sentiment
 
-## Setting Up Sliding Windows
+## Combine with Engagement Filters
 
-In X Search Pro:
+Sliding windows really shine when paired with engagement thresholds:
 
-1. Open the Search Builder
-2. Set your keywords and filters
-3. In the Date section, choose "Sliding Window"
-4. Select 1 Day, 1 Week, or 1 Month
-5. Save your search
+**"Show me viral AI posts from the past week"**
+- Keywords: AI
+- Min likes: 1000
+- Sliding window: 1 Week
 
-That's it. Your search will always show recent content.
+Every time you run this search, you get the latest viral AI content - no manual date updating required.
 
-## Combining with Engagement Filters
+## Why This Matters
 
-Sliding windows shine when combined with engagement filters:
+Without sliding windows, saved searches become stale. You either:
+- Manually update dates (tedious)
+- Forget and see old content (useless)
+- Give up on saved searches entirely
 
-\`\`\`
-AI min_faves:1000 [sliding: last 7 days]
-\`\`\`
-
-This always finds viral AI content from the past week - perfect for weekly content research.
-    `
-  },
-  {
-    slug: 'chrome-extension-search-tips',
-    title: '10 Tips for Better X Searches with Chrome Extensions',
-    excerpt: 'Get more out of your X experience with these power user tips for search-focused Chrome extensions.',
-    date: '2024-11-19',
-    category: 'Tips',
-    readTime: '5 min read',
-    content: `
-# 10 Tips for Better X Searches with Chrome Extensions
-
-Chrome extensions can supercharge your X experience. Here are our top tips for getting the most out of search tools.
-
-## 1. Use the Sidebar, Not Just the Popup
-
-X Search Pro's sidebar lives right on x.com. No switching tabs or opening popups - your searches are always one click away.
-
-## 2. Organize by Use Case, Not Topic
-
-Instead of categories like "Tech" or "Marketing", try:
-- "Daily Check"
-- "Content Ideas"
-- "Competitor Watch"
-- "Research"
-
-## 3. Color Code Strategically
-
-Use colors to indicate priority or frequency:
-- Red: Check multiple times daily
-- Yellow: Daily check
-- Blue: Weekly review
-- Gray: Occasional use
-
-## 4. Start with Templates
-
-Don't build every search from scratch. Use X Search Pro's templates as starting points, then customize.
-
-## 5. Create Engagement Tiers
-
-For any topic you track regularly, create multiple searches:
-- Low threshold (100+ likes) - catch emerging content
-- Medium threshold (1000+ likes) - find popular posts
-- High threshold (10000+ likes) - only viral hits
-
-## 6. Use Sliding Windows by Default
-
-Unless you need a specific date range, always use sliding windows. Your searches stay relevant automatically.
-
-## 7. Keyboard Shortcuts
-
-Learn the shortcuts:
-- Quick toggle sidebar
-- Navigate between searches
-- Apply search instantly
-
-## 8. Sync Across Devices
-
-X Search Pro uses Chrome sync. Set up your searches on one computer, access them everywhere.
-
-## 9. Review and Prune Regularly
-
-Once a month, review your saved searches:
-- Delete unused ones
-- Update keywords for searches that aren't performing
-- Add new searches for emerging interests
-
-## 10. Share Your Best Searches
-
-Found a great search query? Share the operators with colleagues or on social media. Help others discover the power of advanced search.
-
----
-
-These tips apply to X Search Pro specifically, but the principles work for any search-focused browser tool.
+Sliding windows make saved searches actually useful for daily workflows. Set them up once, benefit forever.
     `
   }
 ]
