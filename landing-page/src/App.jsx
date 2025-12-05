@@ -7,7 +7,7 @@ import BlogPost from './pages/BlogPost'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/x-search-pro">
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
         <main className="flex-grow">
