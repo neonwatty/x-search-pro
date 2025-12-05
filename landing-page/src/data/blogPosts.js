@@ -1,174 +1,178 @@
 export const blogPosts = [
   {
-    slug: 'find-viral-content-x-search',
-    title: 'How to Find Viral Content on X with Saved Searches',
-    excerpt: 'Stop manually searching X every day. Learn how to build a personal library of searches that automatically find viral posts in your niche.',
+    slug: 'twitter-advanced-search-guide',
+    title: 'How to Use Twitter Advanced Search: Complete Guide to Search Operators',
+    excerpt: 'Master Twitter advanced search with this complete guide. Learn search operators, date filters, and how to find old tweets without memorizing complex syntax.',
     date: '2024-12-01',
     category: 'Guide',
     readTime: '5 min read',
     content: `
-# How to Find Viral Content on X with Saved Searches
+# How to Use Twitter Advanced Search: Complete Guide to Search Operators
 
-Finding viral content on X (Twitter) shouldn't require manually typing the same search queries every day. With X Search Pro, you can build a library of saved searches and access them instantly from a sidebar on x.com.
+Twitter advanced search is powerful but hard to use. You need to memorize operators like \`min_faves:1000\` or \`since:2024-01-01\` just to filter results. This guide shows you how to use Twitter search operators - and an easier way with X Search Pro.
 
-## The Problem with Manual Searching
+## What is Twitter Advanced Search?
 
-Every time you want to find viral posts, you have to:
-1. Remember the exact search syntax
-2. Type out complex queries like \`AI min_faves:1000 since:2024-11-24\`
-3. Manually update dates to see recent content
-4. Repeat this process across multiple topics
+Twitter advanced search lets you filter tweets by:
+- **Date range** (since/until operators)
+- **Engagement** (minimum likes, retweets, replies)
+- **User** (from:, to:, @mentions)
+- **Content type** (images, videos, links)
+- **Language and location**
 
-It's tedious and easy to forget the right operators.
+The problem? You have to type these operators manually every time.
 
-## Build Your Search Library
+## Essential Twitter Search Operators
 
-X Search Pro lets you save unlimited searches organized by category. Here's how to set up a viral content finder:
-
-### Step 1: Create a Search
-
-Open the extension and use the Search Builder to set:
-- **Keywords**: Your topic (e.g., "AI", "startup", "marketing")
-- **Minimum likes**: 1000+ for viral content
-- **Date range**: Use a sliding window (more on this below)
-
-### Step 2: Save and Categorize
-
-Give your search a name like "Viral AI Posts" and assign it to a category. Color-code categories so you can quickly identify them.
-
-### Step 3: Access from the Sidebar
-
-On x.com, click the X Search Pro toggle to open the sidebar. All your saved searches appear here - one click applies them instantly.
-
-## Example Searches to Save
-
-**Tech News (viral)**
+### Search by Date
 \`\`\`
-(startup OR "series A" OR launch) min_faves:1000
+since:2024-01-01 until:2024-12-01
 \`\`\`
 
-**AI Content**
+### Find Tweets with Minimum Likes
 \`\`\`
-(AI OR "machine learning" OR LLM OR GPT) min_faves:2000
-\`\`\`
-
-**Marketing Insights**
-\`\`\`
-(marketing OR growth OR conversion) min_faves:500 filter:blue_verified
+min_faves:1000
 \`\`\`
 
-## The Sidebar Advantage
+### Search from a Specific User
+\`\`\`
+from:username
+\`\`\`
 
-Instead of opening the extension popup, use the sidebar that lives right on x.com:
+### Filter by Media Type
+\`\`\`
+filter:images
+filter:videos
+filter:links
+\`\`\`
 
-- **Always accessible**: No popup switching needed
-- **Quick apply**: One click runs any saved search
-- **Collapsible**: Minimize to an icon when not in use
-- **Synced**: Your searches sync across all your Chrome browsers
+### Exclude Replies
+\`\`\`
+-filter:replies
+\`\`\`
 
-## Pro Tips
+## Combining Operators
 
-1. **Create engagement tiers**: Save the same search with different like thresholds (100+, 1000+, 10000+) to catch content at different viral stages
+The real power comes from combining these:
 
-2. **Use categories strategically**: Group by workflow ("Daily Check", "Weekly Review") rather than just topic
+**Find viral AI posts from the last week:**
+\`\`\`
+AI min_faves:1000 since:2024-11-24 -filter:replies
+\`\`\`
 
-3. **Combine with filters**: Add \`filter:images\` or \`filter:videos\` to find viral visual content
+**Find images from a specific user:**
+\`\`\`
+from:username filter:images
+\`\`\`
 
-Stop wasting time typing the same searches. Build your library once, use it forever.
+## The Problem with Manual Advanced Search
+
+Every time you want to run an advanced search, you have to:
+1. Remember the exact operator syntax
+2. Type it out correctly
+3. Update the dates manually (they go stale)
+4. Repeat for every search
+
+## A Better Way: X Search Pro
+
+X Search Pro is a Chrome extension that makes Twitter advanced search easy:
+
+1. **Visual Query Builder** - Select filters from dropdowns instead of memorizing syntax
+2. **Save Searches** - Store your searches and run them with one click
+3. **Sliding Windows** - Date ranges auto-update so searches stay fresh
+4. **Sidebar Access** - Run searches directly from X.com without opening popups
+
+Stop memorizing search operators. Build your query visually and save it forever.
     `
   },
   {
-    slug: 'sliding-window-searches',
-    title: 'Sliding Window Searches: Auto-Updating Date Ranges',
-    excerpt: 'The killer feature that keeps your saved searches fresh. Learn how sliding windows automatically update date ranges so you always see recent content.',
+    slug: 'search-twitter-by-date-find-old-tweets',
+    title: 'How to Search Twitter by Date and Find Old Tweets',
+    excerpt: 'Learn how to search Twitter by date, find tweets from specific dates, and locate old tweets. Plus: auto-updating date filters that never go stale.',
     date: '2024-11-28',
-    category: 'Feature',
+    category: 'Tutorial',
     readTime: '4 min read',
     content: `
-# Sliding Window Searches: Auto-Updating Date Ranges
+# How to Search Twitter by Date and Find Old Tweets
 
-The biggest pain point with X search date filters? They're static. Save a search for "AI posts from the last week" and tomorrow it's already outdated.
+Need to find tweets from a specific date? Want to search old tweets from months ago? Twitter's date search is powerful but the syntax is clunky - and the dates go stale immediately.
 
-X Search Pro's sliding window feature solves this completely.
+## How to Search Twitter by Date
 
-## The Problem with Static Dates
+Twitter uses \`since:\` and \`until:\` operators:
 
-A typical X search with dates looks like:
 \`\`\`
-AI min_faves:1000 since:2024-11-20 until:2024-11-27
+your search terms since:2024-01-01 until:2024-01-31
 \`\`\`
 
-This works great... today. Tomorrow? The dates are wrong. Next week? Useless. You'd have to manually edit the dates every single time.
+This finds tweets from January 2024. But tomorrow, this search is already outdated.
 
-## How Sliding Windows Work
+## Find Tweets from a Specific Date
 
-Instead of fixed dates, sliding windows calculate dates relative to *today*:
+To find tweets from a single day:
+\`\`\`
+topic since:2024-06-15 until:2024-06-16
+\`\`\`
 
-- **1 Day**: Always searches the last 24 hours
-- **1 Week**: Always searches the last 7 days
-- **1 Month**: Always searches the last 30 days
+## Search Old Tweets by User
 
-When you click a saved search with a sliding window, X Search Pro:
+Combine date filters with user filters:
+\`\`\`
+from:username since:2023-01-01 until:2023-12-31
+\`\`\`
+
+This finds all tweets from a user in 2023.
+
+## The Problem: Static Dates Go Stale
+
+When you save a search like "AI posts from the last week":
+\`\`\`
+AI since:2024-11-20 until:2024-11-27
+\`\`\`
+
+Tomorrow? The dates are wrong. Next week? Completely useless.
+
+You'd have to manually edit the dates every single time you run the search.
+
+## The Solution: Sliding Window Searches
+
+X Search Pro introduces **sliding windows** - date ranges that auto-update relative to today:
+
+- **1 Day Window**: Always searches the last 24 hours
+- **1 Week Window**: Always searches the last 7 days
+- **1 Month Window**: Always searches the last 30 days
+
+When you click a saved search, X Search Pro:
 1. Gets today's date
-2. Calculates the correct since/until dates
-3. Builds the query with fresh dates
-4. Applies it to X's search
+2. Calculates fresh since/until dates
+3. Runs the search with current dates
 
-You save it once. It stays current forever.
+**Save it once. Dates stay fresh forever.**
 
-## Setting Up a Sliding Window Search
+## Best Use Cases for Date Searches
 
-In X Search Pro's Search Builder:
+### Find Breaking News (1 Day)
+Search your topic with a 1-day sliding window to always see the latest.
 
-1. Enter your keywords and filters
-2. In the Date section, select "Sliding Window"
-3. Choose your window: 1 Day, 1 Week, or 1 Month
-4. Save your search
+### Weekly Content Research (1 Week)
+Find viral posts from the past week for content inspiration.
 
-That's it. Every time you apply this search, dates update automatically.
+### Track Trends Over Time (1 Month)
+Monitor how conversations evolve with a 30-day window.
 
-## Best Use Cases
+## How to Set Up Auto-Updating Date Searches
 
-### Daily Monitoring (1 Day Window)
-Perfect for:
-- Breaking news in your industry
-- Brand mentions
-- Competitor activity
-- Trending topics
+With X Search Pro:
 
-### Weekly Review (1 Week Window)
-Perfect for:
-- Content inspiration
-- Viral post roundups
-- Industry trends
-- Research gathering
+1. Open the Search Builder
+2. Enter your keywords and filters
+3. Select "Sliding Window" for the date option
+4. Choose 1 Day, 1 Week, or 1 Month
+5. Save your search
 
-### Monthly Analysis (1 Month Window)
-Perfect for:
-- Comprehensive topic coverage
-- Trend analysis
-- Research projects
-- Market sentiment
+Access it anytime from the sidebar on X.com. Dates update automatically every time you run it.
 
-## Combine with Engagement Filters
-
-Sliding windows really shine when paired with engagement thresholds:
-
-**"Show me viral AI posts from the past week"**
-- Keywords: AI
-- Min likes: 1000
-- Sliding window: 1 Week
-
-Every time you run this search, you get the latest viral AI content - no manual date updating required.
-
-## Why This Matters
-
-Without sliding windows, saved searches become stale. You either:
-- Manually update dates (tedious)
-- Forget and see old content (useless)
-- Give up on saved searches entirely
-
-Sliding windows make saved searches actually useful for daily workflows. Set them up once, benefit forever.
+Stop manually editing date filters. Let your searches stay fresh on their own.
     `
   }
 ]
