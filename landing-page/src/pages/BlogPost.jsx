@@ -105,12 +105,18 @@ function BlogContent({ content }) {
   let currentCodeBlock = null
   let currentList = []
 
+  const formatInline = (text) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">$1</code>')
+  }
+
   const flushList = () => {
     if (currentList.length > 0) {
       elements.push(
         <ul key={`list-${elements.length}`} className="list-disc list-inside space-y-1 my-4">
           {currentList.map((item, i) => (
-            <li key={i} className="text-gray-600">{item}</li>
+            <li key={i} className="text-gray-600" dangerouslySetInnerHTML={{ __html: formatInline(item) }} />
           ))}
         </ul>
       )
@@ -173,15 +179,11 @@ function BlogContent({ content }) {
       elements.push(<hr key={`hr-${i}`} className="my-8 border-gray-200" />)
     } else if (line.trim()) {
       flushList()
-      const formatted = line
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">$1</code>')
-
       elements.push(
         <p
           key={`p-${i}`}
           className="text-gray-600 my-4"
-          dangerouslySetInnerHTML={{ __html: formatted }}
+          dangerouslySetInnerHTML={{ __html: formatInline(line) }}
         />
       )
     }
